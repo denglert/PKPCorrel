@@ -30,8 +30,8 @@ tag=$(label)_nEv_$(nEvents)
 #batchjobtag=full_withone_ev_1nd_temp
 #batchjobtag=full_withone_ev_and_faultyassocPID_temp
 #batchjobtag=MinBias_Etalon_2nd
-batchjobtag=HighMultiplicty_1nw
-filetoprocess=correl_FULL.root
+batchjobtag=MinBias_HighMulti_All
+filetoprocess=correl_MinBiasHighMulti.root
 #filetoprocess=correl_selection20.root
 
 ##################################
@@ -43,6 +43,14 @@ procbatchjob_and_publish_tag=FULLDATA_EventSel_Finezvtxbins
 procbatchjob_and_publish_filetoprocess=correl_FULL.root
 procbatchjob_and_publish_wwwdir=~/www/PionKaonProtCorrelation
 procbatchjob_and_publish_wwwwtag=FULLDATA_EventSel_Finezvtxbins_dEtamax_3.00_rev1
+
+###############
+# = Publish = #
+###############
+
+publish_tag=MinBias_HighMulti_All
+publish_wwwdir=~/www/PionKaonProtCorrelation
+publish_wwwtag=MinBias_HighMulti_All_rev3
 
 ###########################
 ### ---  Test area  --- ###
@@ -111,6 +119,10 @@ procbatchjob_and_publish : build_proc
 	@rm -rf ./results/$(procbatchjob_and_publish_tag)
 	./bin/process ./preprocessed/$(procbatchjob_and_publish_tag)/$(procbatchjob_and_publish_filetoprocess) $(procbatchjob_and_publish_tag)  
 	./makePublic.sh $(procbatchjob_and_publish_tag) $(procbatchjob_and_publish_wwwdir) $(procbatchjob_and_publish_wwwwtag)
+
+
+publish :
+	./makePublic.sh $(publish_tag) $(publish_wwwdir) $(publish_wwwtag)
 
 ###### - Test - ########
 preproctest : build_preproc

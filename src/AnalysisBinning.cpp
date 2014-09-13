@@ -63,6 +63,23 @@ const float assoptmax = 3.0;
 //////////////////////////////////
 // Analysis multiplicity binning
 
+//// MinBias and HighMultiplicity
+const int nMultiplicityBins_Ana_HDR = 9;
+const int multiplicitybins_Ana[nMultiplicityBins_Ana_HDR][2] = 
+{
+	  {   0,  30 },
+	  {  30,  50 },
+	  {  50,  80 },
+	  {  80, 100 },
+	  { 100, 120 },
+	  { 120, 150 },
+	  { 150, 185 },
+	  { 185, 220 },
+	  { 220, 260 }
+//	  { 260, 300 }
+//	  { 300, 350 }
+};
+
 //// MINBIAS
 //const int nMultiplicityBins_Ana_HDR = 5;
 //const int multiplicitybins_Ana[nMultiplicityBins_Ana_HDR][2] = 
@@ -75,24 +92,31 @@ const float assoptmax = 3.0;
 //};
 
 // HIGH-MULTIPLICITY
-const int nMultiplicityBins_Ana_HDR = 4;
-const int multiplicitybins_Ana[nMultiplicityBins_Ana_HDR][2] = 
-{
-	  { 120, 150 },
-	  { 150, 185 },
-	  { 185, 220 },
-	  { 220, 260 }
+//const int nMultiplicityBins_Ana_HDR = 4;
+//const int multiplicitybins_Ana[nMultiplicityBins_Ana_HDR][2] = 
+//{
+//	  { 120, 150 },
+//	  { 150, 185 },
+//	  { 185, 220 },
+//	  { 220, 260 }
 //	  { 260, 300 }
 //	  { 300, 350 }
-};
+//};
 
+//// Event Mix multiplicity binning
 
-// Event Mix multiplicity binning
-
-// HIGH-MULTIPLICITY
-const int nMultiplicityBins_EvM_HDR = 4;
+// MinBias and High Multiplicity
+const int nMultiplicityBins_EvM_HDR = 12;
 const int multiplicitybins_EvM[nMultiplicityBins_EvM_HDR][2] = 
 {
+ 	  {   0,  20 },
+ 	  {  20,  30 },
+ 	  {  30,  40 },
+ 	  {  40,  50 },
+ 	  {  50,  60 },
+ 	  {  60,  80 },
+ 	  {  80, 100 },
+ 	  { 100, 120 },
 	  { 120, 150 },
 	  { 150, 185 },
 	  { 185, 220 },
@@ -100,6 +124,18 @@ const int multiplicitybins_EvM[nMultiplicityBins_EvM_HDR][2] =
 //	  { 260, 300 }
 //	  { 300, 350 }
 };
+
+// HIGH-MULTIPLICITY
+//const int nMultiplicityBins_EvM_HDR = 4;
+//const int multiplicitybins_EvM[nMultiplicityBins_EvM_HDR][2] = 
+//{
+//	  { 120, 150 },
+//	  { 150, 185 },
+//	  { 185, 220 },
+//	  { 220, 260 }
+//	  { 260, 300 }
+//	  { 300, 350 }
+//};
 
 // MINBIAS
 // const int nMultiplicityBins_EvM_HDR = 8;

@@ -1,4 +1,4 @@
 PKPCorrel
 =========
 
-Pion kaon and proton correlation
+Pion, kaon and proton correlation code

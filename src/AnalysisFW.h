@@ -56,6 +56,27 @@ extern const int nMixEv;
 bool EventSelection( const int &pPAcollisionEventSelection, const int &pileUpBit );
 bool TrackSelection( const Tracks &tTracks, int iTrk );
 
+
+class AnalysisFW
+{
+	public:
+
+	// === Constructor === //
+	AnalysisFW();
+
+	// === Variables === //
+	
+	TH1D *nEvents_Processed_total;
+ 	TH1D *nTrk_Distr;
+
+	// === Functions === //
+	void Setup();
+	void CountPassedEvent();
+	void CountProcessedEvent();
+	void FillnTrk( int nTrk);
+
+};
+
 /////////////////////////////////
 // Setup function
 void Setup_nEvents_Processed (TH1D *&nEvents_Processed_signal_total, TH1D *&nEvents_Processed_backgr_total, TH1D **&nEvents_Processed_signal, TH1D **&nEvents_Processed_backgr, int nMultiplicityBins );

@@ -62,6 +62,18 @@ testfile=root://eoscms.cern.ch//eos/cms/store/group/phys_heavyions/denglert/pPb2
 testnEvents=10000
 testjobid=0
 
+#########################
+#### - EtaPhiDistr - ####
+#########################
+# commands: EtaPhiDistr
+
+EtaPhiDistr_label=EtaPhiDistr
+EtaPhiDistr_inputfile=root://eoscms.cern.ch//eos/cms/store/group/phys_heavyions/denglert/pPb2013_HighMultiplicityForest_merged/HIRun2013-28Sep2013-v1_pPb_run_210498-210658/pPb2013_HM_28Sep2013_v1_HiForest_pPb_run_210498-210658_0.root
+EtaPhiDistr_nEvents=50000
+EtaPhiDistr_jobid=0
+
+EtaPhiDistr_tag=$(EtaPhiDistr_label)_nEv_$(EtaPhiDistr_nEvents)
+
 #####################
 ### - PIDSetup - ####
 #####################
@@ -148,6 +160,19 @@ AnaFwTest : build_AnaFwTest
 build_AnaFwTest : 
 	@cd src; make ../bin/AnaFwTest
 
+######################################################
+### EtaPhiDistr
+EtaPhiDistr : build_EtaPhiDistr
+	@rm -rf ./results/$(EtaPhiDistr_tag); mkdir ./results/$(EtaPhiDistr_tag); 
+	@echo -e "\nPREPROCESSING."
+	@echo
+	@echo WORKDIR: $(EtaPhiDistr_tag)
+	@echo 
+	@echo Testfile: $(EtaPhiDistr_inputfile)
+	@echo Number of events: $(EtaPhiDistr_nEvents)
+	@echo
+	cd ./results/$(EtaPhiDistr_tag); ../../bin/EtaPhiDistr $(EtaPhiDistr_inputfile) $(EtaPhiDistr_jobid) $(EtaPhiDistr_nEvents);
+
 
 ######################################################
 ### PIDSetup
@@ -184,6 +209,9 @@ build_preproc:
 
 build_SimplePreProc:
 	@cd src; make ../bin/SimplePreProc
+
+build_EtaPhiDistr:
+	@cd src; make ../bin/EtaPhiDistr
 
 build_proc:
 	@cd src; make ../bin/process

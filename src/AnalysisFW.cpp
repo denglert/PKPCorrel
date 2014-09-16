@@ -212,6 +212,31 @@ void Read_nEvents_Processed(TFile *f, TH1D **&nEvents_Processed_signal, TH1D **&
 	}
 }
 
+AnalysisFW::AnalysisFW()
+{
+}
+
+void AnalysisFW::Setup()
+{
+	nEvents_Processed_total = new TH1D("nEvents_Processed_total", "Processed Events;", 2, -0.5, 1.5);
+ 	nTrk_Distr			 		= new TH1D("nTrkDistr", "Track distribution;Multiplicity", 350, 0, 350);
+}
+
+void AnalysisFW::FillnTrk( int nTrk)
+{
+	nTrk_Distr->Fill(nTrk);
+}
+
+void AnalysisFW::CountPassedEvent()
+{
+	nEvents_Processed_total->Fill(1.);
+}
+
+void AnalysisFW::CountProcessedEvent()
+{
+	nEvents_Processed_total->Fill(0.);
+}
+
 /////////////////////////////
 // *** Folder handling *** //
 /////////////////////////////

@@ -5,14 +5,13 @@
 #include <TH1D.h>
 #include <TH2D.h>
 #include <TMath.h>
+#include <TCanvas.h>
 #include <TNtuple.h>
 #include <iostream>
 #include <deque>
-#include <TLorentzVector.h>
 #include "AnalysisFW.h"
 #include "AnalysisBinning.h"
 #include "PIDUtils.h"
-#include "CorrelationUtils.h"
 #include "SetupCustomTrackTree.h"
 
 int main( int argc, const char *argv[] )
@@ -75,7 +74,7 @@ int main( int argc, const char *argv[] )
  //                            //
  ////////////////////////////////
  
- TFile *output = new TFile(Form("./dEtadPhi_distr_%s.root", tag.c_str() ),"RECREATE");
+ TFile *output = new TFile(Form("./EtaPhi_distr_%s.root", tag.c_str() ),"RECREATE");
  output->cd();
 
  //////////////////////////////
@@ -102,18 +101,23 @@ int main( int argc, const char *argv[] )
  double PhiMin = -TMath::Pi();
  double PhiMax =  TMath::Pi();
 
+ TH1D ***EtaDistr;
  TH2D ***EtaPhiDistr;
 
  EtaPhiDistr = new TH2D **[nParticles];
+ EtaDistr    = new TH1D **[nParticles];
+
  for (int pid = 0; pid < nParticles; pid++)
  {
 	EtaPhiDistr[pid] = new TH2D*[nPtBins[pid]];
+	EtaDistr   [pid] = new TH1D*[nPtBins[pid]];
 
  	for (int ptBin = 0; ptBin < nPtBins[pid]; ptBin++)
-	{ EtaPhiDistr[pid][ptBin]  = new TH2D (Form("EtaDistribution id = %d, pt [%.2f - %.2f]", pid, pt(pid, ptBin, 0), pt(pid, ptBin, 1)),";dEta;dPhi", nEtaBins, EtaMin, EtaMax, nPhiBins, PhiMin, PhiMax); }
+	{ EtaPhiDistr[pid][ptBin]  = new TH2D (Form("EtaPhiDistribution id = %d, pt [%.2f - %.2f]", pid, pt(pid, ptBin, 0), pt(pid, ptBin, 1)),";#eta;#Phi [rad]", nEtaBins, EtaMin, EtaMax, nPhiBins, PhiMin, PhiMax); 
+  	     EtaDistr[pid][ptBin]  = new TH1D (Form("EtaDistribution id = %d, pt [%.2f - %.2f]", pid, pt(pid, ptBin, 0), pt(pid, ptBin, 1)),";#eta;Entries", nEtaBins, EtaMin, EtaMax); }
  }
 
- std::cout << "Everything initialized." << std::endl;
+ std::cout << "Initialization completed." << std::endl;
 
  ///////////////////////////
  //                       //
@@ -171,12 +175,16 @@ int main( int argc, const char *argv[] )
 
 		// chadron
 		if( !isOutsideChargedHadronPtRange )
-		{ EtaPhiDistr[0][ptBin_CH]->Fill(Eta,Phi);}
+		{ 
+			EtaPhiDistr[0][ptBin_CH]->Fill(Eta,Phi);
+		   EtaDistr[0][ptBin_CH]->Fill(Eta);
+		}
 
 		// pid particle
 		if( (PID != 99) && !isOutsideIdentifHadronPtRange )
 		{
 			EtaPhiDistr[PID][ptBin_ID]->Fill(Eta,Phi);
+		  	EtaDistr[PID][ptBin_ID]->Fill(Eta);
 		}
 
 		// *** Track selection *** //
@@ -186,7 +194,51 @@ int main( int argc, const char *argv[] )
 	}
 
  }
- 
+
+ ////////////////////////////
+ //                        //
+ // **** Plot Figures **** //
+ //                        //
+ ////////////////////////////
+
+ gStyle->SetOptStat(0);
+
+ TCanvas canvas("fucking canvas", ";fuck;you", 800, 800);
+ EtaPhiDistr[0][0]->Draw("COLZ");
+ canvas.SaveAs("fuckingpic.png");
+
+ // (Eta,Phi) distribution
+ for (int pid = 0; pid < nParticles; pid++)
+ for (int ptBin = 0; ptBin < nPtBins[pid]; ptBin++)
+ {
+	TCanvas canvas_EtaPhiDistr ("EtaPhiDistr", ";Eta;Phi", 800, 600);
+ 	EtaPhiDistr[pid][ptBin]->Draw("COLZ");
+
+ 	std::string EtaPhiDistrFigBase = Form("EtaPhiDistr_typ_%d_pt_%.2f-%.2f", pid, pt(pid, ptBin, 0), pid, pt(pid, ptBin, 1));
+
+ 	std::string EtaPhiDistrFigPNG = EtaPhiDistrFigBase+".png";
+ 	std::string EtaPhiDistrFigPDF = EtaPhiDistrFigBase+".pdf";
+
+ 	canvas_EtaPhiDistr.SaveAs(EtaPhiDistrFigPNG.c_str() );
+ 	canvas_EtaPhiDistr.SaveAs(EtaPhiDistrFigPDF.c_str() );
+ }
+
+ // Eta distribution
+ for (int pid = 0; pid < nParticles; pid++)
+ for (int ptBin = 0; ptBin < nPtBins[pid]; ptBin++)
+ {
+	TCanvas canvas_EtaDistr ("EtaDistr", ";Eta;Phi", 800, 600);
+ 	EtaDistr[pid][ptBin]->Draw("COLZ");
+
+ 	std::string EtaDistrFigBase = Form("EtaDistr_typ_%d_pt_%.2f-%.2f", pid, pt(pid, ptBin, 0), pid, pt(pid, ptBin, 1));
+
+ 	std::string EtaDistrFigPNG = EtaDistrFigBase+".png";
+ 	std::string EtaDistrFigPDF = EtaDistrFigBase+".pdf";
+
+ 	canvas_EtaDistr.SaveAs(EtaDistrFigPNG.c_str() );
+ 	canvas_EtaDistr.SaveAs(EtaDistrFigPDF.c_str() );
+ }
+
  //////////////////////
  //                  //
  // **** OUTPUT **** //
@@ -195,6 +247,5 @@ int main( int argc, const char *argv[] )
  
  output->Write();
  output->Close();
-
 
 }

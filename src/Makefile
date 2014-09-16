@@ -48,6 +48,14 @@ dEdxMap.o : dEdxMap.cpp
 PIDSetup.o : PIDSetup.cpp
 	$(CC) $(CFLAGS) -o $@ -c $<
 
+####################################################################################
+### EtaPhiDistr
+../bin/EtaPhiDistr : EtaPhiDistr.o $(CMN) $(OBJS)
+	$(CC) $(LFLAGS) -o $@ $< $(OBJS) 
+
+EtaPhiDistr.o : EtaPhiDistr.cpp
+	$(CC) $(CFLAGS) -o $@ -c $<
+
 
 ###########################################
 ###  *** Framework and utility test *** ###

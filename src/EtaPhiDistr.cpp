@@ -203,10 +203,6 @@ int main( int argc, const char *argv[] )
 
  gStyle->SetOptStat(0);
 
- TCanvas canvas("fucking canvas", ";fuck;you", 800, 800);
- EtaPhiDistr[0][0]->Draw("COLZ");
- canvas.SaveAs("fuckingpic.png");
-
  // (Eta,Phi) distribution
  for (int pid = 0; pid < nParticles; pid++)
  for (int ptBin = 0; ptBin < nPtBins[pid]; ptBin++)

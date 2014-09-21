@@ -386,3 +386,5 @@ sed -i "s/proton_particle_ptbin/${proton_particle_ptbin}/g"       $twikiout
 sed -i "s/proton_particle_multbin/${proton_particle_multbin}/g"   $twikiout 
 
 gedit $twikiout
+
+cp $twikiout "$wwwdir/$wwwtag/"

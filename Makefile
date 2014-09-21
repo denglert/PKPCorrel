@@ -47,10 +47,11 @@ procbatchjob_and_publish_wwwwtag=FULLDATA_EventSel_Finezvtxbins_dEtamax_3.00_rev
 ###############
 # = Publish = #
 ###############
+# Command: publish
 
 publish_tag=MinBias_HighMulti_All
 publish_wwwdir=~/www/PionKaonProtCorrelation
-publish_wwwtag=MinBias_HighMulti_All_rev3
+publish_wwwtag=MinBias_HighMulti_All_rev4
 
 ###########################
 ### ---  Test area  --- ###

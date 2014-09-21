@@ -192,7 +192,7 @@ const double dEtaMin = -4.8;
 const double dEtaMax =  4.8;
 
 const double dEtaMin_plot = -3.0;
-const double dEtaMax_plot =  3.0;
+const double dEtaMax_plot =  2.9;
 
 const double dPhiMin = -TMath::Pi()/2;
 const double dPhiMax = 3*TMath::Pi()/2;

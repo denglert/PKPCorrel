@@ -603,6 +603,12 @@ void CorrelationFramework::makeFigCorrel1D(std::string tag)
  	for(int multBin=0; multBin < nMultiplicityBins_Ana; multBin++)
  	{
 
+	double pt1 = pt(TypBin, ptBin, 0);
+	double pt2 = pt(TypBin, ptBin, 1);
+	int mult1 = multiplicity_Ana(multBin, 0, nMultiplicityBins_Ana);
+	int mult2 = multiplicity_Ana(multBin, 1, nMultiplicityBins_Ana);
+
+	std::string corrtypelabel = Form("%s - c.p.", particletype(TypBin).c_str());
 
 	double chisqrdperndf_ = correl1D_FitResults[TypBin][ptBin][multBin].chisqrdperndf;
 
@@ -616,23 +622,27 @@ void CorrelationFramework::makeFigCorrel1D(std::string tag)
 	double V2_Error_ = correl1D_FitResults[TypBin][ptBin][multBin].V2_Error;
 	double V3_Error_ = correl1D_FitResults[TypBin][ptBin][multBin].V3_Error;
 
-	double pt1 = pt(TypBin, ptBin, 0);
-	double pt2 = pt(TypBin, ptBin, 1);
-
-	int mult1 = multiplicity_Ana(multBin, 0, nMultiplicityBins_Ana);
-	int mult2 = multiplicity_Ana(multBin, 1, nMultiplicityBins_Ana);
-
-
 	std::string dir   = Form("./results/%s/correl1D/", tag.c_str());
 	std::string filename = Form("correl1D_typ_%d_pt_%.2f-%.2f_nTrk_%03d-%03d.png", TypBin, pt1, pt2, mult1, mult2);
 
-	std::string figlabel = Form("typ %d, p_{T} [%.2f-%.2f], nTrk [%d-%d]", TypBin, pt1, pt2, mult1, mult2 );
 	std::string figurename = dir+filename;
 
    double phimin = -TMath::Pi()/2;
    double phimax = 3*TMath::Pi()/2;
    
 	TCanvas canvas_correl_1D ("canvas_correl_1D","",800,600);
+
+   canvas_correl_1D.SetLeftMargin(0.15);
+   canvas_correl_1D.SetRightMargin(0.01);
+   canvas_correl_1D.SetTopMargin(0.01);
+   canvas_correl_1D.SetBottomMargin(0.10);
+
+	correl1D[TypBin][ptBin][multBin]->SetTitle(";#Delta#phi;#frac{1}{N_{trig}} #frac{dN^{pair}}{#Delta#phi}");
+	correl1D[TypBin][ptBin][multBin]->GetXaxis()->CenterTitle(1);
+	correl1D[TypBin][ptBin][multBin]->SetTitleOffset(1.2,"X");
+	correl1D[TypBin][ptBin][multBin]->GetYaxis()->CenterTitle(1);
+	correl1D[TypBin][ptBin][multBin]->SetTitleOffset(1.8,"Y");
+
 	gStyle->SetOptStat(0);
 
 	TF1 fitFunc = TF1 ("fitFunc", "[0] * ( 1 + 2*[1]*cos(x) + 2*[2]*cos(2*x) + 2*[3]*cos(3*x) )");
@@ -681,43 +691,51 @@ void CorrelationFramework::makeFigCorrel1D(std::string tag)
 	Fourier2.Draw("SAME");
 	Fourier3.Draw("SAME");
 
-	double upperleftposx = 0.55;
-	double upperleftposy = 0.30;
+	double upperleftposx = 0.66;
+	double upperleftposy = 0.33;
 	double shift = 0.04;
 
+	double xl1                = 0.18, yl1                = 0.69;
+	double label_CMS_pPb_posx = 0.18, label_CMS_pPb_posy = 0.91;
+	double label_corrtyp_posx = 0.54, label_corrtyp_posy = 0.90;
+	double label_bin_posx     = 0.37, label_bin_posy     = 0.73;
+
+	TLatex label1 = label_CMS_pPb(label_CMS_pPb_posx, label_CMS_pPb_posy, figuretextsize_correl1D);
+	TLatex label2 = label_CorrTyp(label_corrtyp_posx, label_corrtyp_posy, figuretextsize_correl1D, TypBin);
+	TLatex label3 = label_Ntrk_pt(label_bin_posx, label_bin_posy, figuretextsize_correl1D, TypBin, multBin, ptBin);
+
+	label1.Draw(); label2.Draw(); label3.Draw();
+
 	// Legend
-	Double_t xl1=.20, yl1=0.70, xl2=xl1+.15, yl2=yl1+.15;
+	Double_t xl2=xl1+.15, yl2=yl1+.15;
 	TLegend v2vsptlegend (xl1,yl1,xl2,yl2);
+	v2vsptlegend.SetFillStyle(0);
+	v2vsptlegend.SetTextSize(figuretextsize_correl1D);
+	v2vsptlegend.SetBorderSize(0);
 	v2vsptlegend.AddEntry(&fitFunc,"Fit function","L");
 	v2vsptlegend.AddEntry(&baseline,"baseline","L");
-	v2vsptlegend.AddEntry(&Fourier1,"Fourier 1th comp.","L");
-	v2vsptlegend.AddEntry(&Fourier2,"Fourier 2nd comp.","L");
-	v2vsptlegend.AddEntry(&Fourier3,"Fourier 3nd comp.","L");
+	v2vsptlegend.AddEntry(&Fourier1,"V_{1}","L");
+	v2vsptlegend.AddEntry(&Fourier2,"V_{2}","L");
+	v2vsptlegend.AddEntry(&Fourier3,"V_{3}","L");
 	v2vsptlegend.Draw("SAME");
 
-
-	TLatex tlabel( upperleftposx,upperleftposy, figlabel.c_str()); 
-	tlabel.SetTextSize(0.032);
-	tlabel.SetNDC(kTRUE);
-	tlabel.Draw();
 
 	TLatex tchndf( upperleftposx,upperleftposy-shift, Form("#chi^{2} /n.d.f  = %f", chisqrdperndf_)); 
 	tchndf.SetTextSize(0.032);
 	tchndf.SetNDC(kTRUE);
 	tchndf.Draw();
 
-
-	TLatex t1( upperleftposx,upperleftposy-2*shift,Form("V1 = %.4f #pm %.4f ", V1_, V1_Error_) ); 
+	TLatex t1( upperleftposx,upperleftposy-2*shift,Form("V_{1} = %.4f #pm %.4f ", V1_, V1_Error_) ); 
 	t1.SetTextSize(0.032);
 	t1.SetNDC(kTRUE);
 	t1.Draw();
 
-	TLatex t2( upperleftposx,upperleftposy-3*shift,Form("V2 = %.4f #pm %.4f ", V2_, V2_Error_) ); 
+	TLatex t2( upperleftposx,upperleftposy-3*shift,Form("V_{2} = %.4f #pm %.4f ", V2_, V2_Error_) ); 
 	t2.SetTextSize(0.032);
 	t2.SetNDC(kTRUE);
 	t2.Draw();
 
-	TLatex t3( upperleftposx,upperleftposy-4*shift,Form("V3 = %.5f #pm %.5f ", V3_, V3_Error_) ); 
+	TLatex t3( upperleftposx,upperleftposy-4*shift,Form("V_{3} = %.5f #pm %.5f ", V3_, V3_Error_) ); 
 	t3.SetTextSize(0.032);
 	t3.SetNDC(kTRUE);
 	t3.Draw();
@@ -741,7 +759,7 @@ void plot2DCorrelation(TH2D* correl, std::string figurename, std::string title, 
 
    canvas_correl.SetLeftMargin(0.15);
    canvas_correl.SetBottomMargin(0.05);
-   canvas_correl.SetRightMargin(0.01);
+   canvas_correl.SetRightMargin(0.05);
    canvas_correl.SetTopMargin(0.1);
    canvas_correl.SetTheta(60.839);
    canvas_correl.SetPhi(38.0172);
@@ -764,7 +782,7 @@ void plot2DCorrelation(TH2D* correl, std::string figurename, std::string title, 
 
 	correl->Draw("SURF1 FB");
 
-	TLatex ttitle ( 0.1,0.94, title.c_str() ); 
+	TLatex ttitle ( 0.06,0.94, title.c_str() ); 
 	ttitle.SetTextSize(0.032);
 	ttitle.SetNDC(kTRUE);
 	ttitle.Draw();
@@ -819,7 +837,6 @@ TGraphErrors CorrelationFramework::Getv2TGraphError (int TypBin, int multBin)
 	pt       	 = new double[nPtBins[TypBin]];
 	v2       	 = new double[nPtBins[TypBin]];
 	v2_StatError = new double[nPtBins[TypBin]];
-
 
    std::vector< double > ptvec = CorrelationFramework::Getptvec(TypBin, 0.);
    std::vector< double > v2vec = CorrelationFramework::Getv2vec(TypBin, multBin);

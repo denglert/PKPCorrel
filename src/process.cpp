@@ -96,7 +96,7 @@ int main( int argc, const char *argv[] )
  CFW.makeFigv2vspT_HIN13002(tag);
  CFW.makeFigv2vsnTrk_cpar_ref(tag);
 
- CFW.makeFigCorrel2D( tag );
  CFW.makeFigCorrel1D( tag );
+ CFW.makeFigCorrel2D( tag );
 
 }

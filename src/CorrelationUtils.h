@@ -4,6 +4,7 @@
 #include <deque>
 #include "AnalysisBinning.h"
 #include "AnalysisFW.h"
+#include <TGraphErrors.h>
 
 //////////////////////////////////////
 //   *  Correl1DfitResultsData  *   //
@@ -34,6 +35,10 @@ struct CorrelResults
 	double v2;
 	double v2_SystError;
 	double v2_StatError;
+
+	double v3;
+	double v3_SystError;
+	double v3_StatError;
 };
 
 /////////////////
@@ -120,7 +125,7 @@ class CorrelationFramework
 	void ResetCurrentEventCorrelation();
 	void doAnalysis();
 
-	void Calcv2s();
+	void Calcvns();
 
 	void ReBin();
 	void display_v2s();
@@ -129,9 +134,13 @@ class CorrelationFramework
 	void makeFigCorrel2D( std::string tag );
 	void makeFigv2vspT(int TypBin, int multBin, std::string tag);
 	void makeFigv2vspT_allparticles(int multBin, std::string tag);
+	void makeFigv2vspT_HIN13002(std::string tag);
+	void makeFigv3vspT_allparticles(int multBin, std::string tag);
 	void makeFigv2vspT_allparticles_with_selfcorrelation(int multBin, std::string tag);
 	void makeFigv2vsnTrk_cpar_ref( std::string tag );
 
+
+	TGraphErrors Getv2TGraphError (int TypBin, int multBin);
 	std::vector< double > Getptvec      ( int TypBin, double offset );
 	std::vector< double > GetnTrkvec  ( double offset );
 	std::vector< double > Get_cpar_ref_v2vec_nTrk ();
@@ -141,7 +150,10 @@ class CorrelationFramework
 	std::vector< double > GetV2_Errorvec( int TypBin, int multBin);
 
 	std::vector< double > Getv2vec      ( int TypBin, int multBin);
+	std::vector< double > Getv3vec      ( int TypBin, int multBin);
+
 	std::vector< double > Getv2_StatErrorvec( int TypBin, int multBin);
+	std::vector< double > Getv3_StatErrorvec( int TypBin, int multBin);
 
 	std::vector< double > Get_self_v2vec ( int TypBin, int multBin);
 	std::vector< double > Get_self_v2_StatErrorvec ( int TypBin, int multBin);

@@ -90,7 +90,56 @@ int main( int argc, const char *argv[] )
  AnaFW->Setup();
 
  // dEdxvsp map
- TH2D *dEdxvsp  = new TH2D ("dEdxVsP",";p(GeV/c);dE/dx", npBins, pMin, pMax, ndEdxBins, dEdxMin, dEdxMax);
+ TH2D *dEdxvsplinlintyp[4];
+ TH2D *dEdxvsploglogtyp[4];
+
+ double l10 = TMath::Log(10);
+
+ int    npBinslog    = 100;
+ int    ndEdxBinslog = 100;
+ double pBins[npBinslog+1];
+ double dEdxBins[ndEdxBinslog+1];
+
+ double pminlog    = 0.1;
+ double pmaxlog    = 2.0;
+ double dEdxminlog = 0.1;
+ double dEdxmaxlog = 20;
+
+ double pminlin    = 0.1;
+ double pmaxlin    = 2.0;
+ double dEdxminlin = 0.1;
+ double dEdxmaxlin = 20;
+
+ double dplog   = ( TMath::Log(pmaxlog)   -TMath::Log(pminlog)    )/npBinslog/l10;
+ double ddEdxlog = ( TMath::Log(dEdxmaxlog)-TMath::Log(dEdxminlog) )/ndEdxBinslog/l10;
+
+ std::cout << "l10: " << l10 << std::endl; 
+ std::cout << "dplog: " << dplog << std::endl; 
+ std::cout << "ddEdxlog: " << ddEdxlog << std::endl; 
+
+
+ for (int i=0; i<=npBinslog; i++)
+ { pBins[i] = TMath::Exp(l10*(i*dplog + TMath::Log(pminlog)/l10));
+   std::cout << "pbins: " << pBins[i] << std::endl;
+ }
+
+ for (int i=0; i<=ndEdxBinslog; i++)
+ { dEdxBins[i] = TMath::Exp(l10*(i*ddEdxlog+ TMath::Log(dEdxminlog)/l10));
+   std::cout << "dEdxBins: " << dEdxBins[i] << std::endl;
+ }
+
+
+
+ for (int i = 0; i < 4 ; i++)
+ {
+ dEdxvsplinlintyp[i] = new TH2D (Form("dEdxVsP lin-lin %s", particletype(i).c_str()) ,";p(GeV/c);dE/dx", npBins, pminlin, pmaxlin, ndEdxBins, dEdxminlin, dEdxmaxlin);
+ dEdxvsploglogtyp[i] = new TH2D (Form("dEdxVsP log-log %s", particletype(i).c_str()) ,";p(GeV/c);dE/dx", npBinslog, pBins, ndEdxBinslog, dEdxBins);
+ }
+
+ TH2D* dEdxvsplinlinall = new TH2D ("dEdxVsP lin-lin " ,";p(GeV/c);dE/dx", npBins, pminlin, pmaxlin, ndEdxBins, dEdxminlin, dEdxmaxlin);
+ TH2D* dEdxvsploglogall = new TH2D ("dEdxVsP log-log " ,";p(GeV/c);dE/dx", npBinslog, pBins, ndEdxBinslog, dEdxBins);
+
+ /////////////
 
  int nParticles = 4;
 
@@ -178,6 +227,8 @@ int main( int argc, const char *argv[] )
 		{ 
 			EtaPhiDistr[0][ptBin_CH]->Fill(Eta,Phi);
 		   EtaDistr[0][ptBin_CH]->Fill(Eta);
+			dEdxvsplinlintyp[0]->Fill( p, tTracks.dedx[iTrk] );
+			dEdxvsploglogtyp[0]->Fill( p, tTracks.dedx[iTrk] );
 		}
 
 		// pid particle
@@ -185,10 +236,13 @@ int main( int argc, const char *argv[] )
 		{
 			EtaPhiDistr[PID][ptBin_ID]->Fill(Eta,Phi);
 		  	EtaDistr[PID][ptBin_ID]->Fill(Eta);
+			dEdxvsplinlintyp[PID]->Fill( p, tTracks.dedx[iTrk] );
+			dEdxvsploglogtyp[PID]->Fill( p, tTracks.dedx[iTrk] );
 		}
 
+		dEdxvsploglogall->Fill( p, tTracks.dedx[iTrk] );
+		dEdxvsplinlinall->Fill( p, tTracks.dedx[iTrk] );
 		// *** Track selection *** //
-		dEdxvsp->Fill( p, tTracks.dedx[iTrk] );
 
 
 	}
@@ -234,6 +288,58 @@ int main( int argc, const char *argv[] )
  	canvas_EtaDistr.SaveAs(EtaDistrFigPNG.c_str() );
  	canvas_EtaDistr.SaveAs(EtaDistrFigPDF.c_str() );
  }
+
+ /////////////////
+ // dEdx vs p plots
+ for (int i = 0; i < 4; i++)
+ {
+ 	TCanvas canvas_dEdxvsplin ("dEdx", ";p [GeV/c];dE/dx", 800, 600);
+
+	//canvas_dEdxvsplin.GetXaxis()->SetRangeUser(0.15,5);
+	//canvas_dEdxvsplin.GetYaxis()->SetRangeUser(1,20);
+
+	canvas_dEdxvsplin.SetLogz(1);
+	dEdxvsplinlintyp[i]->Draw("COLZ");
+
+ 	std::string dEdxvsplinlinFigBase = Form("dEdxvspLin_typ_%d", i);
+
+ 	std::string dEdxvspFigPNG = dEdxvsplinlinFigBase+".png";
+ 	std::string dEdxvspFigPDF = dEdxvsplinlinFigBase+".pdf";
+
+ 	canvas_dEdxvsplin.SaveAs(dEdxvspFigPNG.c_str() );
+ 	canvas_dEdxvsplin.SaveAs(dEdxvspFigPDF.c_str() );
+ }
+
+ for (int i = 0; i < 4; i++)
+ {
+ 	TCanvas canvas_dEdxvsplog ("dEdx", ";p [GeV/c];dE/dx", 800, 600);
+	canvas_dEdxvsplog.SetLogz(1);
+	canvas_dEdxvsplog.SetLogx(1);
+	canvas_dEdxvsplog.SetLogy(1);
+
+	dEdxvsploglogtyp[i]->Draw("COLZ");
+
+ 	std::string dEdxvsploglogFigBase = Form("dEdxvspLog_typ_%d", i);
+
+ 	std::string dEdxvspFigPNG = dEdxvsploglogFigBase+".png";
+ 	std::string dEdxvspFigPDF = dEdxvsploglogFigBase+".pdf";
+
+ 	canvas_dEdxvsplog.SaveAs(dEdxvspFigPNG.c_str() );
+ 	canvas_dEdxvsplog.SaveAs(dEdxvspFigPDF.c_str() );
+ }
+
+ 	std::string dEdxvsplinlinallFigBase = "dEdxvspLin_typ_all";
+ 	std::string dEdxvsploglogallFigBase = "dEdxvspLog_typ_all";
+ 	std::string dEdxvsplinFigallPNG = dEdxvsplinlinallFigBase+".png";
+ 	std::string dEdxvsplinFigallPDF = dEdxvsplinlinallFigBase+".pdf";
+ 	std::string dEdxvsplogFigallPNG = dEdxvsploglogallFigBase+".png";
+ 	std::string dEdxvsplogFigallPDF = dEdxvsploglogallFigBase+".pdf";
+
+	makedEdxvspFigloglog(dEdxvsploglogall, dEdxvsplogFigallPNG);
+	makedEdxvspFigloglog(dEdxvsploglogall, dEdxvsplogFigallPDF);
+	makedEdxvspFiglinlin(dEdxvsplinlinall, dEdxvsplinFigallPNG);
+	makedEdxvspFiglinlin(dEdxvsplinlinall, dEdxvsplinFigallPDF);
+
 
  //////////////////////
  //                  //

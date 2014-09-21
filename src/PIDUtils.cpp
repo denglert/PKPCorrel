@@ -7,9 +7,17 @@ const int ndEdxBins 	= 300;
 const double dEdxMin = 0;
 const double dEdxMax = 30;
 
-// PID Parameters settings
-const double delta = 0;
+const double pminlog    = 0.1;
+const double pmaxlog    = 2.0;
+const double dEdxminlog = 0.1;
+const double dEdxmaxlog = 20;
+ 
+const double pminlin    = 0.1;
+const double pmaxlin    = 2.0;
+const double dEdxminlin = 0.1;
+const double dEdxmaxlin = 20;
 
+// PID Parameters settings
 const float BB_Pion_low_par[3] = {2.35e-1, 0.61, 1.1e4};
 const float BB_Pion_hig_par[3] = {0.29, 2.2, 0.00};
 const float BB_Pion_mindEdxcut = 0.2;
@@ -77,84 +85,159 @@ int GetPID(float p, float dEdx)
 	return PID;
 }
 
-// viewdEdxvsP
-void viewdEdxvsP(TH2D* dEdxvsP, std::string figurename, float delta)
+
+void makedEdxvspFiglinlin(TH2D* dEdxvsP, std::string figurename)
 {
-
- TF1 BB_Pion_low ("BB_Pion_low_fcn" , BBcurve1, pMin, pMax, 3);
- TF1 BB_Pion_hig ("BB_Pion_high_fcn", BBcurve1, pMin, pMax, 3);
- TF1 BB_Kaon_low ("BB_Kaon_low_fcn" , BBcurve1, pMin, pMax, 3);
- TF1 BB_Kaon_hig ("BB_Kaon_high_fcn", BBcurve1, pMin, pMax, 3);
- TF1 BB_Prot_low ("BB_Prot_low_fcn" , BBcurve1, pMin, pMax, 3);
- TF1 BB_Prot_hig ("BB_Prot_high_fcn", BBcurve1, pMin, pMax, 3);
-
- BB_Pion_low.SetParameters(BB_Pion_low_par[0], BB_Pion_low_par[1], BB_Pion_low_par[2]);
- BB_Pion_hig.SetParameters(BB_Pion_hig_par[0], BB_Pion_hig_par[1], BB_Pion_hig_par[2]);
- BB_Kaon_low.SetParameters(BB_Kaon_low_par[0], BB_Kaon_low_par[1], BB_Kaon_low_par[2]);
- BB_Kaon_hig.SetParameters(BB_Kaon_hig_par[0], BB_Kaon_hig_par[1], BB_Kaon_hig_par[2]);
- BB_Prot_low.SetParameters(BB_Prot_low_par[0], BB_Prot_low_par[1], BB_Prot_low_par[2]);
- BB_Prot_hig.SetParameters(BB_Prot_hig_par[0], BB_Prot_hig_par[1], BB_Prot_hig_par[2]);
-
- BB_Pion_hig.SetLineColor(kMagenta);
- BB_Kaon_low.SetLineColor(kBlue);
- BB_Kaon_hig.SetLineColor(kBlue);
- BB_Prot_low.SetLineColor(kBlack);
- BB_Prot_hig.SetLineColor(kBlack);
-
- TCanvas c("dEdxvsP","dEdxvsP", 1024, 768);
- c.SetLogx(1);
- c.SetLogy(1);
- c.SetLogz(1);
-
- gStyle->SetOptStat(0);
- dEdxvsP->GetXaxis()->SetRangeUser(0.12,3);
- dEdxvsP->GetYaxis()->SetRangeUser(0.1,30);
- dEdxvsP->GetXaxis()->SetTitle("p [GeV/c]");
-
- double pion_maxpcut  = BB_Pion_maxpcut;
-
- double kaon_lowcut  = BB_Kaon_mindEdxcut;
- double kaon_maxpcut = BB_Kaon_maxpcut;
-
- double prot_lowcut  = BB_Prot_mindEdxcut;
- double prot_maxpcut = BB_Prot_maxpcut;
-
- TLine *BB_Pion_maxpcut  = new TLine(pion_maxpcut,0.1,pion_maxpcut,2); 
-
- TLine *BB_Kaon_lowcut  = new TLine(0.6,kaon_lowcut,kaon_maxpcut,kaon_lowcut); 
- TLine *BB_Kaon_maxpcut = new TLine(kaon_maxpcut,kaon_lowcut,kaon_maxpcut,4); 
-
- TLine *BB_Prot_lowcut  = new TLine(1.1,prot_lowcut,prot_maxpcut,prot_lowcut); 
- TLine *BB_Prot_maxpcut = new TLine(prot_maxpcut,prot_lowcut,prot_maxpcut,4); 
-
-
- BB_Pion_maxpcut->SetLineColor(kMagenta);
-
- BB_Prot_lowcut->SetLineColor(kBlack);
- BB_Prot_maxpcut->SetLineColor(kBlack);
-
- BB_Kaon_lowcut->SetLineColor(kBlue);
- BB_Kaon_maxpcut->SetLineColor(kBlue);
-
-
- dEdxvsP->Draw("colz");
-
- BB_Pion_hig.Draw("same");
- BB_Kaon_low.Draw("same");
- BB_Kaon_hig.Draw("same");
- BB_Prot_low.Draw("same");
- BB_Prot_hig.Draw("same");
-
-
- BB_Pion_maxpcut->Draw("same");
-
- BB_Prot_lowcut->Draw("same");
- BB_Prot_maxpcut->Draw("same");
-
- BB_Kaon_lowcut->Draw("same");
- BB_Kaon_maxpcut->Draw("same");
-
-
- c.SaveAs(figurename.c_str());
-
+	TF1 BB_Pion_low ("BB_Pion_low_fcn" , BBcurve1, pminlin, pmaxlin, 3);
+	TF1 BB_Pion_hig ("BB_Pion_high_fcn", BBcurve1, pminlin, pmaxlin, 3);
+	TF1 BB_Kaon_low ("BB_Kaon_low_fcn" , BBcurve1, pminlin, pmaxlin, 3);
+	TF1 BB_Kaon_hig ("BB_Kaon_high_fcn", BBcurve1, pminlin, pmaxlin, 3);
+	TF1 BB_Prot_low ("BB_Prot_low_fcn" , BBcurve1, pminlin, pmaxlin, 3);
+	TF1 BB_Prot_hig ("BB_Prot_high_fcn", BBcurve1, pminlin, pmaxlin, 3);
+	
+	BB_Pion_low.SetParameters(BB_Pion_low_par[0], BB_Pion_low_par[1], BB_Pion_low_par[2]);
+	BB_Pion_hig.SetParameters(BB_Pion_hig_par[0], BB_Pion_hig_par[1], BB_Pion_hig_par[2]);
+	BB_Kaon_low.SetParameters(BB_Kaon_low_par[0], BB_Kaon_low_par[1], BB_Kaon_low_par[2]);
+	BB_Kaon_hig.SetParameters(BB_Kaon_hig_par[0], BB_Kaon_hig_par[1], BB_Kaon_hig_par[2]);
+	BB_Prot_low.SetParameters(BB_Prot_low_par[0], BB_Prot_low_par[1], BB_Prot_low_par[2]);
+	BB_Prot_hig.SetParameters(BB_Prot_hig_par[0], BB_Prot_hig_par[1], BB_Prot_hig_par[2]);
+	
+	BB_Pion_hig.SetLineColor(kMagenta);
+	BB_Kaon_low.SetLineColor(kBlue);
+	BB_Kaon_hig.SetLineColor(kBlue);
+	BB_Prot_low.SetLineColor(kBlack);
+	BB_Prot_hig.SetLineColor(kBlack);
+	
+	TCanvas c("dEdxvsP","dEdxvsP", 1024, 768);
+	c.SetLogz(1);
+	
+	gStyle->SetOptStat(0);
+	dEdxvsP->GetXaxis()->SetRangeUser(pminlin,pmaxlin);
+	dEdxvsP->GetYaxis()->SetRangeUser(dEdxminlin,dEdxmaxlin);
+	dEdxvsP->GetXaxis()->SetTitle("p [GeV/c]");
+	
+	double pion_maxpcut  = BB_Pion_maxpcut;
+	
+	double kaon_lowcut  = BB_Kaon_mindEdxcut;
+	double kaon_maxpcut = BB_Kaon_maxpcut;
+	
+	double prot_lowcut  = BB_Prot_mindEdxcut;
+	double prot_maxpcut = BB_Prot_maxpcut;
+	
+	TLine *BB_Pion_maxpcut  = new TLine(pion_maxpcut,0.1,pion_maxpcut,2); 
+	
+	TLine *BB_Kaon_lowcut  = new TLine(0.6,kaon_lowcut,kaon_maxpcut,kaon_lowcut); 
+	TLine *BB_Kaon_maxpcut = new TLine(kaon_maxpcut,kaon_lowcut,kaon_maxpcut,4); 
+	
+	TLine *BB_Prot_lowcut  = new TLine(1.1,prot_lowcut,prot_maxpcut,prot_lowcut); 
+	TLine *BB_Prot_maxpcut = new TLine(prot_maxpcut,prot_lowcut,prot_maxpcut,4); 
+	
+	
+	BB_Pion_maxpcut->SetLineColor(kMagenta);
+	
+	BB_Prot_lowcut->SetLineColor(kBlack);
+	BB_Prot_maxpcut->SetLineColor(kBlack);
+	
+	BB_Kaon_lowcut->SetLineColor(kBlue);
+	BB_Kaon_maxpcut->SetLineColor(kBlue);
+	
+	
+	dEdxvsP->Draw("colz");
+	
+	BB_Pion_hig.Draw("same");
+	BB_Kaon_low.Draw("same");
+	BB_Kaon_hig.Draw("same");
+	BB_Prot_low.Draw("same");
+	BB_Prot_hig.Draw("same");
+	
+	
+	BB_Pion_maxpcut->Draw("same");
+	
+	BB_Prot_lowcut->Draw("same");
+	BB_Prot_maxpcut->Draw("same");
+	
+	BB_Kaon_lowcut->Draw("same");
+	BB_Kaon_maxpcut->Draw("same");
+	
+	c.SaveAs(figurename.c_str());
 };
+
+
+void makedEdxvspFigloglog(TH2D* dEdxvsP, std::string figurename)
+{
+	TF1 BB_Pion_low ("BB_Pion_low_fcn" , BBcurve1, pminlin, pmaxlin, 3);
+	TF1 BB_Pion_hig ("BB_Pion_high_fcn", BBcurve1, pminlin, pmaxlin, 3);
+	TF1 BB_Kaon_low ("BB_Kaon_low_fcn" , BBcurve1, pminlin, pmaxlin, 3);
+	TF1 BB_Kaon_hig ("BB_Kaon_high_fcn", BBcurve1, pminlin, pmaxlin, 3);
+	TF1 BB_Prot_low ("BB_Prot_low_fcn" , BBcurve1, pminlin, pmaxlin, 3);
+	TF1 BB_Prot_hig ("BB_Prot_high_fcn", BBcurve1, pminlin, pmaxlin, 3);
+	
+	BB_Pion_low.SetParameters(BB_Pion_low_par[0], BB_Pion_low_par[1], BB_Pion_low_par[2]);
+	BB_Pion_hig.SetParameters(BB_Pion_hig_par[0], BB_Pion_hig_par[1], BB_Pion_hig_par[2]);
+	BB_Kaon_low.SetParameters(BB_Kaon_low_par[0], BB_Kaon_low_par[1], BB_Kaon_low_par[2]);
+	BB_Kaon_hig.SetParameters(BB_Kaon_hig_par[0], BB_Kaon_hig_par[1], BB_Kaon_hig_par[2]);
+	BB_Prot_low.SetParameters(BB_Prot_low_par[0], BB_Prot_low_par[1], BB_Prot_low_par[2]);
+	BB_Prot_hig.SetParameters(BB_Prot_hig_par[0], BB_Prot_hig_par[1], BB_Prot_hig_par[2]);
+	
+	BB_Pion_hig.SetLineColor(kMagenta);
+	BB_Kaon_low.SetLineColor(kBlue);
+	BB_Kaon_hig.SetLineColor(kBlue);
+	BB_Prot_low.SetLineColor(kBlack);
+	BB_Prot_hig.SetLineColor(kBlack);
+	
+	TCanvas c("dEdxvsP","dEdxvsP", 1024, 768);
+	c.SetLogx(1);
+	c.SetLogy(1);
+	c.SetLogz(1);
+	
+	gStyle->SetOptStat(0);
+	dEdxvsP->GetXaxis()->SetRangeUser(pminlin,pmaxlin);
+	dEdxvsP->GetYaxis()->SetRangeUser(dEdxminlin,dEdxmaxlin);
+	dEdxvsP->GetXaxis()->SetTitle("p [GeV/c]");
+	
+	double pion_maxpcut  = BB_Pion_maxpcut;
+	
+	double kaon_lowcut  = BB_Kaon_mindEdxcut;
+	double kaon_maxpcut = BB_Kaon_maxpcut;
+	
+	double prot_lowcut  = BB_Prot_mindEdxcut;
+	double prot_maxpcut = BB_Prot_maxpcut;
+	
+	TLine *BB_Pion_maxpcut  = new TLine(pion_maxpcut,0.1,pion_maxpcut,2); 
+	
+	TLine *BB_Kaon_lowcut  = new TLine(0.6,kaon_lowcut,kaon_maxpcut,kaon_lowcut); 
+	TLine *BB_Kaon_maxpcut = new TLine(kaon_maxpcut,kaon_lowcut,kaon_maxpcut,4); 
+	
+	TLine *BB_Prot_lowcut  = new TLine(1.1,prot_lowcut,prot_maxpcut,prot_lowcut); 
+	TLine *BB_Prot_maxpcut = new TLine(prot_maxpcut,prot_lowcut,prot_maxpcut,4); 
+	
+	
+	BB_Pion_maxpcut->SetLineColor(kMagenta);
+	
+	BB_Prot_lowcut->SetLineColor(kBlack);
+	BB_Prot_maxpcut->SetLineColor(kBlack);
+	
+	BB_Kaon_lowcut->SetLineColor(kBlue);
+	BB_Kaon_maxpcut->SetLineColor(kBlue);
+	
+	
+	dEdxvsP->Draw("colz");
+	
+	BB_Pion_hig.Draw("same");
+	BB_Kaon_low.Draw("same");
+	BB_Kaon_hig.Draw("same");
+	BB_Prot_low.Draw("same");
+	BB_Prot_hig.Draw("same");
+	
+	
+	BB_Pion_maxpcut->Draw("same");
+	
+	BB_Prot_lowcut->Draw("same");
+	BB_Prot_maxpcut->Draw("same");
+	
+	BB_Kaon_lowcut->Draw("same");
+	BB_Kaon_maxpcut->Draw("same");
+	
+	c.SaveAs(figurename.c_str());
+	
+}

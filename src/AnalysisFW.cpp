@@ -250,11 +250,13 @@ void prepareDIR( std::string tag )
  std::string correl2Ddir 	 	 = "./results/"+tag+"/correl2D/";
  std::string correl1Ddir 	 	 = "./results/"+tag+"/correl1D/";
  std::string v2vsptdir 	 	 	 = "./results/"+tag+"/v2/";
+ std::string v3vsptdir 	 	 	 = "./results/"+tag+"/v3/";
  std::string fitlogdir 			 = "./results/"+tag+"/fit/";
 
  mkdir( correl2Ddir.c_str(),  	 0755 );
  mkdir( correl1Ddir.c_str(),  	 0755 );
  mkdir( v2vsptdir.c_str(),    	 0755 );
+ mkdir( v3vsptdir.c_str(),    	 0755 );
  mkdir( fitlogdir.c_str(), 0755 );
 
 }

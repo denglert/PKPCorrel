@@ -69,7 +69,7 @@ testjobid=0
 
 EtaPhiDistr_label=EtaPhiDistr
 EtaPhiDistr_inputfile=root://eoscms.cern.ch//eos/cms/store/group/phys_heavyions/denglert/pPb2013_HighMultiplicityForest_merged/HIRun2013-28Sep2013-v1_pPb_run_210498-210658/pPb2013_HM_28Sep2013_v1_HiForest_pPb_run_210498-210658_0.root
-EtaPhiDistr_nEvents=50000
+EtaPhiDistr_nEvents=-1
 EtaPhiDistr_jobid=0
 
 EtaPhiDistr_tag=$(EtaPhiDistr_label)_nEv_$(EtaPhiDistr_nEvents)

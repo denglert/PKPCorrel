@@ -81,16 +81,19 @@ int main( int argc, const char *argv[] )
 // plot2DCorrelation_custom( CFW.correl2D_functi[1][1][0], functi,  functi_title);
 // plot2DCorrelation_custom( CFW.correl2D_backgr[1][1][0], backgr,  backgr_title);
 
- CFW.Calcv2s();
+ CFW.Calcvns();
  CFW.display_v2s();
 
  // Make figures
  for(int multBin=0; multBin < nMultiplicityBins_Ana; multBin++)
  {
 	CFW.makeFigv2vspT_allparticles(multBin, tag);
+	CFW.makeFigv3vspT_allparticles(multBin, tag);
 	CFW.makeFigv2vspT_allparticles_with_selfcorrelation(multBin, tag);
 
  }
+
+ CFW.makeFigv2vspT_HIN13002(tag);
  CFW.makeFigv2vsnTrk_cpar_ref(tag);
 
  CFW.makeFigCorrel2D( tag );

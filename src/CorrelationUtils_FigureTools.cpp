@@ -47,93 +47,100 @@ void CorrelationFramework::makeFigv2vspT_allparticles(int multBin, std::string t
 	}
 
 	// *** Plotting the graphs *** //
+	//
+	gStyle->SetPadTickY(1);
+	gStyle->SetPadTickX(1);
 	TCanvas canvas_v2_vs_pT ("v2 vs pT", "v_{2} values as a function of p_{T}; p_{T} [GeV/c];v_{2}", 800, 600);
+
+	canvas_v2_vs_pT.SetLeftMargin(0.10);
+   canvas_v2_vs_pT.SetBottomMargin(0.12);
+   canvas_v2_vs_pT.SetRightMargin(0.05);
+   canvas_v2_vs_pT.SetTopMargin(0.05);
 	
-	// chadron
-	TGraphErrors *g0 = new TGraphErrors(nPtBins[0], pt[0], v2[0], 0, v2_StatError[0]);
-	g0->SetTitle("Azimuthal correlations, v2 coefficient p_{T} dependence");
-	g0->GetXaxis()->SetLimits(0,3.5);
-	g0->GetXaxis()->SetTitle("p_{T} [GeV/c]");
-	g0->GetXaxis()->SetTitleOffset(1.3);
-	g0->GetYaxis()->SetRangeUser(0.000,0.2);
-	g0->GetYaxis()->SetTitle("v_{2}");
-	g0->GetYaxis()->SetTitleOffset(1.4);
-	g0->SetLineColor(kBlack);
-	//0 8 = full circle
-	g0->SetMarkerStyle(8);
-	//0 6 = magenta
-	g0->SetMarkerColor(1);
-	g0->Draw("ALP");
+	TGraphErrors cparv2 = cpar_v2(nPtBins[0], pt[0], v2[0], 0, v2_StatError[0] );
+	TGraphErrors pionv2 = pion_v2(nPtBins[1], pt[1], v2[1], 0, v2_StatError[1] );
+	TGraphErrors kaonv2 = kaon_v2(nPtBins[2], pt[2], v2[2], 0, v2_StatError[2] );
+	TGraphErrors protv2 = prot_v2(nPtBins[3], pt[3], v2[3], 0, v2_StatError[3] );
 
-	// pion
-	TGraphErrors *g1 = new TGraphErrors(nPtBins[1], pt[1], v2[1], 0, v2_StatError[1]);
-	g1->SetLineColor(kRed);
-	// 21 = square
-	g1->SetMarkerStyle(21);
-	// 4 = blue
-	g1->SetMarkerColor(2);
-	g1->Draw("LP");
+	double v2vspt_ptmin = 0.0;
+	double v2vspt_ptmax = 2.5;
+	double v2vspt_v2min = 0.0;
+	double v2vspt_v2max = 0.16;
 
-	// kaon
-	TGraphErrors *g2 = new TGraphErrors(nPtBins[2], pt[2], v2[2], 0, v2_StatError[2]);
-	g2->SetLineColor(kGreen);
-	// 21 = square
-	g2->SetMarkerStyle(21);
-	// 4 = blue
-	g2->SetMarkerColor(3);
-	g2->Draw("LP");
+	cparv2.SetTitle("");
+   cparv2.GetXaxis()->SetLimits(v2vspt_ptmin,v2vspt_ptmax);
+	cparv2.GetXaxis()->SetTitle("p_{T} [GeV/c]");                              			  
+	cparv2.GetXaxis()->CenterTitle(1);
+	cparv2.GetXaxis()->SetTitleOffset(1.2);
+	cparv2.GetXaxis()->SetTitleSize(figuretextsize);
+	cparv2.GetYaxis()->SetRangeUser(v2vspt_v2min,v2vspt_v2max);
+	cparv2.GetYaxis()->SetTitle("v_{2}");
+	cparv2.GetYaxis()->CenterTitle(1);
+	cparv2.GetYaxis()->SetTitleOffset(1.2);
+	cparv2.GetYaxis()->SetTitleSize(figuretextsize);
 
-	// prot
-	TGraphErrors *g3 = new TGraphErrors(nPtBins[3], pt[3], v2[3], 0, v2_StatError[3]);
-	g3->SetLineColor(kBlue);
-	// 21 = square
-	g3->SetMarkerStyle(21);
-	// 4 = blue
-	g3->SetMarkerColor(4);
-	g3->Draw("LP");
+	cparv2.Draw("ALP");
+	pionv2.Draw("LP");
+	kaonv2.Draw("LP");
+	protv2.Draw("LP");
 
-	TGraphErrors cms = CMSres_v2_chadron_120_150();
-	g3->SetMarkerStyle(8);
-	cms.SetMarkerColor(5);
-	cms.SetLineColor(6);
-	cms.Draw("LP");
+//	TGraphErrors cms = CMSres_v2_chadron_120_150();
+//	g3->SetMarkerStyle(8);
+//	cms.SetMarkerColor(5);
+//	cms.SetLineColor(6);
+//	cms.Draw("LP");
 
 //	TGraphAsymmErrors alice_0_20_cpar = ALICE_pPB_0_20_cpar();
 //	TGraphAsymmErrors alice_0_20_pion = ALICE_pPB_0_20_pion();
 //	TGraphAsymmErrors alice_0_20_kaon = ALICE_pPB_0_20_kaon();
 //	TGraphAsymmErrors alice_0_20_prot = ALICE_pPB_0_20_prot();
 //
+//
 //	alice_0_20_cpar.Draw("P");
 //	alice_0_20_pion.Draw("P");
 //	alice_0_20_kaon.Draw("P");
 //	alice_0_20_prot.Draw("P");
 
-	Double_t xl1=.10, yl1=0.67, xl2=xl1+.30, yl2=yl1+.22;
-	TLegend v2vsptlegend (xl1,yl1,xl2,yl2);
-	v2vsptlegend.AddEntry(g0,"# c. p. - c. p", "P");
-	v2vsptlegend.AddEntry(g1,"# #pi - c.p", "P");
-	v2vsptlegend.AddEntry(g2,"# K - c.p", "P");
-	v2vsptlegend.AddEntry(g3,"# p - c.p", "P");
-	v2vsptlegend.AddEntry(&cms,"# CMS HIN 13-002 c.p - c.p nTrk [120-150]", "L");
+	double legend_x1=.14;
+	double legend_y1=0.56;
+	double legend_x2=legend_x1+.20;
+	double legend_y2=legend_y1+.20;
+	double CMSsystemlabelposx = 0.14;
+	double CMSsystemlabelposy = 0.84;
+	double multlabelposx = 0.62;
+	double multlabelposy = 0.24;
+
+
+	TLegend v2vsptlegend (legend_x1, legend_y1, legend_x2, legend_y2);
+	v2vsptlegend.SetFillStyle(0);
+	v2vsptlegend.SetBorderSize(0);
+	v2vsptlegend.AddEntry(&cparv2,"c.p.", "P");
+	v2vsptlegend.AddEntry(&pionv2,"#pi", "P");
+	v2vsptlegend.AddEntry(&kaonv2,"K", "P");
+	v2vsptlegend.AddEntry(&protv2,"p", "P");
+//	v2vsptlegend.AddEntry(&cms,"# CMS HIN 13-002 c.p - c.p nTrk [120-150]", "L");
 //	v2vsptlegend.AddEntry(&alice_0_20_cpar,"# ALICE [0-20] c.p - c.p", "P");
 //	v2vsptlegend.AddEntry(&alice_0_20_pion,"# ALICE [0-20] #pi - c.p", "P");
 //	v2vsptlegend.AddEntry(&alice_0_20_kaon,"# ALICE [0-20] K - c.p", "P");
 //	v2vsptlegend.AddEntry(&alice_0_20_prot,"# ALICE [0-20] p - c.p", "P");
-	v2vsptlegend.SetTextSize(0.032);
+	v2vsptlegend.SetTextSize(figuretextsize);
 	v2vsptlegend.Draw("SAME");
 
    int mult1 = multiplicity_Ana(multBin, 0, nMultiplicityBins_Ana);
 	int mult2 = multiplicity_Ana(multBin, 1, nMultiplicityBins_Ana);
 
-	std::string figlabel = Form("nTrk [ %03d - %03d ]", mult1, mult2);
+	std::string CMSsystemlabel = Form("#splitline{CMS Preliminary pPb}{#sqrt{s_{NN}} = 5.02 TeV L_{int} = 35 nb^{-1}}", mult1, mult2);
+	std::string multlabel = Form("%3d #leq N_{trk}^{offline} #leq %3d", mult1, mult2);
 
-	double upperleftposx = 0.65;
-	double upperleftposy = 0.15;
+	TLatex tCMSsystemlabel( CMSsystemlabelposx,CMSsystemlabelposy, CMSsystemlabel.c_str()); 
+	tCMSsystemlabel.SetTextSize(figuretextsize);
+	tCMSsystemlabel.SetNDC(kTRUE);
+	tCMSsystemlabel.Draw();
 
-	TLatex tlabel( upperleftposx,upperleftposy, figlabel.c_str()); 
-	tlabel.SetTextSize(0.032);
-	tlabel.SetNDC(kTRUE);
-	tlabel.Draw();
+	TLatex tmultlabel( multlabelposx,multlabelposy, multlabel.c_str()); 
+	tmultlabel.SetTextSize(figuretextsize);
+	tmultlabel.SetNDC(kTRUE);
+	tmultlabel.Draw();
 	
 	std::string dir  = Form("./results/%s/v2/", tag.c_str());
 	std::string label = Form("v2vspt_all_nTrk_%03d-%03d", mult1, mult2); 
@@ -142,6 +149,124 @@ void CorrelationFramework::makeFigv2vspT_allparticles(int multBin, std::string t
 	canvas_v2_vs_pT.SaveAs( pngfigure.c_str() );
 	canvas_v2_vs_pT.SaveAs( pdffigure.c_str() );
 
+}
+
+////////////////////////////////////////
+// - makeFigv3vspT_allparticles
+void CorrelationFramework::makeFigv3vspT_allparticles(int multBin, std::string tag)
+{
+
+	gStyle->SetOptStat(0);
+
+	double **pt;
+	double **v3;
+	double **v3_StatError;
+
+	pt       = new double*[nCorrTyp];
+	v3       = new double*[nCorrTyp];
+	v3_StatError = new double*[nCorrTyp];
+
+ 	for(int TypBin=0; TypBin < nCorrTyp; TypBin++)
+	{
+		pt      [TypBin] = new double[nPtBins[TypBin]];
+		v3      [TypBin] = new double[nPtBins[TypBin]];
+		v3_StatError[TypBin] = new double[nPtBins[TypBin]];
+
+
+   	std::vector< double > ptvec = CorrelationFramework::Getptvec(TypBin, 0.);
+   	std::vector< double > v3vec = CorrelationFramework::Getv3vec(TypBin, multBin);
+   	std::vector< double > v3_StatErrorvec = CorrelationFramework::Getv3_StatErrorvec(TypBin, multBin);
+
+		for(int ptBin = 0; ptBin < nPtBins[TypBin]; ptBin++)
+		{
+			pt[TypBin][ptBin]        = ptvec[ptBin];
+			v3[TypBin][ptBin]        = v3vec[ptBin];
+			v3_StatError[TypBin][ptBin]  = v3_StatErrorvec[ptBin];
+		};
+
+
+	}
+
+	// *** Plotting the graphs *** //
+	gStyle->SetPadTickY(1);
+	gStyle->SetPadTickX(1);
+	TCanvas canvas_v3_vs_pT ("v3 vs pT", "v_{3} values as a function of p_{T}; p_{T} [GeV/c];v_{2}", 800, 600);
+
+	canvas_v3_vs_pT.SetLeftMargin(0.10);
+   canvas_v3_vs_pT.SetBottomMargin(0.12);
+   canvas_v3_vs_pT.SetRightMargin(0.05);
+   canvas_v3_vs_pT.SetTopMargin(0.05);
+	
+	TGraphErrors cparv3 = cpar_v2(nPtBins[0], pt[0], v3[0], 0, v3_StatError[0] );
+	TGraphErrors pionv3 = pion_v2(nPtBins[1], pt[1], v3[1], 0, v3_StatError[1] );
+	TGraphErrors kaonv3 = kaon_v2(nPtBins[2], pt[2], v3[2], 0, v3_StatError[2] );
+	TGraphErrors protv3 = prot_v2(nPtBins[3], pt[3], v3[3], 0, v3_StatError[3] );
+
+	double v3vspt_ptmin = 0.0;
+	double v3vspt_ptmax = 2.5;
+	double v3vspt_v3min = 0.0;
+	double v3vspt_v3max = 0.08;
+
+	cparv3.SetTitle("");
+   cparv3.GetXaxis()->SetLimits(v3vspt_ptmin,v3vspt_ptmax);
+	cparv3.GetXaxis()->SetTitle("p_{T} [GeV/c]");                              			  
+	cparv3.GetXaxis()->CenterTitle(1);
+	cparv3.GetXaxis()->SetTitleOffset(1.2);
+	cparv3.GetXaxis()->SetTitleSize(figuretextsize);
+	cparv3.GetYaxis()->SetRangeUser(v3vspt_v3min,v3vspt_v3max);
+	cparv3.GetYaxis()->SetTitle("v_{3}");
+	cparv3.GetYaxis()->CenterTitle(1);
+	cparv3.GetYaxis()->SetTitleOffset(1.2);
+	cparv3.GetYaxis()->SetTitleSize(figuretextsize);
+
+	cparv3.Draw("ALP");
+	pionv3.Draw("LP");
+	kaonv3.Draw("LP");
+	protv3.Draw("LP");
+
+	double legend_x1=.14;
+	double legend_y1=0.56;
+	double legend_x2=legend_x1+.20;
+	double legend_y2=legend_y1+.20;
+	double CMSsystemlabelposx = 0.14;
+	double CMSsystemlabelposy = 0.84;
+	double multlabelposx = 0.62;
+	double multlabelposy = 0.24;
+
+
+	TLegend v3vsptlegend (legend_x1, legend_y1, legend_x2, legend_y2);
+	v3vsptlegend.SetFillStyle(0);
+	v3vsptlegend.SetBorderSize(0);
+	v3vsptlegend.AddEntry(&cparv3,"c.p.", "P");
+	v3vsptlegend.AddEntry(&pionv3,"#pi", "P");
+	v3vsptlegend.AddEntry(&kaonv3,"K", "P");
+	v3vsptlegend.AddEntry(&protv3,"p", "P");
+
+	v3vsptlegend.SetTextSize(figuretextsize);
+	v3vsptlegend.Draw("SAME");
+
+   int mult1 = multiplicity_Ana(multBin, 0, nMultiplicityBins_Ana);
+	int mult2 = multiplicity_Ana(multBin, 1, nMultiplicityBins_Ana);
+
+	std::string CMSsystemlabel = Form("#splitline{CMS Preliminary pPb}{#sqrt{s_{NN}} = 5.02 TeV L_{int} = 35 nb^{-1}}", mult1, mult2);
+	std::string multlabel = Form("%3d #leq N_{trk}^{offline} #leq %3d", mult1, mult2);
+
+	TLatex tCMSsystemlabel( CMSsystemlabelposx,CMSsystemlabelposy, CMSsystemlabel.c_str()); 
+	tCMSsystemlabel.SetTextSize(figuretextsize);
+	tCMSsystemlabel.SetNDC(kTRUE);
+	tCMSsystemlabel.Draw();
+
+	TLatex tmultlabel( multlabelposx,multlabelposy, multlabel.c_str()); 
+	tmultlabel.SetTextSize(figuretextsize);
+	tmultlabel.SetNDC(kTRUE);
+	tmultlabel.Draw();
+	
+	std::string dir  = Form("./results/%s/v3/", tag.c_str());
+	std::string label = Form("v3vspt_all_nTrk_%03d-%03d", mult1, mult2); 
+	std::string	pngfigure = dir+label+".png";
+	std::string	pdffigure = dir+label+".pdf";
+	canvas_v3_vs_pT.SaveAs( pngfigure.c_str() );
+	canvas_v3_vs_pT.SaveAs( pdffigure.c_str() );
 }
 
 
@@ -209,65 +334,89 @@ void CorrelationFramework::makeFigv2vsnTrk_cpar_ref( std::string tag )
 
 }
 
-
-///////////////////////////
-// makeFigv2vspT
-void CorrelationFramework::makeFigv2vspT(int TypBin, int multBin, std::string tag)
+////////////////////////////////////////
+// - makeFigv2vspT_allparticles
+void CorrelationFramework::makeFigv2vspT_HIN13002(std::string tag)
 {
 
 	gStyle->SetOptStat(0);
 
-   std::vector< double > ptvec = CorrelationFramework::Getptvec(TypBin, 0.);
-   std::vector< double > v2vec = CorrelationFramework::Getv2vec(TypBin, multBin);
-   std::vector< double > v2_StatErrorvec = CorrelationFramework::Getv2_StatErrorvec(TypBin, multBin);
-
-	double pt[nPtBins[TypBin]];
-	double v2[nPtBins[TypBin]];
-	double v2_StatError[nPtBins[TypBin]];
-
-	for(int ptBin = 0; ptBin < nPtBins[TypBin]; ptBin++)
-	{
-		pt[ptBin] = ptvec[ptBin];
-		v2[ptBin] = v2vec[ptBin];
-		v2_StatError[ptBin] = v2_StatErrorvec[ptBin];
-	}
+	TGraphErrors cpar_120150 = CorrelationFramework::Getv2TGraphError(0, 5);
+	TGraphErrors cpar_150185 = CorrelationFramework::Getv2TGraphError(0, 6);
+	TGraphErrors cpar_185220 = CorrelationFramework::Getv2TGraphError(0, 7);
+	TGraphErrors cmsr_120150 = CMSres_v2_chadron_120_150();
+	TGraphErrors cmsr_150185 = CMSres_v2_chadron_150_185();
+	TGraphErrors cmsr_185220 = CMSres_v2_chadron_185_220();
 
 	// *** Plotting the graphs *** //
+	gStyle->SetPadTickY(1);
+	gStyle->SetPadTickX(1);
 	TCanvas canvas_v2_vs_pT ("v2 vs pT", "v_{2} values as a function of p_{T}; p_{T} [GeV/c];v_{2}", 800, 600);
-	
-	TGraphErrors *g1 = new TGraphErrors(nPtBins[TypBin], pt, v2, 0, v2_StatError);
-	g1->SetTitle("Azimuthal correlations, v2 coefficient p_{T} dependence");
-	g1->GetXaxis()->SetLimits(0,3.0);
-	g1->GetXaxis()->SetTitle("p_{T} [GeV/c]");
-	g1->GetXaxis()->SetTitleOffset(1.3);
-	g1->GetYaxis()->SetRangeUser(0.000,0.2);
-	g1->GetYaxis()->SetTitle("v_{2}");
-	g1->GetYaxis()->SetTitleOffset(1.4);
-	g1->SetLineColor(kMagenta);
-	// 8 = full circle
-	g1->SetMarkerStyle(2);
-	// 6 = magenta
-	g1->SetMarkerColor(2);
-	g1->Draw("AP");
 
-	TGraphErrors cms = CMSres_v2_chadron_120_150();
-	cms.SetMarkerStyle(8);
-	cms.SetMarkerColor(1);
-	cms.SetLineColor(1);
-	cms.Draw("P");
+	canvas_v2_vs_pT.SetLeftMargin(0.10);
+   canvas_v2_vs_pT.SetBottomMargin(0.12);
+   canvas_v2_vs_pT.SetRightMargin(0.05);
+   canvas_v2_vs_pT.SetTopMargin(0.05);
 
-	Double_t xl1=.10, yl1=0.75, xl2=xl1+.45, yl2=yl1+.15;
-	TLegend v2vsptlegend (xl1,yl1,xl2,yl2);
-	v2vsptlegend.AddEntry(g1,"# Ana c.p - c.p nTrk [120-150]", "P");
-	v2vsptlegend.AddEntry(&cms,"# HIN 13-002 pPb corr2 nTrk [120-150]", "P");
-	v2vsptlegend.SetTextSize(0.032);
+	double v2vspt_ptmin = 0.0;
+	double v2vspt_ptmax = 2.5;
+	double v2vspt_v2min = 0.0;
+	double v2vspt_v2max = 0.16;
+
+	cpar_120150.SetTitle("");
+   cpar_120150.GetXaxis()->SetLimits(v2vspt_ptmin,v2vspt_ptmax);
+	cpar_120150.GetXaxis()->SetTitle("p_{T} [GeV/c]");                              			  
+	cpar_120150.GetXaxis()->CenterTitle(1);
+	cpar_120150.GetXaxis()->SetTitleOffset(1.2);
+	cpar_120150.GetXaxis()->SetTitleSize(figuretextsize);
+	cpar_120150.GetYaxis()->SetRangeUser(v2vspt_v2min,v2vspt_v2max);
+	cpar_120150.GetYaxis()->SetTitle("v_{2}");
+	cpar_120150.GetYaxis()->CenterTitle(1);
+	cpar_120150.GetYaxis()->SetTitleOffset(1.2);
+	cpar_120150.GetYaxis()->SetTitleSize(figuretextsize);
+
+	cmsr_120150.SetMarkerColor(5);
+	cmsr_120150.SetLineColor(6);
+
+	cpar_120150.Draw("ALP");
+	cpar_150185.Draw("LP");
+	cpar_185220.Draw("LP");
+	cmsr_120150.Draw("LP");
+	cmsr_150185.Draw("LP");
+	cmsr_185220.Draw("LP");
+
+	double legend_x1=.14;
+	double legend_y1=0.56;
+	double legend_x2=legend_x1+.20;
+	double legend_y2=legend_y1+.20;
+	double CMSsystemlabelposx = 0.14;
+	double CMSsystemlabelposy = 0.84;
+	double multlabelposx = 0.62;
+	double multlabelposy = 0.24;
+
+
+	TLegend v2vsptlegend (legend_x1, legend_y1, legend_x2, legend_y2);
+	v2vsptlegend.SetFillStyle(0);
+	v2vsptlegend.SetBorderSize(0);
+	v2vsptlegend.AddEntry(&cpar_120150,"analysis 120-150", "P");
+	v2vsptlegend.AddEntry(&cpar_150185,"analysis 150-185.", "P");
+	v2vsptlegend.AddEntry(&cpar_185220,"analysis 185-220", "P");
+	v2vsptlegend.AddEntry(&cmsr_120150,"13-002   120-150", "P");
+	v2vsptlegend.AddEntry(&cmsr_150185,"13-002   150-185", "P");
+	v2vsptlegend.AddEntry(&cmsr_185220,"13-002   185-220", "P");
+	v2vsptlegend.SetTextSize(figuretextsize);
 	v2vsptlegend.Draw("SAME");
 
-   int mult1 = multiplicity_Ana(multBin, 0, nMultiplicityBins_Ana);
-	int mult2 = multiplicity_Ana(multBin, 1, nMultiplicityBins_Ana);
-	
+
+	std::string CMSsystemlabel = "#splitline{CMS Preliminary pPb}{#sqrt{s_{NN}} = 5.02 TeV L_{int} = 35 nb^{-1}}";
+
+	TLatex tCMSsystemlabel( CMSsystemlabelposx,CMSsystemlabelposy, CMSsystemlabel.c_str()); 
+	tCMSsystemlabel.SetTextSize(figuretextsize);
+	tCMSsystemlabel.SetNDC(kTRUE);
+	tCMSsystemlabel.Draw();
+
 	std::string dir  = Form("./results/%s/v2/", tag.c_str());
-	std::string label = Form("v2vspt_typ_%d_nTrk_%03d-%03d", TypBin, mult1, mult2); 
+	std::string label = "v2vspt_HIN13002_comparison"; 
 	std::string	pngfigure = dir+label+".png";
 	std::string	pdffigure = dir+label+".pdf";
 	canvas_v2_vs_pT.SaveAs( pngfigure.c_str() );
@@ -657,3 +806,51 @@ void plot2DCorrelation_custom(TH2D* correl, std::string figurename, std::string 
 	canvas_correl.SaveAs( figurename.c_str() );
 
 };
+
+
+TGraphErrors CorrelationFramework::Getv2TGraphError (int TypBin, int multBin)
+{
+	gStyle->SetOptStat(0);
+
+	double *pt;
+	double *v2;
+	double *v2_StatError;
+
+	pt       	 = new double[nPtBins[TypBin]];
+	v2       	 = new double[nPtBins[TypBin]];
+	v2_StatError = new double[nPtBins[TypBin]];
+
+
+   std::vector< double > ptvec = CorrelationFramework::Getptvec(TypBin, 0.);
+   std::vector< double > v2vec = CorrelationFramework::Getv2vec(TypBin, multBin);
+   std::vector< double > v2_StatErrorvec = CorrelationFramework::Getv2_StatErrorvec(TypBin, multBin);
+
+	for(int ptBin = 0; ptBin < nPtBins[TypBin]; ptBin++)
+	{
+		pt[ptBin]           = ptvec[ptBin];
+		v2[ptBin]           = v2vec[ptBin];
+		v2_StatError[ptBin] = v2_StatErrorvec[ptBin];
+	};
+
+	TGraphErrors cparv2 = cpar_v2(nPtBins[0], pt, v2, 0, v2_StatError );
+
+	double v2vspt_ptmin = 0.0;
+	double v2vspt_ptmax = 2.5;
+	double v2vspt_v2min = 0.0;
+	double v2vspt_v2max = 0.16;
+
+	cparv2.SetTitle("");
+   cparv2.GetXaxis()->SetLimits(v2vspt_ptmin,v2vspt_ptmax);
+	cparv2.GetXaxis()->SetTitle("p_{T} [GeV/c]");                              			  
+	cparv2.GetXaxis()->CenterTitle(1);
+	cparv2.GetXaxis()->SetTitleOffset(1.2);
+	cparv2.GetXaxis()->SetTitleSize(figuretextsize);
+	cparv2.GetYaxis()->SetRangeUser(v2vspt_v2min,v2vspt_v2max);
+	cparv2.GetYaxis()->SetTitle("v_{2}");
+	cparv2.GetYaxis()->CenterTitle(1);
+	cparv2.GetYaxis()->SetTitleOffset(1.2);
+	cparv2.GetYaxis()->SetTitleSize(figuretextsize);
+
+	return cparv2;
+
+}

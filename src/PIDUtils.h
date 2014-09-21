@@ -45,7 +45,8 @@ int  GetPID(float p, float dEdx);
 bool isPion(float p, float dEdx);
 bool isKaon(float p, float dEdx);
 bool isProt(float p, float dEdx);
-void viewdEdxvsP(TH2D* dEdxvsP, std::string figurename, float delta);
+void makedEdxvspFiglinlin(TH2D* dEdxvsP, std::string figurename);
+void makedEdxvspFigloglog(TH2D* dEdxvsP, std::string figurename);
 
 
 #endif

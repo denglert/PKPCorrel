@@ -3,6 +3,8 @@
 
 #include "TGraphErrors.h"
 
+const double figuretextsize = 0.043;
+
 ///////////////////////////////
 // cpar_v2
 TGraphErrors cpar_v2 (int npoint, double *pt, double *v2, double *pt_Error, double *v2_Error )
@@ -11,7 +13,8 @@ TGraphErrors cpar_v2 (int npoint, double *pt, double *v2, double *pt_Error, doub
 	graph.SetLineColor(kBlack);
 	graph.SetMarkerColor(kBlack);
 	// full circle
-	graph.SetMarkerStyle(8);
+	graph.SetMarkerStyle(21);
+	graph.SetMarkerSize(1);
 	return graph;
 };
 
@@ -24,7 +27,8 @@ TGraphErrors pion_v2 (int npoint, double *pt, double *v2, double *pt_Error, doub
 	graph.SetLineColor(kRed);
 	graph.SetMarkerColor(kRed);
 	// full square
-	graph.SetMarkerStyle(21);
+	graph.SetMarkerStyle(22);
+	graph.SetMarkerSize(1.5);
 	return graph;
 };
 
@@ -36,7 +40,8 @@ TGraphErrors kaon_v2 (int npoint, double *pt, double *v2, double *pt_Error, doub
 	TGraphErrors graph (npoint, pt, v2, pt_Error, v2_Error);
 	graph.SetLineColor(kGreen);
 	graph.SetMarkerColor(kGreen);
-	graph.SetMarkerStyle(21);
+	graph.SetMarkerStyle(29);
+	graph.SetMarkerSize(2);
 	return graph;
 };
 
@@ -48,7 +53,8 @@ TGraphErrors prot_v2 (int npoint, double *pt, double *v2, double *pt_Error, doub
 	TGraphErrors graph (npoint, pt, v2, pt_Error, v2_Error);
 	graph.SetLineColor(kBlue);
 	graph.SetMarkerColor(kBlue);
-	graph.SetMarkerStyle(21);
+	graph.SetMarkerStyle(20);
+	graph.SetMarkerSize(1);
 	return graph;
 };
 

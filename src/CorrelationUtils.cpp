@@ -325,8 +325,8 @@ void CorrelationFramework::AddCurrentEventCorrelation( EventData* ev )
 
 
 /////////////////////////////////////
-// - Calcv2s()
-void CorrelationFramework::Calcv2s()
+// - Calcvns()
+void CorrelationFramework::Calcvns()
 {
 	for( int TypBin=0; TypBin < nCorrTyp; TypBin++)
 	for( int ptBin=0; ptBin < nPtBins[TypBin]; ptBin++)
@@ -338,9 +338,18 @@ void CorrelationFramework::Calcv2s()
 		double V2_Err    = correl1D_FitResults[TypBin][ptBin][multBin].V2_Error;
 		double V2_cp_Err = correl1D_FitResults_cpar_ref[multBin].V2_Error;
 
+		double V3        = correl1D_FitResults[TypBin][ptBin][multBin].V3;
+		double V3_cp     = correl1D_FitResults_cpar_ref[multBin].V3;
+		double V3_Err    = correl1D_FitResults[TypBin][ptBin][multBin].V3_Error;
+		double V3_cp_Err = correl1D_FitResults_cpar_ref[multBin].V3_Error;
+
 		correl_Results[TypBin][ptBin][multBin].v2           = V2 / sqrt( V2_cp);
 		correl_Results[TypBin][ptBin][multBin].v2_StatError = sqrt( (V2_Err*V2_Err/ V2_cp) + (0.25 * V2 * V2 * V2_cp_Err * V2_cp_Err / pow( V2_cp, 3)) );
 		correl_Results[TypBin][ptBin][multBin].v2_SystError = 0;
+
+		correl_Results[TypBin][ptBin][multBin].v3           = V3 / sqrt( V3_cp);
+		correl_Results[TypBin][ptBin][multBin].v3_StatError = sqrt( (V3_Err*V3_Err/ V3_cp) + (0.25 * V3 * V3 * V3_cp_Err * V3_cp_Err / pow( V3_cp, 3)) );
+		correl_Results[TypBin][ptBin][multBin].v3_SystError = 0;
 
 
 		if ( DoSelfCorrelation )
@@ -496,6 +505,21 @@ std::vector< double > CorrelationFramework::Getv2vec ( int TypBin, int multBin)
 }
 
 ///////////////////////
+// - Getv3vec
+std::vector< double > CorrelationFramework::Getv3vec ( int TypBin, int multBin)
+{
+
+	std::vector< double > v3vec(nPtBins[TypBin]);
+
+	for (int ptBin = 0; ptBin < nPtBins[TypBin]; ptBin++)
+	{
+		v3vec[ptBin] = correl_Results[TypBin][ptBin][multBin].v3;
+	}
+
+	return v3vec;
+}
+
+///////////////////////
 // - Get_self_v2vec
 std::vector< double > CorrelationFramework::Get_self_v2vec ( int TypBin, int multBin)
 {
@@ -525,6 +549,7 @@ std::vector< double > CorrelationFramework::Get_self_v2_StatErrorvec ( int TypBi
 	return v2Errorvec;
 }
 
+
 /////////////////////////////
 // - Get_cpar_ref_v2vec_nTrk
 std::vector< double > CorrelationFramework::Get_cpar_ref_v2vec_nTrk ()
@@ -546,7 +571,7 @@ std::vector< double > CorrelationFramework::Get_cpar_ref_v2_StatError_vec_nTrk (
 }
 
 //////////////////////////
-//
+// Getv2_StatErrorvec
 std::vector< double > CorrelationFramework::Getv2_StatErrorvec( int TypBin, int multBin)
 {
 	std::vector< double > v2_StatErrorvec(nPtBins[TypBin]);
@@ -555,6 +580,18 @@ std::vector< double > CorrelationFramework::Getv2_StatErrorvec( int TypBin, int 
 		v2_StatErrorvec[ptBin] = correl_Results[TypBin][ptBin][multBin].v2_StatError;
 	}
 	return v2_StatErrorvec;
+}
+
+//////////////////////////
+// Getv3_StatErrorvec
+std::vector< double > CorrelationFramework::Getv3_StatErrorvec( int TypBin, int multBin)
+{
+	std::vector< double > v3_StatErrorvec(nPtBins[TypBin]);
+	for (int ptBin = 0; ptBin < nPtBins[TypBin]; ptBin++)
+	{
+		v3_StatErrorvec[ptBin] = correl_Results[TypBin][ptBin][multBin].v3_StatError;
+	}
+	return v3_StatErrorvec;
 }
 
 void CorrelationFramework::ReBin()

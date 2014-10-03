@@ -16,6 +16,13 @@ all : ../bin/preprocess ../bin/process ../bin/preprocess_minimal
 process.o : process.cpp 
 	$(CC) $(CFLAGS) -o $@ -c $<
 
+# process_light
+../bin/process_light : process_light.o $(CMN) $(OBJS)
+	$(CC) $(LFLAGS) -o $@ $< $(OBJS)
+
+process_light.o : process_light.cpp 
+	$(CC) $(CFLAGS) -o $@ -c $<
+
 # preprocess
 ../bin/preprocess : preprocess.o $(CMN) $(OBJS)
 	$(CC) $(LFLAGS) -o $@ $< $(OBJS)
@@ -56,6 +63,13 @@ PIDSetup.o : PIDSetup.cpp
 EtaPhiDistr.o : EtaPhiDistr.cpp
 	$(CC) $(CFLAGS) -o $@ -c $<
 
+####################################################################################
+### TrackCorrection
+../bin/TrackCorrection : TrackCorrection.o $(CMN) PIDUtils.o AnalysisBinning.o PhyConst.o
+	$(CC) $(LFLAGS) -o $@ $< PIDUtils.o AnalysisBinning.o PhyConst.o 
+
+TrackCorrection.o : TrackCorrection.cpp
+	$(CC) $(CFLAGS) -o $@ -c $<
 
 ###########################################
 ###  *** Framework and utility test *** ###

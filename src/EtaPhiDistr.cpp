@@ -53,7 +53,8 @@ int main( int argc, const char *argv[] )
  else {std::cout << "File successfully opened." << std::endl;}
 
  // trackTree
- TTree *trackTree = (TTree*)f->Get("pptracks/trackTree");
+ //TTree *trackTree = (TTree*)f->Get("pptracks/trackTree");
+ TTree *trackTree = (TTree*)f->Get("ppTrack/trackTree");
  Tracks tTracks;
  bool doCheck = true;
  setupTrackTree(trackTree, tTracks, doCheck);
@@ -65,7 +66,7 @@ int main( int argc, const char *argv[] )
 
  // skimanalysis for event selection
  TTree *SkimAna= (TTree*)f->Get("skimanalysis/HltTree");
- int pPAcollisionEventSelection; SkimAna->SetBranchAddress("pPAcollisionEventSelection", &pPAcollisionEventSelection);
+ int pPAcollisionEventSelection; SkimAna->SetBranchAddress("pPAcollisionEventSelectionPA", &pPAcollisionEventSelection);
  int pileUpBit;                  SkimAna->SetBranchAddress("pVertexFilterCutGplus", &pileUpBit);
 
  ////////////////////////////////
@@ -150,6 +151,10 @@ int main( int argc, const char *argv[] )
  double PhiMin = -TMath::Pi();
  double PhiMax =  TMath::Pi();
 
+ TH2D *EtaPhiDistr_cpar = new TH2D (Form("EtaPhiDistribution id = %d, pt [%.2f - %.2f]", 0, ptref1, ptref2),";#eta;#Phi [rad]", nEtaBins, EtaMin, EtaMax, nPhiBins, PhiMin, PhiMax);
+ TH1D *EtaDistr_cpar    = new TH1D (Form("EtaDistribution id = %d, pt [%.2f - %.2f]", 0, ptref1, ptref2),";#eta;Entries", nEtaBins, EtaMin, EtaMax);
+
+
  TH1D ***EtaDistr;
  TH2D ***EtaPhiDistr;
 
@@ -194,7 +199,6 @@ int main( int argc, const char *argv[] )
 	if ( multiplicitybin_Ana(hiNtracks, nMultiplicityBins_Ana) == -1) continue;
 
 	AnaFW->CountPassedEvent();
-
 	AnaFW->FillnTrk(hiNtracks);
 
 	// Load in tracks
@@ -221,6 +225,12 @@ int main( int argc, const char *argv[] )
 
 		double Eta = tTracks.trkEta[iTrk];
 		double Phi = tTracks.trkPhi[iTrk];
+
+		if ( (ptref1 < tTracks.trkPt[iTrk]) && (tTracks.trkPt[iTrk] < ptref2) )
+		{
+			EtaPhiDistr_cpar->Fill(Eta,Phi);
+			EtaDistr_cpar->Fill(Eta);
+		}
 
 		// chadron
 		if( !isOutsideChargedHadronPtRange )
@@ -257,6 +267,7 @@ int main( int argc, const char *argv[] )
 
  gStyle->SetOptStat(0);
 
+ /////////////////////////
  // (Eta,Phi) distribution
  for (int pid = 0; pid < nParticles; pid++)
  for (int ptBin = 0; ptBin < nPtBins[pid]; ptBin++)
@@ -273,6 +284,13 @@ int main( int argc, const char *argv[] )
  	canvas_EtaPhiDistr.SaveAs(EtaPhiDistrFigPDF.c_str() );
  }
 
+ TCanvas canvas_EtaPhiDistr_cpar ("EtaPhiDistr", ";Eta;Phi", 800, 600);
+ EtaPhiDistr_cpar->Draw("COLZ");
+
+ canvas_EtaPhiDistr_cpar.SaveAs(Form("EtaPhiDistr_typ_0_pt_%.2f-%.2f.png", ptref1, ptref2));
+ canvas_EtaPhiDistr_cpar.SaveAs(Form("EtaPhiDistr_typ_0_pt_%.2f-%.2f.pdf", ptref1, ptref2));
+
+ ////////////////////
  // Eta distribution
  for (int pid = 0; pid < nParticles; pid++)
  for (int ptBin = 0; ptBin < nPtBins[pid]; ptBin++)
@@ -288,6 +306,12 @@ int main( int argc, const char *argv[] )
  	canvas_EtaDistr.SaveAs(EtaDistrFigPNG.c_str() );
  	canvas_EtaDistr.SaveAs(EtaDistrFigPDF.c_str() );
  }
+
+ TCanvas canvas_EtaDistr_cpar ("EtaDistr", ";Eta;Entries", 800, 600);
+ EtaDistr_cpar->Draw("COLZ");
+
+ canvas_EtaDistr_cpar.SaveAs(Form("EtaDistr_typ_0_pt_%.2f-%.2f.png", ptref1, ptref2));
+ canvas_EtaDistr_cpar.SaveAs(Form("EtaDistr_typ_0_pt_%.2f-%.2f.pdf", ptref1, ptref2));
 
  /////////////////
  // dEdx vs p plots

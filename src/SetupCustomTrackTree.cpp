@@ -7,7 +7,7 @@ void setupTrackTree(TTree *t,Tracks &tTracks,bool doCheck = 1)
 //   t->SetBranchAddress("nLumi", &tTracks.nLumi, &tTracks.b_nLumi);
 //   t->SetBranchAddress("nBX", &tTracks.nBX, &tTracks.b_nBX);
 //   t->SetBranchAddress("nRun", &tTracks.nRun, &tTracks.b_nRun);
-   t->SetBranchAddress("nv", &tTracks.nv, &tTracks.b_nv);
+//   t->SetBranchAddress("nv", &tTracks.nv, &tTracks.b_nv);
 //   t->SetBranchAddress("vx", tTracks.vx, &tTracks.b_vx);
 //   t->SetBranchAddress("vy", tTracks.vy, &tTracks.b_vy);
 //   t->SetBranchAddress("vz", tTracks.vz, &tTracks.b_vz);
@@ -43,7 +43,7 @@ void setupTrackTree(TTree *t,Tracks &tTracks,bool doCheck = 1)
 //   t->SetBranchAddress("trkFake", tTracks.trkFake, &tTracks.b_trkFake);
 //   t->SetBranchAddress("trkAlgo", tTracks.trkAlgo, &tTracks.b_trkAlgo);
    if (doCheck) {
-      if (t->GetMaximum("nv")>4) cout <<"FATAL ERROR: Arrary size of nv too small!!!  "<<t->GetMaximum("nv")<<endl;
+//      if (t->GetMaximum("nv")>4) cout <<"FATAL ERROR: Arrary size of nv too small!!!  "<<t->GetMaximum("nv")<<endl;
       if (t->GetMaximum("nVtx") > MAXVTX) cout <<"FATAL ERROR: Arrary size of nVtx too small!!!  "<<t->GetMaximum("nVtx")<<endl;
       if (t->GetMaximum("nTrk")>maxTracks) cout <<"FATAL ERROR: Arrary size of nTrk too small!!!  "<<t->GetMaximum("nTrk")<<endl;
    }

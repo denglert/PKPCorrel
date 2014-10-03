@@ -22,8 +22,8 @@ int  EventData::GetnTracks () { return tracks.size(); }
 void EventData::SetzVtx(float zVtx_) { zVtx = zVtx_; }
 void EventData::SetnTrk(int nTrk_) { nTrk  = nTrk_; }
 
-int EventData::GetzVtxBin()         { return                 zvtxbin(zVtx, nZvtxBins_); }
-int EventData::GetMultiplicityBin_Ana(int nMultiplicityBins_Ana) { int bin = multiplicitybin_Ana(nTrk, nMultiplicityBins_Ana); return bin;}
+int EventData::GetzVtxBin()         { return zvtxbin(zVtx, nZvtxBins_); }
+int EventData::GetMultiplicityBin_Ana( int nMultiplicityBins_Ana) { int bin = multiplicitybin_Ana(nTrk, nMultiplicityBins_Ana); return bin;}
 int EventData::GetMultiplicityBin_EvM() { return multiplicitybin_EvM(nTrk); }
 
 

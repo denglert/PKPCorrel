@@ -341,6 +341,12 @@ void CorrelationFramework::makeFigv2vspT_HIN13002(std::string tag)
 
 	gStyle->SetOptStat(0);
 
+	std::string dir  = Form("./results/%s/v2/", tag.c_str());
+	std::string label;
+
+	std::string CMSsystemlabel = "#splitline{CMS Preliminary pPb}{#sqrt{s_{NN}} = 5.02 TeV L_{int} = 35 nb^{-1}}";
+
+	// Get the graphs
 	TGraphErrors cpar_120150 = CorrelationFramework::Getv2TGraphError(0, 5);
 	TGraphErrors cpar_150185 = CorrelationFramework::Getv2TGraphError(0, 6);
 	TGraphErrors cpar_185220 = CorrelationFramework::Getv2TGraphError(0, 7);
@@ -351,76 +357,101 @@ void CorrelationFramework::makeFigv2vspT_HIN13002(std::string tag)
 	// *** Plotting the graphs *** //
 	gStyle->SetPadTickY(1);
 	gStyle->SetPadTickX(1);
-	TCanvas canvas_v2_vs_pT ("v2 vs pT", "v_{2} values as a function of p_{T}; p_{T} [GeV/c];v_{2}", 800, 600);
 
-	canvas_v2_vs_pT.SetLeftMargin(0.10);
-   canvas_v2_vs_pT.SetBottomMargin(0.12);
-   canvas_v2_vs_pT.SetRightMargin(0.05);
-   canvas_v2_vs_pT.SetTopMargin(0.05);
 
 	double v2vspt_ptmin = 0.0;
 	double v2vspt_ptmax = 2.5;
 	double v2vspt_v2min = 0.0;
 	double v2vspt_v2max = 0.16;
 
-	cpar_120150.SetTitle("");
-   cpar_120150.GetXaxis()->SetLimits(v2vspt_ptmin,v2vspt_ptmax);
-	cpar_120150.GetXaxis()->SetTitle("p_{T} [GeV/c]");                              			  
-	cpar_120150.GetXaxis()->CenterTitle(1);
-	cpar_120150.GetXaxis()->SetTitleOffset(1.2);
-	cpar_120150.GetXaxis()->SetTitleSize(figuretextsize);
-	cpar_120150.GetYaxis()->SetRangeUser(v2vspt_v2min,v2vspt_v2max);
-	cpar_120150.GetYaxis()->SetTitle("v_{2}");
-	cpar_120150.GetYaxis()->CenterTitle(1);
-	cpar_120150.GetYaxis()->SetTitleOffset(1.2);
-	cpar_120150.GetYaxis()->SetTitleSize(figuretextsize);
-
 	cmsr_120150.SetMarkerColor(5);
 	cmsr_120150.SetLineColor(6);
 
-	cpar_120150.Draw("ALP");
-	cpar_150185.Draw("LP");
-	cpar_185220.Draw("LP");
-	cmsr_120150.Draw("LP");
-	cmsr_150185.Draw("LP");
-	cmsr_185220.Draw("LP");
 
-	double legend_x1=.14;
-	double legend_y1=0.56;
-	double legend_x2=legend_x1+.20;
-	double legend_y2=legend_y1+.20;
+	double legend_x1 = .14;
+	double legend_y1 = 0.56;
+	double legend_x2 = legend_x1+.20;
+	double legend_y2 = legend_y1+.20;
 	double CMSsystemlabelposx = 0.14;
 	double CMSsystemlabelposy = 0.84;
 	double multlabelposx = 0.62;
 	double multlabelposy = 0.24;
 
-
-	TLegend v2vsptlegend (legend_x1, legend_y1, legend_x2, legend_y2);
-	v2vsptlegend.SetFillStyle(0);
-	v2vsptlegend.SetBorderSize(0);
-	v2vsptlegend.AddEntry(&cpar_120150,"analysis 120-150", "P");
-	v2vsptlegend.AddEntry(&cpar_150185,"analysis 150-185.", "P");
-	v2vsptlegend.AddEntry(&cpar_185220,"analysis 185-220", "P");
-	v2vsptlegend.AddEntry(&cmsr_120150,"13-002   120-150", "P");
-	v2vsptlegend.AddEntry(&cmsr_150185,"13-002   150-185", "P");
-	v2vsptlegend.AddEntry(&cmsr_185220,"13-002   185-220", "P");
-	v2vsptlegend.SetTextSize(figuretextsize);
-	v2vsptlegend.Draw("SAME");
-
-
-	std::string CMSsystemlabel = "#splitline{CMS Preliminary pPb}{#sqrt{s_{NN}} = 5.02 TeV L_{int} = 35 nb^{-1}}";
-
 	TLatex tCMSsystemlabel( CMSsystemlabelposx,CMSsystemlabelposy, CMSsystemlabel.c_str()); 
 	tCMSsystemlabel.SetTextSize(figuretextsize);
 	tCMSsystemlabel.SetNDC(kTRUE);
+
+	// 120-150
+	TCanvas canvas_v2_vs_pT_120_150 ("v2 vs pT", "v_{2} values as a function of p_{T}; p_{T} [GeV/c];v_{2}", 800, 600);
+	canvas_v2_vs_pT_120_150.SetLeftMargin(0.10);
+   canvas_v2_vs_pT_120_150.SetBottomMargin(0.12);
+   canvas_v2_vs_pT_120_150.SetRightMargin(0.05);
+   canvas_v2_vs_pT_120_150.SetTopMargin(0.05);
+	cpar_120150.Draw("ALP");
+	cmsr_120150.Draw("LP");
 	tCMSsystemlabel.Draw();
 
-	std::string dir  = Form("./results/%s/v2/", tag.c_str());
-	std::string label = "v2vspt_HIN13002_comparison"; 
+	TLegend v2vsptlegend_120_150 (legend_x1, legend_y1, legend_x2, legend_y2);
+	v2vsptlegend_120_150.SetFillStyle(0);
+	v2vsptlegend_120_150.SetBorderSize(0);
+	v2vsptlegend_120_150.AddEntry(&cpar_120150,"analysis 120-150", "P");
+	v2vsptlegend_120_150.AddEntry(&cmsr_120150,"13-002   120-150", "P");
+	v2vsptlegend_120_150.SetTextSize(figuretextsize);
+	v2vsptlegend_120_150.Draw("SAME");
+
+	label = "v2vspt_HIN13002_comparison_nTrk_120-150"; 
 	std::string	pngfigure = dir+label+".png";
 	std::string	pdffigure = dir+label+".pdf";
-	canvas_v2_vs_pT.SaveAs( pngfigure.c_str() );
-	canvas_v2_vs_pT.SaveAs( pdffigure.c_str() );
+	canvas_v2_vs_pT_120_150.SaveAs( pngfigure.c_str() );
+	canvas_v2_vs_pT_120_150.SaveAs( pdffigure.c_str() );
+
+	// 150-185
+	TCanvas canvas_v2_vs_pT_150_185 ("v2 vs pT", "v_{2} values as a function of p_{T}; p_{T} [GeV/c];v_{2}", 800, 600);
+	canvas_v2_vs_pT_150_185.SetLeftMargin(0.10);
+   canvas_v2_vs_pT_150_185.SetBottomMargin(0.12);
+   canvas_v2_vs_pT_150_185.SetRightMargin(0.05);
+   canvas_v2_vs_pT_150_185.SetTopMargin(0.05);
+	cpar_150185.Draw("LP");
+	cmsr_150185.Draw("LP");
+	tCMSsystemlabel.Draw();
+
+	TLegend v2vsptlegend_150_185 (legend_x1, legend_y1, legend_x2, legend_y2);
+	v2vsptlegend_150_185.SetFillStyle(0);
+	v2vsptlegend_150_185.SetBorderSize(0);
+	v2vsptlegend_150_185.AddEntry(&cpar_120150,"analysis 150-185", "P");
+	v2vsptlegend_150_185.AddEntry(&cmsr_120150,"13-002   150-185", "P");
+	v2vsptlegend_150_185.SetTextSize(figuretextsize);
+	v2vsptlegend_150_185.Draw("SAME");
+
+	label = "v2vspt_HIN13002_comparison_nTrk_150-185"; 
+	pngfigure = dir+label+".png";
+	pdffigure = dir+label+".pdf";
+	canvas_v2_vs_pT_150_185.SaveAs( pngfigure.c_str() );
+	canvas_v2_vs_pT_150_185.SaveAs( pdffigure.c_str() );
+
+	// 185-220
+	TCanvas canvas_v2_vs_pT_185_220 ("v2 vs pT", "v_{2} values as a function of p_{T}; p_{T} [GeV/c];v_{2}", 800, 600);
+	canvas_v2_vs_pT_185_220.SetLeftMargin(0.10);
+   canvas_v2_vs_pT_185_220.SetBottomMargin(0.12);
+   canvas_v2_vs_pT_185_220.SetRightMargin(0.05);
+   canvas_v2_vs_pT_185_220.SetTopMargin(0.05);
+	cpar_185220.Draw("ALP");
+	cmsr_185220.Draw("LP");
+	tCMSsystemlabel.Draw();
+
+	TLegend v2vsptlegend_185_220 (legend_x1, legend_y1, legend_x2, legend_y2);
+	v2vsptlegend_185_220.SetFillStyle(0);
+	v2vsptlegend_185_220.SetBorderSize(0);
+	v2vsptlegend_185_220.AddEntry(&cpar_120150,"analysis 185-220", "P");
+	v2vsptlegend_185_220.AddEntry(&cmsr_120150,"13-002   185-220", "P");
+	v2vsptlegend_185_220.SetTextSize(figuretextsize);
+	v2vsptlegend_185_220.Draw("SAME");
+
+	label = "v2vspt_HIN13002_comparison_nTrk_185-220"; 
+	pngfigure = dir+label+".png";
+	pdffigure = dir+label+".pdf";
+	canvas_v2_vs_pT_185_220.SaveAs( pngfigure.c_str() );
+	canvas_v2_vs_pT_185_220.SaveAs( pdffigure.c_str() );
 
 }
 

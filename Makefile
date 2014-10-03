@@ -44,6 +44,25 @@ procbatchjob_and_publish_filetoprocess=correl_FULL.root
 procbatchjob_and_publish_wwwdir=~/www/PionKaonProtCorrelation
 procbatchjob_and_publish_wwwwtag=FULLDATA_EventSel_Finezvtxbins_dEtamax_3.00_rev1
 
+########################
+# * Process Light * #
+########################
+# Command: process_light
+
+# Parameters
+#batchjobtag=FULLDATA_EventSel_Finezvtxbins
+#batchjobtag=FULLDATA_selfcorrelincl_tracksel_fix_temp
+#batchjobtag=FULLDATA_selfcorrelincl_code_fix_1nd_queue
+#batchjobtag=FULLDATA_selfcorrelincl_code_fix_1nd_queue_new
+#batchjobtag=full_searchingforbkgrbug_temp
+#batchjobtag=full_withone_ev_1nd_temp
+#batchjobtag=full_withone_ev_and_faultyassocPID_temp
+#batchjobtag=MinBias_Etalon_2nd
+batchjobtag=MinBias_HighMulti_All
+filetoprocess=correl_MinBiasHighMulti.root
+#filetoprocess=correl_selection20.root
+
+
 ###############
 # = Publish = #
 ###############
@@ -68,12 +87,28 @@ testjobid=0
 #########################
 # commands: EtaPhiDistr
 
-EtaPhiDistr_label=EtaPhiDistr
-EtaPhiDistr_inputfile=root://eoscms.cern.ch//eos/cms/store/group/phys_heavyions/denglert/pPb2013_HighMultiplicityForest_merged/HIRun2013-28Sep2013-v1_pPb_run_210498-210658/pPb2013_HM_28Sep2013_v1_HiForest_pPb_run_210498-210658_0.root
+EtaPhiDistr_label=EtaPhiDistr_HIJING_MC_recalibrated_on_MC_mintpT_corrected
+#EtaPhiDistr_inputfile=root://eoscms.cern.ch//eos/cms/store/group/phys_heavyions/denglert/pPb2013_HighMultiplicityForest_merged/HIRun2013-28Sep2013-v1_pPb_run_210498-210658/pPb2013_HM_28Sep2013_v1_HiForest_pPb_run_210498-210658_0.root
+#EtaPhiDistr_inputfile=root://eoscms.cern.ch//eos/cms/store/group/phys_heavyions/denglert/pPb_MC_HIJING_MB/pPb_MC_HIJING_MB_mergedHiForest_500k.root
+#EtaPhiDistr_inputfile=/afs/cern.ch/work/d/denglert/public/sample/MC_500k/pPb_MC_HIJING_MB_mergedHiForest_500k.root
+#EtaPhiDistr_inputfile=root://eoscms.cern.ch//eos/cms/store/group/phys_heavyions/denglert/pPb_MC_HIJING_MB_recalib_on_MC/pPb_MC_HIJING_MB_mergedHiForest_500k.root
+EtaPhiDistr_inputfile=root://eoscms.cern.ch//eos/cms/store/group/phys_heavyions/denglert/pPb_MC_HIJING_MB_recalib_on_MC_minpT_corrected/pPb_MC_HIJING_MB_minpT_corrected_mergedHiForest_500k.root
 EtaPhiDistr_nEvents=-1
 EtaPhiDistr_jobid=0
-
 EtaPhiDistr_tag=$(EtaPhiDistr_label)_nEv_$(EtaPhiDistr_nEvents)
+
+#############################
+#### - TrackCorrection - ####
+#############################
+# commands: TrackCorrection
+
+TrackCorrection_label=TrackCorrection_HIJING_MC_test
+TrackCorrection_inputfile=root://eoscms.cern.ch//eos/cms/store/group/phys_heavyions/denglert/pPb_MC_HIJING_MB_recalib_on_MC_minpT_corrected/pPb_MC_HIJING_MB_minpT_corrected_mergedHiForest_500k.root
+TrackCorrection_sampleType=kPAMC
+TrackCorrection_nEvents=2000
+TrackCorrection_jobid=0
+
+TrackCorrection_tag=$(TrackCorrection_label)_nEv_$(TrackCorrection_nEvents)
 
 #####################
 ### - PIDSetup - ####
@@ -174,6 +209,19 @@ EtaPhiDistr : build_EtaPhiDistr
 	@echo
 	cd ./results/$(EtaPhiDistr_tag); ../../bin/EtaPhiDistr $(EtaPhiDistr_inputfile) $(EtaPhiDistr_jobid) $(EtaPhiDistr_nEvents);
 
+######################################################
+### TrackCorrection
+TrackCorrection : build_TrackCorrection
+	@rm -rf ./trkCorr/$(TrackCorrection_tag); mkdir ./trkCorr/$(TrackCorrection_tag); 
+	@echo -e "\nPREPROCESSING."
+	@echo
+	@echo WORKDIR: $(TrackCorrection_tag)
+	@echo 
+	@echo Testfile: $(TrackCorrection_inputfile)
+	@echo Number of events: $(TrackCorrection_nEvents)
+	@echo
+	cd ./trkCorr/$(TrackCorrection_tag); ../../bin/TrackCorrection $(TrackCorrection_inputfile) $(TrackCorrection_sampleType) $(TrackCorrection_jobid) $(TrackCorrection_nEvents);
+
 
 ######################################################
 ### PIDSetup
@@ -213,6 +261,9 @@ build_SimplePreProc:
 
 build_EtaPhiDistr:
 	@cd src; make ../bin/EtaPhiDistr
+
+build_TrackCorrection:
+	@cd src; make ../bin/TrackCorrection
 
 build_proc:
 	@cd src; make ../bin/process

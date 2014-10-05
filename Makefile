@@ -105,7 +105,7 @@ EtaPhiDistr_tag=$(EtaPhiDistr_label)_nEv_$(EtaPhiDistr_nEvents)
 TrackCorrection_label=TrackCorrection_HIJING_MC_test
 TrackCorrection_inputfile=root://eoscms.cern.ch//eos/cms/store/group/phys_heavyions/denglert/pPb_MC_HIJING_MB_recalib_on_MC_minpT_corrected/pPb_MC_HIJING_MB_minpT_corrected_mergedHiForest_500k.root
 TrackCorrection_sampleType=kPAMC
-TrackCorrection_nEvents=2000
+TrackCorrection_nEvents=200
 TrackCorrection_jobid=0
 
 TrackCorrection_tag=$(TrackCorrection_label)_nEv_$(TrackCorrection_nEvents)

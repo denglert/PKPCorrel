@@ -16,28 +16,37 @@
 #include "PIDUtils.h"
 //#include "SetupCustomTrackTree.h"
 #include "dataType.h"
-// #include "stdlib.h"
-// #include <iostream>
-// #include <fstream>
 
+TH3D** Setup_TH3D_nCorrTyp(const char histoname[], const char histolabel[], int nXBins, double xbins, int nYBins, double ybins, int nZBins, double zbins )
+{
+	int nPart = 4;
+	TH3D *histos[nPart];
+
+	for( int i = 0; i < nPart; i++)
+	{
+		 histos[i] = new TH3D(Form("%s part %d", histoname, i), histolabel, nXBins, xbins, nYBins, ybins, nZBins, nZBins);
+	}
+
+	return histos;
+	
+}
+
+  TH3D *hmatched   = new TH3D("hmatched",";p_{T};#eta;#phi",  nx,x,neta,etaval,nphi,phival);
 
 int main( int argc, const char *argv[] )
 {
 
-
   if(argc != 5)
   {
-    std::cerr << "Usage: process <.root file to be preprocessed> <tag> <nEvents>" << std::endl;
+    std::cerr << "Usage: TrackCorrection <.root file to be preprocessed> <sample type> <tag> <nEvents>" << std::endl;
 	 exit(1);
   }
 
- 
  std::string inpFilename    = argv[1];
  std::string str_sampleType = argv[2];
  std::string tag		       = argv[3];
  int nEvMax 	  		       = atoi( argv[4] );
  //TString inpFilename = "../";
- //
  
  sampleType sType = str2enumSampleTyp(str_sampleType);
  
@@ -63,22 +72,22 @@ int main( int argc, const char *argv[] )
  // TFile *f = new TFile(inpFilename, "READ");
  if ( f->IsZombie() ) {std::cerr << "Error opening file: " << inpFilename << std::endl; exit(-1);}
 
-// // trackTree
-// //TTree *trackTree = (TTree*)f->Get("pptracks/trackTree");
-// TTree *trackTree = (TTree*)f->Get("ppTrack/trackTree");
-// Tracks tTracks;
-// bool doCheck = true;
-// setupTrackTree(trackTree, tTracks, doCheck);
-//
-// // hiEvtAnalyzer
-// TTree *EvtAna= (TTree*)f->Get("hiEvtAnalyzer/HiTree");
-// int hiNtracks; EvtAna->SetBranchAddress("hiNtracks", &hiNtracks);
-// float vz; EvtAna->SetBranchAddress("vz", &vz);
-//
-// // skimanalysis for event selection
-// TTree *SkimAna= (TTree*)f->Get("skimanalysis/HltTree");
-// int pPAcollisionEventSelection; SkimAna->SetBranchAddress("pPAcollisionEventSelectionPA", &pPAcollisionEventSelection);
-// int pileUpBit;                  SkimAna->SetBranchAddress("pVertexFilterCutGplus", &pileUpBit);
+ // tTracksTree
+ //TTree *tTracksTree = (TTree*)f->Get("pptTrackss/tTracksTree");
+ TTree *tTracksTree = (TTree*)f->Get("ppTrack/tTracksTree");
+ Tracks tTracks;
+ bool doCheck = true;
+ setupTrackTree(tTracksTree, tTracks, doCheck);
+
+ // hiEvtAnalyzer
+ TTree *EvtAna= (TTree*)f->Get("hiEvtAnalyzer/HiTree");
+ int hiNtTrackss; EvtAna->SetBranchAddress("hiNtTrackss", &hiNtTrackss);
+ float vz; EvtAna->SetBranchAddress("vz", &vz);
+
+ // skimanalysis for event selection
+ TTree *SkimAna= (TTree*)f->Get("skimanalysis/HltTree");
+ int pPAcollisionEventSelection; SkimAna->SetBranchAddress("pPAcollisionEventSelectionPA", &pPAcollisionEventSelection);
+ int pileUpBit;                  SkimAna->SetBranchAddress("pVertexFilterCutGplus", &pileUpBit);
 
  ////////////////////////////////
  //                            //
@@ -98,13 +107,10 @@ int main( int argc, const char *argv[] )
   Bool_t montecarlo = isMonteCarlo(sType);
   Bool_t hi = isHI(sType);
 
-  int PId = 211;
-
   std::cout << "sampleType: " << sType << std::endl;
   std::cout << "montecarlo: " << montecarlo << std::endl;
 
   collisionType cType = getCType(sType);
-
 
   double bin_pt_min = 0.2;
   double bin_pt_max = 50;
@@ -134,21 +140,13 @@ int main( int argc, const char *argv[] )
   for(int iphi=0; iphi<nphi+1; iphi++)
   { phival[iphi]=phi_min+((double)iphi)*dphi; }
   
-  TH3D * hfake = new TH3D("hfake",";p_{T};#eta;#phi",nx,x,neta,etaval,nphi,phival);
-  TH3D * hreco = new TH3D("hreco",";p_{T};#eta;#phi",nx,x,neta,etaval,nphi,phival);
-  TH3D * hsecondary = new TH3D("hsecondary",";p_{T};#eta;#phi",nx,x,neta,etaval,nphi,phival);
-  TH3D * hreal = new TH3D("hreal",";p_{T};#eta;#phi",nx,x,neta,etaval,nphi,phival);
-  TH3D * hgen = new TH3D("hgen",";p_{T};#eta;#phi",nx,x,neta,etaval,nphi,phival);
-  TH3D * hmatched = new TH3D("hmatched",";p_{T};#eta;#phi",nx,x,neta,etaval,nphi,phival);
-  TH3D * heff = new TH3D("heff",";p_{T};#eta;#phi",nx,x,neta,etaval,nphi,phival);
-  TH3D * hmultrec = new TH3D("hmultrec",";p_{T};#eta;#phi",nx,x,neta,etaval,nphi,phival);
-
-  HiForest *c = new HiForest( inpFilename.c_str(), "Forest", cType, montecarlo);
-  c->InitTree();
-  c->LoadNoTrees();
-  c->hasSkimTree = true;
-  c->hasEvtTree = true;
-  c->hasTrackTree = true;
+  TH3D **hreco      = Setup_TH3D_nCorrTyp("hreco",      ";p_{T};#eta;#phi", nx,x,neta,etaval,nphi,phival);
+  TH3D **hsecondary = Setup_TH3D_nCorrTyp("hsecondary", ";p_{T};#eta;#phi", nx,x,neta,etaval,nphi,phival)
+  TH3D **hreal      = Setup_TH3D_nCorrTyp("hreal",      ";p_{T};#eta;#phi", nx,x,neta,etaval,nphi,phival);
+  TH3D **hgen       = Setup_TH3D_nCorrTyp("hgen",       ";p_{T};#eta;#phi", nx,x,neta,etaval,nphi,phival);
+  TH3D **hmatched   = Setup_TH3D_nCorrTyp("hmatched",   ";p_{T};#eta;#phi", nx,x,neta,etaval,nphi,phival);
+  TH3D **heff       = Setup_TH3D_nCorrTyp("heff",       ";p_{T};#eta;#phi", nx,x,neta,etaval,nphi,phival);
+  TH3D **hmultrec   = Setup_TH3D_nCorrTyp("hmultrec",   ";p_{T};#eta;#phi", nx,x,neta,etaval,nphi,phival);
 
   Float_t meanVz = 0;
   
@@ -164,13 +162,6 @@ int main( int argc, const char *argv[] )
     meanVz = .4205 - .6953;
   }
   
-  Long64_t nentries = nEvMax; 
-
-
-  Int_t totEv = 0;
-  Int_t selectCut = 0;
-  Int_t vzCut = 0;
-
  ///////////////////////////////////////
  //                                   //
  // ***** Calculate corrections ***** //
@@ -178,78 +169,96 @@ int main( int argc, const char *argv[] )
  ///////////////////////////////////////
 
   // Event loop
-  if (nEvMax == -1) {if(!hi)
-    nentries = c->skimTree->GetEntries();
-  else
-    nentries = c->GetEntries();}
-  std::cout << "nentries = "<<nentries << std::endl;
-  for(Long64_t jentry = 0; jentry < nentries; jentry++)
+  if (nEvMax == -1) {if(!hi) nEvMax = SkimAna->GetEntries();
+  else nEvMax = tTracksTree->GetEntries();}
+  std::cout << "nEvMax = " << nEvMax << std::endl;
+
+  for (int iEvA = 0; iEvA < nEvMax; iEvA++)
   {
-    c->GetEntry(jentry);
-    
-    totEv++;
 
-    if(jentry%1000 == 0)
-      std::cout << jentry << std::endl;
+   EvtAna->GetEntry (iEvA);
+	SkimAna->GetEntry(iEvA);
+ 
+	// Event counter info
+	if ( (iEvA % 1000) == 0 )
+	{ std::cout << "Event: " << iEvA << std::endl; }
 
-    if( !c->selectEvent() )
-	 {
-      selectCut++;
-      continue;
-    }
+	// Event Selection
+	if ( !EventSelection( pPAcollisionEventSelection, pileUpBit) ) continue;
+	if ( zvtxbin(vz, nZvtxBins) == -1 ) continue;
+	if ( multiplicitybin_Ana(hiNtTrackss, nMultiplicityBins_Ana) == -1) continue;
 
+	 // Check vz
     if( TMath::Abs(c->evt.vz - meanVz) > 15)
 	 {
       vzCut++;
       continue;
     }
 
-	 // Track loop
-    for(int itrk=0; itrk<(c->track.nTrk) ;itrk++)
-	 {
-				
-      double pt=c->track.trkPt[itrk];
-      double eta=c->track.trkEta[itrk]; 
-      double phi=c->track.trkPhi[itrk];
+	// Load in tTrackss
+	tTracksTree->GetEntry(iEvA);
 
-		// Debuggg 
-		std::cerr << "pt: "  << pt << std::endl;
-		std::cerr << "eta: " << eta << std::endl;
+	int nTrk = tTracks.nTrk;
 
-		// Track selection
-      if( fabs(eta)>2.4) continue;
-      if(pt<bin_pt_min) continue;
-      if(!(c->track.highPurity[itrk] && fabs(c->track.trkDxy1[itrk]/c->track.trkDxyError1[itrk])<3.0 && fabs(c->track.trkDz1[itrk]/c->track.trkDzError1[itrk])<3 && (c->track.trkPtError[itrk]/c->track.trkPt[itrk])<0.1)) continue;
-      //You should also require the additional cuts that you apply to choose a given PID
+	// Track loop
+	for (int iTrk = 0; iTrk < nTrk; iTrk++)
+	{
+
+      double pt  = tTracks.trkPt [iTrk];
+      double eta = tTracks.trkEta[iTrk]; 
+      double phi = tTracks.trkPhi[iTrk];
+  		float p    = pt * cosh(eta);
+		int PID    = GetPID(p, tTracks.dedx[iTrk]);
+		bool isPID = (PID != 99);
+
+		// *** Track selection *** //
+		if ( !TrackSelection(tTracks, iTrk ) ) continue;
+
+      // You should also require the additional cuts that you apply to choose a given PID
 		
-		// Debuggg 
-		std::cerr << "filled. " << std::endl;
-
-      if(c->track.trkFake){
-       hfake->Fill(pt,eta,phi);
-      }else{
-       hreal->Fill(pt,eta,phi);
-       if(c->track.trkStatus[itrk]<0) hsecondary->Fill(pt,eta,phi);
+		// Fake tracks
+      if( tTracks.trkFake[iTrk] )
+		{ 
+			hfake[0]->Fill(pt, eta, phi);
+			if (isPID) { hfake[PID]->Fill(pt, eta, phi);}
+		}
+		else 
+		// Real track
+		{ 
+		  hreal[0]->Fill(pt,eta,phi);
+		  if (isPID) { hreal[PID]->Fill(pt, eta, phi);}
+		  // Real secondary track
+		  if( tTracks.trkStatus[iTrk] < 0 )
+		  {
+		    hsecondary[0]->Fill(pt, eta, phi);
+		    if (isPID) { hsecondary[PID]->Fill(pt, eta, phi);}
+		  };
       }
-      hreco->Fill(pt,eta,phi);
+
+		// Reconstructed tracks
+      hreco[0]->Fill( pt, eta, phi);
+		if (isPID) { hreco[PID]->Fill(pt, eta, phi);}
     }
 
-	 // Particle loop
-    for(int itrk=0;itrk<(c->track.nParticle);itrk++)
+	 // * Particle loop * //
+    for(int iTrk=0; iTrk < tTracks.nParticle; iTrk++)
 	 {
-      double pt=c->track.pPt[itrk];
-      double eta=c->track.pEta[itrk];
-      double phi=c->track.pPhi[itrk];
+
+      double pt  = tTracks.pPt [iTrk];
+      double eta = tTracks.pEta[iTrk];
+      double phi = tTracks.pPhi[iTrk];
 
 		// particle selection
-      if(fabs(eta)>2.4) continue;
-      if(pt<bin_pt_min) continue;
-      if(fabs(c->track.pPId[itrk])!=PId) continue; 
-      hgen->Fill(pt,eta,phi);
-      if(!(c->track.mtrkQual[itrk] && fabs(c->track.mtrkDxy1[itrk]/c->track.mtrkDxyError1[itrk])<3.0 && fabs(c->track.mtrkDz1[itrk]/c->track.mtrkDzError1[itrk])<3 && (c->track.mtrkPtError[itrk]/c->track.mtrkPt[itrk])<0.1)) continue;
+      if( fabs(eta)>2.4 ) continue;
+      if( pt<bin_pt_min ) continue;
+      if( fabs(c->tTracks.pPId[iTrk])!=PId ) continue; 
+
+      hgen->Fill( pt,eta,phi );
+
+      if( !( tTracks.mtrkQual[iTrk] && fabs( tTracks.mtrkDxy1[iTrk]/tTracks.mtrkDxyError1[iTrk])<3.0 && fabs(tTracks.mtrkDz1[iTrk]/tTracks.mtrkDzError1[iTrk])<3 && (tTracks.mtrkPtError[iTrk]/tTracks.mtrkPt[iTrk])<0.1) ) continue;
 
       hmatched->Fill(pt,eta,phi);
-      hmultrec->Fill(pt,eta,phi,c->track.pNRec[itrk]);
+      hmultrec->Fill(pt,eta,phi, tTracks.pNRec[iTrk]);
     }
 
 

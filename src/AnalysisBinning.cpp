@@ -336,7 +336,7 @@ std::string particletype (int ID)
 
 	switch (ID)
    { 
-		case 0: out = "c.p."; return out;
+		case 0: out = "charged"; return out;
 		case 1: out = "#pi"; return out;
 		case 2: out = "K"; return out;
 		case 3: out = "p"; return out;

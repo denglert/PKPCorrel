@@ -73,6 +73,19 @@ bool EventSelection( const int &pPAcollisionEventSelection, const int &pileUpBit
 	return true;
 }
 
+double trackWeight (TH3D **trackCorr, int PID, double pt, double eta, double phi, bool doTable)
+{		
+	if( doTable )
+	{ 
+	 if( (PID != 99))
+	 {double value = trackCorr[PID]->GetBinContent(trackCorr[PID]->FindBin(pt,eta,phi));
+	 if (value == 0) {return 1;}
+	 else {return value;}
+	 }
+	}	
+	else
+	{return 1;}
+}
 
 // TrackSelection()
 bool TrackSelection( const Tracks &tTracks, int iTrk )
@@ -88,6 +101,27 @@ bool TrackSelection( const Tracks &tTracks, int iTrk )
 	if ( 3   < abs(impact_significance)  ) {return false;}
 
 	float pt_rel_uncertainty  = tTracks.trkPtError[iTrk] / tTracks.trkPt     [iTrk];
+	if ( 0.1 < abs(pt_rel_uncertainty)   ) {return false;}
+
+	return true;
+}
+
+// TrackSelection()
+bool mTrackSelection( const Tracks &tTracks, int iTrk )
+{
+	// *** Track selection *** //
+	if ( tTracks.mtrkQual[iTrk] == false ) {return false;}
+	
+	// WARNING: NEEDS TO CHECKED
+	if ( 2.4 < abs(tTracks.pEta[iTrk]) ) {return false;}
+
+	float z_sep_significance  = tTracks.mtrkDz1 [iTrk] / tTracks.mtrkDzError1  [iTrk];
+	if ( 3   < abs(z_sep_significance)   ) {return false;}
+
+	float impact_significance = tTracks.mtrkDxy1[iTrk] / tTracks.mtrkDxyError1 [iTrk];
+	if ( 3   < abs(impact_significance)  ) {return false;}
+
+	float pt_rel_uncertainty  = tTracks.mtrkPtError[iTrk] / tTracks.mtrkPt     [iTrk];
 	if ( 0.1 < abs(pt_rel_uncertainty)   ) {return false;}
 
 	return true;
@@ -191,6 +225,20 @@ void Setup_nEvents_Processed(TH1D *&nEvents_Processed_signal_total, TH1D *&nEven
 ///////////////////////////////
 // *** Read In functions *** //
 ///////////////////////////////
+//
+TH3D **Read_trkEff(TFile *f)
+{
+	TH3D **trkEff = new TH3D*[nCorrTyp_];
+	
+	for(int TypBin = 0; TypBin < nCorrTyp_; TypBin++)
+	{
+		trkEff[TypBin] = (TH3D*)f->Get(
+		Form("heff part %d", TypBin)
+   	);
+	}
+
+	return trkEff;
+}
 
 void Read_nEvents_Processed(TFile *f, TH1D **&nEvents_Processed_signal, TH1D **&nEvents_Processed_backgr, int nMultiplicityBins )
 {

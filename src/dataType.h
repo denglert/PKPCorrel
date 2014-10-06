@@ -8,7 +8,7 @@
 #include "TH1F.h"
 //#include "commonSetup.h"
 
-
+enum collisionType { cPbPb, cPP, cPPb };
 
 enum sampleType{
   kHIDATA, //0

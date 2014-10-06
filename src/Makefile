@@ -65,8 +65,8 @@ EtaPhiDistr.o : EtaPhiDistr.cpp
 
 ####################################################################################
 ### TrackCorrection
-../bin/TrackCorrection : TrackCorrection.o $(CMN) PIDUtils.o AnalysisBinning.o PhyConst.o
-	$(CC) $(LFLAGS) -o $@ $< PIDUtils.o AnalysisBinning.o PhyConst.o 
+../bin/TrackCorrection : TrackCorrection.o $(CMN) PIDUtils.o AnalysisFW.o AnalysisBinning.o PhyConst.o SetupCustomTrackTree.o
+	$(CC) $(LFLAGS) -o $@ $< PIDUtils.o AnalysisBinning.o PhyConst.o AnalysisFW.o SetupCustomTrackTree.o
 
 TrackCorrection.o : TrackCorrection.cpp
 	$(CC) $(CFLAGS) -o $@ -c $<

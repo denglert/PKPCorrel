@@ -55,6 +55,39 @@ public :
    Float_t         trkDzError1[maxTracks];   //[nTrk]
    Bool_t          trkFake[maxTracks];   //[nTrk]
    Float_t         trkAlgo[maxTracks];   //[nTrk]
+   Float_t         trkStatus[maxTracks];   //[nTrk]
+	Int_t           nParticle;
+   Int_t         pStatus[maxTracks];   //[nParticle]
+   Int_t         pPId[maxTracks];   //[nParticle]
+   Float_t         pEta[maxTracks];   //[nParticle]
+   Float_t         pPhi[maxTracks];   //[nParticle]
+   Float_t         pPt[maxTracks];   //[nParticle]
+   Float_t         pAcc[maxTracks];   //[nParticle]
+   Float_t         pAccPair[maxTracks];   //[nParticle]
+   Int_t         pNRec[maxTracks];   //[nParticle]
+   Int_t           pNHit[maxTracks];   //[nParticle]
+   Float_t         mtrkPt[maxTracks];   //[nParticle]
+   Float_t         mtrkPtError[maxTracks];   //[nParticle]
+   Int_t           mtrkNHit[maxTracks];   //[nParticle]
+   Int_t           mtrkNlayer[maxTracks];   //[nParticle]
+   Int_t           mtrkNlayer3D[maxTracks];   //[nParticle]
+   Int_t           mtrkQual[maxTracks];   //[nParticle]
+   Float_t         mtrkChi2[maxTracks];   //[nParticle]
+   Float_t         mtrkNdof[maxTracks];   //[nParticle]
+   Float_t         mtrkDz1[maxTracks];   //[nParticle]
+   Float_t         mtrkDzError1[maxTracks];   //[nParticle]
+   Float_t         mtrkDxy1[maxTracks];   //[nParticle]
+   Float_t         mtrkDxyError1[maxTracks];   //[nParticle]
+   Float_t         mtrkDz2[maxTracks];   //[nParticle]
+   Float_t         mtrkDzError2[maxTracks];   //[nParticle]
+   Float_t         mtrkDxy2[maxTracks];   //[nParticle]
+   Float_t         mtrkDxyError2[maxTracks];   //[nParticle]
+   Float_t         mtrkAlgo[maxTracks];   //[nParticle]
+   Int_t           mtrkPfType[maxTracks];   //[nParticle]
+   Float_t         mtrkPfCandPt[maxTracks];   //[nParticle]
+   Float_t         mtrkPfSumEcal[maxTracks];   //[nParticle]
+   Float_t         mtrkPfSumHcal[maxTracks];   //[nParticle]
+
 
    // List of branches
    TBranch        *b_nEv;   //!
@@ -96,6 +129,38 @@ public :
    TBranch        *b_trkDzError1;   //!
    TBranch        *b_trkFake;   //!
    TBranch        *b_trkAlgo;   //!
+   TBranch        *b_trkStatus;   //!
+   TBranch        *b_nParticle;   //!
+   TBranch        *b_pStatus;   //!
+   TBranch        *b_pPId;   //!
+   TBranch        *b_pEta;   //!
+   TBranch        *b_pPhi;   //!
+   TBranch        *b_pPt;   //!
+   TBranch        *b_pAcc;   //!
+   TBranch        *b_pAccPair;   //!
+   TBranch        *b_pNRec;   //!
+   TBranch        *b_pNHit;   //!
+   TBranch        *b_mtrkPt;   //!
+   TBranch        *b_mtrkPtError;   //!
+   TBranch        *b_mtrkNHit;   //!
+   TBranch        *b_mtrkNlayer;   //!
+   TBranch        *b_mtrkNlayer3D;   //!
+   TBranch        *b_mtrkQual;   //!
+   TBranch        *b_mtrkChi2;   //!
+   TBranch        *b_mtrkNdof;   //!
+   TBranch        *b_mtrkDz1;   //!
+   TBranch        *b_mtrkDzError1;   //!
+   TBranch        *b_mtrkDxy1;   //!
+   TBranch        *b_mtrkDxyError1;   //!
+   TBranch        *b_mtrkDz2;   //!
+   TBranch        *b_mtrkDzError2;   //!
+   TBranch        *b_mtrkDxy2;   //!
+   TBranch        *b_mtrkDxyError2;   //!
+   TBranch        *b_mtrkAlgo;   //!
+   TBranch        *b_mtrkPfType;   //!
+   TBranch        *b_mtrkPfCandPt;   //!
+   TBranch        *b_mtrkPfSumEcal;   //!
+   TBranch        *b_mtrkPfSumHcal;   //!
 
 };
 

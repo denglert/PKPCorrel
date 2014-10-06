@@ -87,12 +87,13 @@ testjobid=0
 #########################
 # commands: EtaPhiDistr
 
-EtaPhiDistr_label=EtaPhiDistr_HIJING_MC_recalibrated_on_MC_mintpT_corrected
+EtaPhiDistr_label=EtaPhiDistr_HIJING_MC_recalibrated_on_MC_mintpT_corrected_500kEv
 #EtaPhiDistr_inputfile=root://eoscms.cern.ch//eos/cms/store/group/phys_heavyions/denglert/pPb2013_HighMultiplicityForest_merged/HIRun2013-28Sep2013-v1_pPb_run_210498-210658/pPb2013_HM_28Sep2013_v1_HiForest_pPb_run_210498-210658_0.root
 #EtaPhiDistr_inputfile=root://eoscms.cern.ch//eos/cms/store/group/phys_heavyions/denglert/pPb_MC_HIJING_MB/pPb_MC_HIJING_MB_mergedHiForest_500k.root
 #EtaPhiDistr_inputfile=/afs/cern.ch/work/d/denglert/public/sample/MC_500k/pPb_MC_HIJING_MB_mergedHiForest_500k.root
 #EtaPhiDistr_inputfile=root://eoscms.cern.ch//eos/cms/store/group/phys_heavyions/denglert/pPb_MC_HIJING_MB_recalib_on_MC/pPb_MC_HIJING_MB_mergedHiForest_500k.root
 EtaPhiDistr_inputfile=root://eoscms.cern.ch//eos/cms/store/group/phys_heavyions/denglert/pPb_MC_HIJING_MB_recalib_on_MC_minpT_corrected/pPb_MC_HIJING_MB_minpT_corrected_mergedHiForest_500k.root
+EtaPhiDistr_trkCorr=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/trkCorr/TrackCorrection_HIJING_MC_test_nEv_500000/trkCorrections_0.root
 EtaPhiDistr_nEvents=-1
 EtaPhiDistr_jobid=0
 EtaPhiDistr_tag=$(EtaPhiDistr_label)_nEv_$(EtaPhiDistr_nEvents)
@@ -105,7 +106,7 @@ EtaPhiDistr_tag=$(EtaPhiDistr_label)_nEv_$(EtaPhiDistr_nEvents)
 TrackCorrection_label=TrackCorrection_HIJING_MC_test
 TrackCorrection_inputfile=root://eoscms.cern.ch//eos/cms/store/group/phys_heavyions/denglert/pPb_MC_HIJING_MB_recalib_on_MC_minpT_corrected/pPb_MC_HIJING_MB_minpT_corrected_mergedHiForest_500k.root
 TrackCorrection_sampleType=kPAMC
-TrackCorrection_nEvents=200
+TrackCorrection_nEvents=500000
 TrackCorrection_jobid=0
 
 TrackCorrection_tag=$(TrackCorrection_label)_nEv_$(TrackCorrection_nEvents)
@@ -207,7 +208,7 @@ EtaPhiDistr : build_EtaPhiDistr
 	@echo Testfile: $(EtaPhiDistr_inputfile)
 	@echo Number of events: $(EtaPhiDistr_nEvents)
 	@echo
-	cd ./results/$(EtaPhiDistr_tag); ../../bin/EtaPhiDistr $(EtaPhiDistr_inputfile) $(EtaPhiDistr_jobid) $(EtaPhiDistr_nEvents);
+	cd ./results/$(EtaPhiDistr_tag); ../../bin/EtaPhiDistr $(EtaPhiDistr_inputfile) $(EtaPhiDistr_trkCorr) $(EtaPhiDistr_jobid) $(EtaPhiDistr_nEvents);
 
 ######################################################
 ### TrackCorrection

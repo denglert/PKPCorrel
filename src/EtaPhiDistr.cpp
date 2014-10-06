@@ -17,17 +17,21 @@
 int main( int argc, const char *argv[] )
 { 
 
-  if(argc != 4)
+  bool doTable = true;
+
+  if(argc != 5)
   {
     std::cerr << "Usage: process <.root file to be preprocessed> <tag> <nEvents>" << std::endl;
 	 exit(1);
   }
 
 
- TString inpFilename   = argv[1];
- std::string tag		  = argv[2];
- int nEvMax 	  		  = atoi( argv[3] );
+ TString inpFilename     = argv[1];
+ TString trkCorrFilename = argv[2];
+ std::string tag		    = argv[3];
+ int nEvMax 	  		    = atoi( argv[4] );
  //TString inpFilename = "../";
+ //
 
  // Binning
  int nCorrTyp			  = nCorrTyp_; 
@@ -45,6 +49,23 @@ int main( int argc, const char *argv[] )
  // ****** Opening input file ****** //
  //                                  //
  //////////////////////////////////////
+ //
+ 
+ 
+ // Open trkCorr file
+ TFile *f_trkCorr = new TFile(trkCorrFilename, "READ");
+ if ( f_trkCorr->IsZombie() ) {std::cerr << "Error opening file: " << trkCorrFilename << std::endl; exit(-1);}
+ else {std::cout << "trkCorr File successfully opened." << std::endl;}
+
+
+ TH3D **trkEff = Read_trkEff(f_trkCorr);
+
+ for (int i = 0; i < nCorrTyp; i++)
+ {
+  trkEff[i]->SetDirectory(0);
+ }
+
+ f_trkCorr->Close();
 
  // Open file
  TFile *f = TFile::Open(inpFilename);
@@ -58,6 +79,7 @@ int main( int argc, const char *argv[] )
  Tracks tTracks;
  bool doCheck = true;
  setupTrackTree(trackTree, tTracks, doCheck);
+
 
  // hiEvtAnalyzer
  TTree *EvtAna= (TTree*)f->Get("hiEvtAnalyzer/HiTree");
@@ -77,6 +99,7 @@ int main( int argc, const char *argv[] )
  
  TFile *output = new TFile(Form("./EtaPhi_distr_%s.root", tag.c_str() ),"RECREATE");
  output->cd();
+
 
  //////////////////////////////
  //                          //
@@ -225,6 +248,8 @@ int main( int argc, const char *argv[] )
 
 		double Eta = tTracks.trkEta[iTrk];
 		double Phi = tTracks.trkPhi[iTrk];
+		double pt = tTracks.trkPt[iTrk];
+		double w = 1./trackWeight(trkEff, PID, pt, Eta, Phi, doTable);
 
 		if ( (ptref1 < tTracks.trkPt[iTrk]) && (tTracks.trkPt[iTrk] < ptref2) )
 		{
@@ -244,8 +269,8 @@ int main( int argc, const char *argv[] )
 		// pid particle
 		if( (PID != 99) && !isOutsideIdentifHadronPtRange )
 		{
-			EtaPhiDistr[PID][ptBin_ID]->Fill(Eta,Phi);
-		  	EtaDistr[PID][ptBin_ID]->Fill(Eta);
+			EtaPhiDistr[PID][ptBin_ID]->Fill(Eta,Phi, w);
+		  	EtaDistr[PID][ptBin_ID]->Fill(Eta, w);
 			dEdxvsplinlintyp[PID]->Fill( p, tTracks.dedx[iTrk] );
 			dEdxvsploglogtyp[PID]->Fill( p, tTracks.dedx[iTrk] );
 		}

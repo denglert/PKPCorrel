@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include "PIDUtils.h"
 #include <TFile.h>
+#include <TH3D.h>
 //#include "../HiForestAnalysis/hiForest.h"
 #include "SetupCustomTrackTree.h"
 
@@ -56,7 +57,8 @@ extern const int nMixEv;
 // Event & TrackSelection
 bool EventSelection( const int &pPAcollisionEventSelection, const int &pileUpBit );
 bool TrackSelection( const Tracks &tTracks, int iTrk );
-
+bool mTrackSelection( const Tracks &tTracks, int iTrk );
+double trackWeight (TH3D **trackCorr, int PID, double pt, double eta, double phi, bool doTable);
 
 class AnalysisFW
 {
@@ -86,6 +88,7 @@ void Setup_nEvents_Processed (TH1D *&nEvents_Processed_signal_total, TH1D *&nEve
 ///////////////////////
 // Read In function
 void Read_nEvents_Processed(TFile *f, TH1D **&nEvents_Processed_signal, TH1D **&nEvents_ProcessedBit_backgr, int nMultiplicityBins );
+TH3D **Read_trkEff(TFile *f);
 
 ///////////////////////////////
 // AnalysisFW functions

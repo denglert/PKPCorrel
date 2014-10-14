@@ -42,7 +42,9 @@ void setupTrackTree(TTree *t,Tracks &tTracks,bool doCheck = 1)
    t->SetBranchAddress("trkDz1", tTracks.trkDz1, &tTracks.b_trkDz1);
    t->SetBranchAddress("trkDzError1", tTracks.trkDzError1, &tTracks.b_trkDzError1);
    t->SetBranchAddress("trkStatus", tTracks.trkStatus, &tTracks.b_trkStatus);
+   t->SetBranchAddress("trkFake", tTracks.trkFake, &tTracks.b_trkFake);
    t->SetBranchAddress("nParticle", &tTracks.nParticle, &tTracks.b_nParticle);
+
    t->SetBranchAddress("pStatus", tTracks.pStatus, &tTracks.b_pStatus);
    t->SetBranchAddress("pPId", tTracks.pPId, &tTracks.b_pPId);
    t->SetBranchAddress("pEta", tTracks.pEta, &tTracks.b_pEta);
@@ -74,7 +76,6 @@ void setupTrackTree(TTree *t,Tracks &tTracks,bool doCheck = 1)
 //   t->SetBranchAddress("mtrkPfSumEcal", tTracks.mtrkPfSumEcal, &tTracks.b_mtrkPfSumEcal);
 //   t->SetBranchAddress("mtrkPfSumHcal", tTracks.mtrkPfSumHcal, &tTracks.b_mtrkPfSumHcal);
 
-//   t->SetBranchAddress("trkFake", tTracks.trkFake, &tTracks.b_trkFake);
 //   t->SetBranchAddress("trkAlgo", tTracks.trkAlgo, &tTracks.b_trkAlgo);
    if (doCheck) {
 //      if (t->GetMaximum("nv")>4) cout <<"FATAL ERROR: Arrary size of nv too small!!!  "<<t->GetMaximum("nv")<<endl;

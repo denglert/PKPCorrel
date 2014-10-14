@@ -87,14 +87,15 @@ testjobid=0
 #########################
 # commands: EtaPhiDistr
 
-EtaPhiDistr_label=EtaPhiDistr_HIJING_MC_recalibrated_on_MC_mintpT_corrected_500kEv
-#EtaPhiDistr_inputfile=root://eoscms.cern.ch//eos/cms/store/group/phys_heavyions/denglert/pPb2013_HighMultiplicityForest_merged/HIRun2013-28Sep2013-v1_pPb_run_210498-210658/pPb2013_HM_28Sep2013_v1_HiForest_pPb_run_210498-210658_0.root
-#EtaPhiDistr_inputfile=root://eoscms.cern.ch//eos/cms/store/group/phys_heavyions/denglert/pPb_MC_HIJING_MB/pPb_MC_HIJING_MB_mergedHiForest_500k.root
-#EtaPhiDistr_inputfile=/afs/cern.ch/work/d/denglert/public/sample/MC_500k/pPb_MC_HIJING_MB_mergedHiForest_500k.root
-#EtaPhiDistr_inputfile=root://eoscms.cern.ch//eos/cms/store/group/phys_heavyions/denglert/pPb_MC_HIJING_MB_recalib_on_MC/pPb_MC_HIJING_MB_mergedHiForest_500k.root
-EtaPhiDistr_inputfile=root://eoscms.cern.ch//eos/cms/store/group/phys_heavyions/denglert/pPb_MC_HIJING_MB_recalib_on_MC_minpT_corrected/pPb_MC_HIJING_MB_minpT_corrected_mergedHiForest_500k.root
-EtaPhiDistr_trkCorr=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/trkCorr/TrackCorrection_HIJING_MC_test_nEv_500000/trkCorrections_0.root
-EtaPhiDistr_nEvents=-1
+EtaPhiDistr_label=EtaPhiDistr_pPb_DATA_trkCorrected_coarsepTbin
+# DATA
+EtaPhiDistr_inputfile=root://eoscms.cern.ch//store/group/phys_heavyions/denglert/pPb2013_HighMultiplicityForest_merged/HIRun2013-28Sep2013-v1_pPb_run_210498-210658/pPb2013_HM_28Sep2013_v1_HiForest_pPb_run_210498-210658_0.root
+# MC
+#EtaPhiDistr_inputfile=root://eoscms.cern.ch//store/group/phys_heavyions/denglert/pPb_MC_HIJING_MB_dEdxcalib_on_500kMCEv_1.9m/pPb_MC_HIJING_MB_mergedHiForest_1.9mEv.root
+EtaPhiDistr_dotrkCorr=yes
+EtaPhiDistr_trkCorrlabel=TrackCorrection_full_coarsepTbin
+EtaPhiDistr_trkCorr=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/trkCorr/$(EtaPhiDistr_trkCorrlabel)/trkCorrections_0.root
+EtaPhiDistr_nEvents=100000
 EtaPhiDistr_jobid=0
 EtaPhiDistr_tag=$(EtaPhiDistr_label)_nEv_$(EtaPhiDistr_nEvents)
 
@@ -103,13 +104,21 @@ EtaPhiDistr_tag=$(EtaPhiDistr_label)_nEv_$(EtaPhiDistr_nEvents)
 #############################
 # commands: TrackCorrection
 
-TrackCorrection_label=TrackCorrection_HIJING_MC_test
-TrackCorrection_inputfile=root://eoscms.cern.ch//eos/cms/store/group/phys_heavyions/denglert/pPb_MC_HIJING_MB_recalib_on_MC_minpT_corrected/pPb_MC_HIJING_MB_minpT_corrected_mergedHiForest_500k.root
+TrackCorrection_label=TrackCorrection_full_dev_test
+TrackCorrection_inputfileDATA=root://eoscms.cern.ch//store/group/phys_heavyions/denglert/pPb2013_HighMultiplicityForest_merged/HIRun2013-28Sep2013-v1_pPb_run_210498-210658/pPb2013_HM_28Sep2013_v1_HiForest_pPb_run_210498-210658_0.root
+TrackCorrection_inputfileMC=root://eoscms.cern.ch//eos/cms/store/group/phys_heavyions/denglert/pPb_MC_HIJING_MB_dEdxcalib_on_500kMCEv_1.9m/pPb_MC_HIJING_MB_mergedHiForest_1.9mEv.root
 TrackCorrection_sampleType=kPAMC
-TrackCorrection_nEvents=500000
+TrackCorrection_nEventsDATA=-1
+TrackCorrection_nEventsMC=-1
 TrackCorrection_jobid=0
 
-TrackCorrection_tag=$(TrackCorrection_label)_nEv_$(TrackCorrection_nEvents)
+TrackCorrection_tag=$(TrackCorrection_label)
+
+#####################
+### - quickLook - ####
+#####################
+# commands: quickLook
+inputfile_quickLook=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/trkCorr/TrackCorrection_full/trkCorrections_0.root
 
 #####################
 ### - PIDSetup - ####
@@ -208,7 +217,7 @@ EtaPhiDistr : build_EtaPhiDistr
 	@echo Testfile: $(EtaPhiDistr_inputfile)
 	@echo Number of events: $(EtaPhiDistr_nEvents)
 	@echo
-	cd ./results/$(EtaPhiDistr_tag); ../../bin/EtaPhiDistr $(EtaPhiDistr_inputfile) $(EtaPhiDistr_trkCorr) $(EtaPhiDistr_jobid) $(EtaPhiDistr_nEvents);
+	cd ./results/$(EtaPhiDistr_tag); ../../bin/EtaPhiDistr $(EtaPhiDistr_inputfile) $(EtaPhiDistr_dotrkCorr) $(EtaPhiDistr_trkCorr) $(EtaPhiDistr_jobid) $(EtaPhiDistr_nEvents);
 
 ######################################################
 ### TrackCorrection
@@ -218,11 +227,12 @@ TrackCorrection : build_TrackCorrection
 	@echo
 	@echo WORKDIR: $(TrackCorrection_tag)
 	@echo 
-	@echo Testfile: $(TrackCorrection_inputfile)
-	@echo Number of events: $(TrackCorrection_nEvents)
+	@echo DATA - file: $(TrackCorrection_inputfileDATA)
+	@echo DATA - Number of events: $(TrackCorrection_nEventsDATA)
+	@echo MC - file: $(TrackCorrection_inputfileMC)
+	@echo MC - Number of events: $(TrackCorrection_nEventsMC)
 	@echo
-	cd ./trkCorr/$(TrackCorrection_tag); ../../bin/TrackCorrection $(TrackCorrection_inputfile) $(TrackCorrection_sampleType) $(TrackCorrection_jobid) $(TrackCorrection_nEvents);
-
+	cd ./trkCorr/$(TrackCorrection_tag); ../../bin/TrackCorrection $(TrackCorrection_inputfileDATA) $(TrackCorrection_inputfileMC) $(TrackCorrection_sampleType) $(TrackCorrection_jobid) $(TrackCorrection_nEventsDATA) $(TrackCorrection_nEventsMC);
 
 ######################################################
 ### PIDSetup
@@ -232,6 +242,13 @@ PIDSetup : build_PIDSetup
 build_PIDSetup : 
 	@cd src; make ../bin/PIDSetup
 
+######################################################
+### quickLook
+quickLook : build_quickLook
+	./bin/quickLook $(inputfile_quickLook);
+
+build_quickLook : 
+	@cd src; make ../bin/quickLook
 
 ######################################################
 ### dEdxMap

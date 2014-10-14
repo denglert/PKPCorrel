@@ -26,6 +26,30 @@ int EventData::GetzVtxBin()         { return zvtxbin(zVtx, nZvtxBins_); }
 int EventData::GetMultiplicityBin_Ana( int nMultiplicityBins_Ana) { int bin = multiplicitybin_Ana(nTrk, nMultiplicityBins_Ana); return bin;}
 int EventData::GetMultiplicityBin_EvM() { return multiplicitybin_EvM(nTrk); }
 
+LogFile::LogFile(const char filename[])
+{ ofs.open( filename ); }
+
+void LogFile::wr( const char str[])
+{
+	      ofs << str << std::endl;
+	std::cout << str << std::endl;
+}
+
+void LogFile::EventCounter( int iEv, const char label[])
+{
+  if ( (iEv % 1000) == 0 )
+  { 
+	 std::cout << Form("%s Event: %d", label, iEv ) << std::endl; 
+    ofs       << Form("%s Event: %d", label, iEv ) << std::endl;
+  }
+  else
+  {return 1;}
+}
+
+void LogFile::Close()
+{
+	ofs.close();
+}
 
 void EventData::Clear(int nCorrTyp, int *nPtBins)
 {
@@ -77,11 +101,19 @@ double trackWeight (TH3D **trackCorr, int PID, double pt, double eta, double phi
 {		
 	if( doTable )
 	{ 
-	 if( (PID != 99))
-	 {double value = trackCorr[PID]->GetBinContent(trackCorr[PID]->FindBin(pt,eta,phi));
-	 if (value == 0) {return 1;}
-	 else {return value;}
-	 }
+
+		if( (PID == 0))
+		{ 
+			double value = trackCorr[0]->GetBinContent(trackCorr[0]->FindBin(pt,eta,phi));
+			if (value == 0) {return 1;}
+			else {return value;}
+		}
+		else if( (PID != 99) )
+		 {
+			double value = trackCorr[PID]->GetBinContent(trackCorr[PID]->FindBin(pt,eta,phi));
+			if (value == 0) {return 1;}
+		 	else {return value;}
+		 }
 	}	
 	else
 	{return 1;}
@@ -226,14 +258,14 @@ void Setup_nEvents_Processed(TH1D *&nEvents_Processed_signal_total, TH1D *&nEven
 // *** Read In functions *** //
 ///////////////////////////////
 //
-TH3D **Read_trkEff(TFile *f)
+TH3D **Read_trkEff(TFile *f, const char histoname)
 {
 	TH3D **trkEff = new TH3D*[nCorrTyp_];
 	
 	for(int TypBin = 0; TypBin < nCorrTyp_; TypBin++)
 	{
 		trkEff[TypBin] = (TH3D*)f->Get(
-		Form("heff part %d", TypBin)
+		Form("%s %d", histoname, TypBin)
    	);
 	}
 

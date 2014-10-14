@@ -17,21 +17,18 @@
 int main( int argc, const char *argv[] )
 { 
 
-  bool doTable = true;
-
-  if(argc != 5)
+  if(argc != 6)
   {
-    std::cerr << "Usage: process <.root file to be preprocessed> <tag> <nEvents>" << std::endl;
+    std::cerr << "Usage: process <.root file to be preprocessed> <dotrkCorr> <trkCorrFilename> <tag> <nEvents>" << std::endl;
 	 exit(1);
   }
 
 
  TString inpFilename     = argv[1];
- TString trkCorrFilename = argv[2];
- std::string tag		    = argv[3];
- int nEvMax 	  		    = atoi( argv[4] );
- //TString inpFilename = "../";
- //
+ TString dotrkCorr_str 	 = argv[2];
+ TString trkCorrFilename = argv[3];
+ std::string tag		    = argv[4];
+ int nEvMax 	  		    = atoi( argv[5] );
 
  // Binning
  int nCorrTyp			  = nCorrTyp_; 
@@ -43,6 +40,11 @@ int main( int argc, const char *argv[] )
  int nMultiplicityBins_Ana = nMultiplicityBins_Ana_HDR;
  int nMultiplicityBins_EvM = nMultiplicityBins_EvM_HDR;
  int nZvtxBins 		      = nZvtxBins_; 
+
+ bool dotrkCorr;
+      if( dotrkCorr_str == "yes") { dotrkCorr = true;}
+ else if( dotrkCorr_str == "no ") { dotrkCorr = false;}
+ else {std::cerr << "dotrkCorr not defined." << std::endl; exit(-1);}
 
  //////////////////////////////////////
  //                                  //
@@ -58,7 +60,9 @@ int main( int argc, const char *argv[] )
  else {std::cout << "trkCorr File successfully opened." << std::endl;}
 
 
- TH3D **trkEff = Read_trkEff(f_trkCorr);
+ TH3D **trkEff = Read_trkEff(f_trkCorr, "hcorr typ");
+
+		Form("avgtrkCorr typ %d", TypBin)
 
  for (int i = 0; i < nCorrTyp; i++)
  {
@@ -74,8 +78,10 @@ int main( int argc, const char *argv[] )
  else {std::cout << "File successfully opened." << std::endl;}
 
  // trackTree
- //TTree *trackTree = (TTree*)f->Get("pptracks/trackTree");
- TTree *trackTree = (TTree*)f->Get("ppTrack/trackTree");
+ // DATA - pptracks
+ // MC   - ppTrack
+ TTree *trackTree = (TTree*)f->Get("pptracks/trackTree");
+ //TTree *trackTree = (TTree*)f->Get("ppTrack/trackTree");
  Tracks tTracks;
  bool doCheck = true;
  setupTrackTree(trackTree, tTracks, doCheck);
@@ -88,7 +94,10 @@ int main( int argc, const char *argv[] )
 
  // skimanalysis for event selection
  TTree *SkimAna= (TTree*)f->Get("skimanalysis/HltTree");
- int pPAcollisionEventSelection; SkimAna->SetBranchAddress("pPAcollisionEventSelectionPA", &pPAcollisionEventSelection);
+ // DATA  -pPAcollisionEventSelection
+ // MC   - pPAcollisionEventSelectionPA
+// int pPAcollisionEventSelection; SkimAna->SetBranchAddress("pPAcollisionEventSelectionPA", &pPAcollisionEventSelection);
+ int pPAcollisionEventSelection; SkimAna->SetBranchAddress("pPAcollisionEventSelection", &pPAcollisionEventSelection);
  int pileUpBit;                  SkimAna->SetBranchAddress("pVertexFilterCutGplus", &pileUpBit);
 
  ////////////////////////////////
@@ -137,21 +146,13 @@ int main( int argc, const char *argv[] )
  double dplog   = ( TMath::Log(pmaxlog)   -TMath::Log(pminlog)    )/npBinslog/l10;
  double ddEdxlog = ( TMath::Log(dEdxmaxlog)-TMath::Log(dEdxminlog) )/ndEdxBinslog/l10;
 
- std::cout << "l10: " << l10 << std::endl; 
- std::cout << "dplog: " << dplog << std::endl; 
- std::cout << "ddEdxlog: " << ddEdxlog << std::endl; 
-
-
  for (int i=0; i<=npBinslog; i++)
  { pBins[i] = TMath::Exp(l10*(i*dplog + TMath::Log(pminlog)/l10));
-   std::cout << "pbins: " << pBins[i] << std::endl;
  }
 
  for (int i=0; i<=ndEdxBinslog; i++)
  { dEdxBins[i] = TMath::Exp(l10*(i*ddEdxlog+ TMath::Log(dEdxminlog)/l10));
-   std::cout << "dEdxBins: " << dEdxBins[i] << std::endl;
  }
-
 
 
  for (int i = 0; i < 4 ; i++)
@@ -163,7 +164,7 @@ int main( int argc, const char *argv[] )
  TH2D* dEdxvsplinlinall = new TH2D ("dEdxVsP lin-lin " ,";p(GeV/c);dE/dx", npBins, pminlin, pmaxlin, ndEdxBins, dEdxminlin, dEdxmaxlin);
  TH2D* dEdxvsploglogall = new TH2D ("dEdxVsP log-log " ,";p(GeV/c);dE/dx", npBinslog, pBins, ndEdxBinslog, dEdxBins);
 
- /////////////
+ // Eta and (Eta,Phi) distributions
 
  int nParticles = 4;
 
@@ -194,6 +195,24 @@ int main( int argc, const char *argv[] )
   	     EtaDistr[pid][ptBin]  = new TH1D (Form("EtaDistribution id = %d, pt [%.2f - %.2f]", pid, pt(pid, ptBin, 0), pt(pid, ptBin, 1)),";#eta;Entries", nEtaBins, EtaMin, EtaMax); }
  }
 
+ // pT distribution
+ const int nPtDistrBins = 15;
+ const double pTMin = 0.1;
+ const double pTMax = 3.0;
+
+ TH1D *pTDistr[nParticles];
+ for (int pid = 0; pid < nParticles; pid++)
+ {
+ 	pTDistr[pid]  = new TH1D (Form("pTDistribution id = %d", pid),";pT;Entries", nPtDistrBins, pTMin, pTMax);
+ }
+
+ // vertez z distribution
+ int nZvtxDistrBins = 30;
+ double zVtxMin = -15.;
+ double zVtxMax =  15.;
+ TH1D *zVtxDistr = new TH1D ("zv",";vz;nEvents", nZvtxDistrBins, zVtxMin, zVtxMax);
+
+ // Init finish
  std::cout << "Initialization completed." << std::endl;
 
  ///////////////////////////
@@ -219,7 +238,8 @@ int main( int argc, const char *argv[] )
 	// Event Selection
 	if ( !EventSelection( pPAcollisionEventSelection, pileUpBit) ) continue;
 	if ( zvtxbin(vz, nZvtxBins) == -1 ) continue;
-	if ( multiplicitybin_Ana(hiNtracks, nMultiplicityBins_Ana) == -1) continue;
+
+	zVtxDistr->Fill(vz);
 
 	AnaFW->CountPassedEvent();
 	AnaFW->FillnTrk(hiNtracks);
@@ -249,19 +269,21 @@ int main( int argc, const char *argv[] )
 		double Eta = tTracks.trkEta[iTrk];
 		double Phi = tTracks.trkPhi[iTrk];
 		double pt = tTracks.trkPt[iTrk];
-		double w = 1./trackWeight(trkEff, PID, pt, Eta, Phi, doTable);
+		double w0 = trackWeight(trkEff,   0, pt, Eta, Phi, dotrkCorr);
+		double w  = trackWeight(trkEff, PID, pt, Eta, Phi, dotrkCorr);
 
 		if ( (ptref1 < tTracks.trkPt[iTrk]) && (tTracks.trkPt[iTrk] < ptref2) )
 		{
-			EtaPhiDistr_cpar->Fill(Eta,Phi);
-			EtaDistr_cpar->Fill(Eta);
+			EtaPhiDistr_cpar->Fill(Eta,Phi,w0);
+			EtaDistr_cpar->Fill(Eta,w0);
 		}
 
 		// chadron
 		if( !isOutsideChargedHadronPtRange )
 		{ 
-			EtaPhiDistr[0][ptBin_CH]->Fill(Eta,Phi);
-		   EtaDistr[0][ptBin_CH]->Fill(Eta);
+			EtaPhiDistr[0][ptBin_CH]->Fill(Eta,Phi,w0);
+		   EtaDistr[0][ptBin_CH]->Fill(Eta,w0);
+			pTDistr[0]->Fill(pt, w0);
 			dEdxvsplinlintyp[0]->Fill( p, tTracks.dedx[iTrk] );
 			dEdxvsploglogtyp[0]->Fill( p, tTracks.dedx[iTrk] );
 		}
@@ -271,6 +293,7 @@ int main( int argc, const char *argv[] )
 		{
 			EtaPhiDistr[PID][ptBin_ID]->Fill(Eta,Phi, w);
 		  	EtaDistr[PID][ptBin_ID]->Fill(Eta, w);
+			pTDistr[PID]->Fill(pt, w);
 			dEdxvsplinlintyp[PID]->Fill( p, tTracks.dedx[iTrk] );
 			dEdxvsploglogtyp[PID]->Fill( p, tTracks.dedx[iTrk] );
 		}
@@ -359,6 +382,21 @@ int main( int argc, const char *argv[] )
  	canvas_dEdxvsplin.SaveAs(dEdxvspFigPDF.c_str() );
  }
 
+ // zVtxDistr
+ gStyle->SetOptStat(1);
+ 	TCanvas canvas_zVtxDistr ("canvas_zvtx", ";vz;nEvents", 800, 600);
+	zVtxDistr->Draw();
+
+ 	std::string zVtxDistrFigBase = "zVtxDistr";
+
+ 	std::string zVtxDistrFigPNG = zVtxDistrFigBase+".png";
+ 	std::string zVtxDistrFigPDF = zVtxDistrFigBase+".pdf";
+
+	canvas_zVtxDistr.SaveAs(zVtxDistrFigPNG.c_str());
+	canvas_zVtxDistr.SaveAs(zVtxDistrFigPDF.c_str());
+
+ gStyle->SetOptStat(0);
+ // dEdx vs. p map
  for (int i = 0; i < 4; i++)
  {
  	TCanvas canvas_dEdxvsplog ("dEdx", ";p [GeV/c];dE/dx", 800, 600);
@@ -384,11 +422,10 @@ int main( int argc, const char *argv[] )
  	std::string dEdxvsplogFigallPNG = dEdxvsploglogallFigBase+".png";
  	std::string dEdxvsplogFigallPDF = dEdxvsploglogallFigBase+".pdf";
 
-	makedEdxvspFigloglog(dEdxvsploglogall, dEdxvsplogFigallPNG);
-	makedEdxvspFigloglog(dEdxvsploglogall, dEdxvsplogFigallPDF);
-	makedEdxvspFiglinlin(dEdxvsplinlinall, dEdxvsplinFigallPNG);
-	makedEdxvspFiglinlin(dEdxvsplinlinall, dEdxvsplinFigallPDF);
-
+	makedEdxvspFigloglog( dEdxvsploglogall, dEdxvsplogFigallPNG);
+	makedEdxvspFigloglog( dEdxvsploglogall, dEdxvsplogFigallPDF);
+	makedEdxvspFiglinlin( dEdxvsplinlinall, dEdxvsplinFigallPNG);
+	makedEdxvspFiglinlin( dEdxvsplinlinall, dEdxvsplinFigallPDF);
 
  //////////////////////
  //                  //

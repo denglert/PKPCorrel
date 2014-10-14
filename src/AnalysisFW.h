@@ -2,6 +2,7 @@
 #define ANALYSISFW_H
 #include <vector>
 #include <iostream>
+#include <fstream>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include "PIDUtils.h"
@@ -20,6 +21,19 @@ class track
    float pt;        
    float phi;			
    float eta;			
+};
+
+class LogFile
+{
+	public:
+   LogFile();
+   ~LogFile(){};
+
+	std::ofstream ofs;
+
+	void Write( const char str[]);
+	void nEvents( int nEv);
+	void Close();
 };
 
 class EventData

@@ -1,7 +1,7 @@
 CC = g++
 CFLAGS = `root-config --cflags`  
 LFLAGS = -O3 -Wl,--no-as-needed `root-config --libs`
-OBJS = CorrelationUtils.o CorrelationUtils_FigureTools.o PIDUtils.o AnalysisFW.o AnalysisBinning.o SetupCustomTrackTree.o PhyConst.o
+OBJS = CorrelationUtils.o CorrelationUtils_FigureTools.o PIDUtils.o AnalysisFW.o AnalysisBinning.o SetupCustomTrackTree.o PhyConst.o EvtSelection.o EvtAnalyzer.o
 CMN =  commonSetup.h
 
 all : ../bin/preprocess ../bin/process ../bin/preprocess_minimal
@@ -65,8 +65,8 @@ EtaPhiDistr.o : EtaPhiDistr.cpp
 
 ####################################################################################
 ### TrackCorrection
-../bin/TrackCorrection : TrackCorrection.o $(CMN) PIDUtils.o AnalysisFW.o AnalysisBinning.o PhyConst.o SetupCustomTrackTree.o
-	$(CC) $(LFLAGS) -o $@ $< PIDUtils.o AnalysisBinning.o PhyConst.o AnalysisFW.o SetupCustomTrackTree.o
+../bin/TrackCorrection : TrackCorrection.o $(CMN) PIDUtils.o AnalysisFW.o AnalysisBinning.o PhyConst.o SetupCustomTrackTree.o EvtSelection.o EvtAnalyzer.o
+	$(CC) $(LFLAGS) -o $@ $< PIDUtils.o AnalysisBinning.o PhyConst.o AnalysisFW.o SetupCustomTrackTree.o EvtSelection.o EvtAnalyzer.o
 
 TrackCorrection.o : TrackCorrection.cpp
 	$(CC) $(CFLAGS) -o $@ -c $<
@@ -80,6 +80,12 @@ TrackCorrection.o : TrackCorrection.cpp
 AnaFwTest.o : AnaFwTest.cpp
 	$(CC) $(CFLAGS)-o $@ -c $<  
 
+# quickLook
+../bin/quickLook : quickLook.o $(CMN) $(OBJS)
+	$(CC) $(LFLAGS) -o $@ $< $(OBJS) 
+
+quickLook.o : quickLook.cpp
+	$(CC) $(CFLAGS)-o $@ -c $<  
 
 # UtilityTest
 ../bin/utilitytest : UtilityTest.o $(CMN) $(OBJS)
@@ -116,4 +122,20 @@ PIDUtils.o : PIDUtils.cpp PIDUtils.h
 
 # SetupCustomTrackTree
 SetupCustomTrackTree.o : SetupCustomTrackTree.cpp SetupCustomTrackTree.h
+	$(CC) $(CFLAGS) -c $< -o $@ 
+
+# SetupSkimTree
+SetupSkimTree.o : SetupSkimTree.cpp SetupSkimTree.h
+	$(CC) $(CFLAGS) -c $< -o $@ 
+
+# SetupEvtTree
+SetupEvtTree.o : SetupEvtTree.cpp SetupEvtTree.h
+	$(CC) $(CFLAGS) -c $< -o $@ 
+
+# EvtSelection
+EvtSelection.o : EvtSelection.cpp EvtSelection.h
+	$(CC) $(CFLAGS) -c $< -o $@ 
+
+# EvtAnalyzer
+EvtAnalyzer.o : EvtAnalyzer.cpp EvtAnalyzer.h
 	$(CC) $(CFLAGS) -c $< -o $@ 

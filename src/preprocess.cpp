@@ -24,10 +24,11 @@ int main( int argc, const char *argv[] )
   }
 
 
- TString inpFilename   = argv[1];
- std::string tag		  = argv[2];
- int nEvMax 	  		  = atoi( argv[3] );
- //TString inpFilename = "../";
+ TString inpFilename     = argv[1];
+ TString dotrkCorr_str 	 = argv[2];
+ TString trkCorrFilename = argv[3];
+ std::string tag		    = argv[4];
+ int nEvMax 	  		    = atoi( argv[5] );
 
  // Binning
  int nCorrTyp			  = nCorrTyp_; 
@@ -40,22 +41,26 @@ int main( int argc, const char *argv[] )
  int nMultiplicityBins_EvM = nMultiplicityBins_EvM_HDR;
  int nZvtxBins 		      = nZvtxBins_; 
 
+ bool dotrkCorr;
+      if( dotrkCorr_str == "yes" ) { dotrkCorr =  true; }
+ else if( dotrkCorr_str == "no " ) { dotrkCorr = false; }
+ else {std::cerr << "dotrkCorr not defined." << std::endl; exit(-1);}
+
  //////////////////////////////////////
  //                                  //
  // ****** Opening input file ****** //
  //                                  //
  //////////////////////////////////////
-
+ 
  // Open file
  TFile *f = TFile::Open(inpFilename);
- // TFile *f = new TFile(inpFilename, "READ");
  if ( f->IsZombie() ) {std::cerr << "Error opening file: " << inpFilename << std::endl; exit(-1);}
 
  // trackTree
  TTree *trackTree = (TTree*)f->Get("pptracks/trackTree");
  Tracks tTracks;
- bool doCheck = true;
- setupTrackTree(trackTree, tTracks, doCheck);
+ bool doMC = false;
+ setupTrackTree(trackTree, tTracks, doMC);
 
  // hiEvtAnalyzer
  TTree *EvtAna= (TTree*)f->Get("hiEvtAnalyzer/HiTree");
@@ -95,7 +100,6 @@ int main( int argc, const char *argv[] )
  // Number of tracks distribution
  TH1D *nTrkDistr_signal = new TH1D("nTrkDistr_signal","Track distribution;Multiplicity", 350, 0, 350);
 
-
  // Correlation Framework
  CorrelationFramework CFW(nCorrTyp, nPtBins, nMultiplicityBins_Ana, nMultiplicityBins_EvM);
  std::cout << "Correlation Analysis Framework loaded." << std::endl;
@@ -103,7 +107,20 @@ int main( int argc, const char *argv[] )
  CFW.DoSelfCorrelation = true;
  if ( CFW.DoSelfCorrelation ) { std::cout << "Analysis includes self correlation computation." << std::endl;}
 
+ CFW.DoTrackWeight = dotrkCorr;
  CFW.SetupForPreprocess();
+
+ // TrackCorrection file
+ TFile *f_trkCorr = new TFile(trkCorrFilename, "READ");
+ if ( f_trkCorr->IsZombie() ) {std::cerr << "Error opening file: " << trkCorrFilename << std::endl; exit(-1);}
+ else {std::cout << "trkCorr File successfully opened." << std::endl;}
+
+ CFW.trkCorr = Read_trkEff(f_trkCorr, "hcorr typ");
+
+ for (int i = 0; i < nCorrTyp; i++)
+ { CFW.trkCorr[i]->SetDirectory(0); }
+
+ f_trkCorr->Close();
 
  // EventData
  EventData *ev;
@@ -248,7 +265,7 @@ int main( int argc, const char *argv[] )
 	trackTree->GetEntry(iEvA);
 
 	// Read in event
-	ev->ReadIn(tTracks, dEdxvsp);
+	ev->ReadInDATA(tTracks, dEdxvsp);
 
 	CFW.SignalCorrelation(ev);
 	CFW.MixedCorrelation(ev, EventCache);

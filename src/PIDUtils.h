@@ -7,6 +7,20 @@
 #include <TStyle.h>
 #include <TLine.h>
 
+class dEdxMaps {
+public :
+   dEdxMaps(const char tag[]);
+   ~dEdxMaps();
+
+	// Variables
+	TH2D *dEdxvspPID[4];
+	TH2D *dEdxvspAll;
+
+	// Functions
+	void Fill(int PID, double p, double dedx);
+	void PlotFigs(const char tag[]);
+};
+
 // Bethe-Bloch Curve function
 double poly2nd(double *x, double *par);
 
@@ -26,6 +40,7 @@ extern const float BB_Prot_maxpcut;
 extern const double delta;
 
 // PIDUtils parameters
+extern const int nPIDBins;
 extern const int npBins;
 extern const double pMin;
 extern const double pMax;
@@ -42,6 +57,7 @@ extern const float mindEdx;
 float BBcurve1c(float *x, const float *par);
 double BBcurve1 (double *x, double *par);
 int  GetPID(float p, float dEdx);
+int McPID2AnaPID ( int McPID);
 bool isPion(float p, float dEdx);
 bool isKaon(float p, float dEdx);
 bool isProt(float p, float dEdx);

@@ -1,6 +1,6 @@
 #include "SetupCustomTrackTree.h"
 
-void setupTrackTree(TTree *t,Tracks &tTracks,bool doCheck = 1)
+void setupTrackTree(TTree *t, Tracks &tTracks, bool doMC)
 {
 
 // Set branch addresses and branch pointers
@@ -41,10 +41,12 @@ void setupTrackTree(TTree *t,Tracks &tTracks,bool doCheck = 1)
    t->SetBranchAddress("trkDxyError1", tTracks.trkDxyError1, &tTracks.b_trkDxyError1);
    t->SetBranchAddress("trkDz1", tTracks.trkDz1, &tTracks.b_trkDz1);
    t->SetBranchAddress("trkDzError1", tTracks.trkDzError1, &tTracks.b_trkDzError1);
-   t->SetBranchAddress("trkStatus", tTracks.trkStatus, &tTracks.b_trkStatus);
-   t->SetBranchAddress("trkFake", tTracks.trkFake, &tTracks.b_trkFake);
-   t->SetBranchAddress("nParticle", &tTracks.nParticle, &tTracks.b_nParticle);
 
+	if (doMC)
+	{
+   t->SetBranchAddress("trkStatus", tTracks.trkStatus, &tTracks.b_trkStatus);
+   t->SetBranchAddress("nParticle", &tTracks.nParticle, &tTracks.b_nParticle);
+   t->SetBranchAddress("trkFake", tTracks.trkFake, &tTracks.b_trkFake);
    t->SetBranchAddress("pStatus", tTracks.pStatus, &tTracks.b_pStatus);
    t->SetBranchAddress("pPId", tTracks.pPId, &tTracks.b_pPId);
    t->SetBranchAddress("pEta", tTracks.pEta, &tTracks.b_pEta);
@@ -54,6 +56,7 @@ void setupTrackTree(TTree *t,Tracks &tTracks,bool doCheck = 1)
    t->SetBranchAddress("pAccPair", tTracks.pAccPair, &tTracks.b_pAccPair);
    t->SetBranchAddress("pNRec", tTracks.pNRec, &tTracks.b_pNRec);
    t->SetBranchAddress("pNHit", tTracks.pNHit, &tTracks.b_pNHit);
+   t->SetBranchAddress("mtrkdedx", tTracks.mtrkdedx, &tTracks.b_mtrkdedx);
    t->SetBranchAddress("mtrkPt", tTracks.mtrkPt, &tTracks.b_mtrkPt);
    t->SetBranchAddress("mtrkPtError", tTracks.mtrkPtError, &tTracks.b_mtrkPtError);
    t->SetBranchAddress("mtrkNHit", tTracks.mtrkNHit, &tTracks.b_mtrkNHit);
@@ -71,15 +74,19 @@ void setupTrackTree(TTree *t,Tracks &tTracks,bool doCheck = 1)
    t->SetBranchAddress("mtrkDxy2", tTracks.mtrkDxy2, &tTracks.b_mtrkDxy2);
    t->SetBranchAddress("mtrkDxyError2", tTracks.mtrkDxyError2, &tTracks.b_mtrkDxyError2);
    t->SetBranchAddress("mtrkAlgo", tTracks.mtrkAlgo, &tTracks.b_mtrkAlgo);
+	}
 //   t->SetBranchAddress("mtrkPfType", tTracks.mtrkPfType, &tTracks.b_mtrkPfType);
 //   t->SetBranchAddress("mtrkPfCandPt", tTracks.mtrkPfCandPt, &tTracks.b_mtrkPfCandPt);
 //   t->SetBranchAddress("mtrkPfSumEcal", tTracks.mtrkPfSumEcal, &tTracks.b_mtrkPfSumEcal);
 //   t->SetBranchAddress("mtrkPfSumHcal", tTracks.mtrkPfSumHcal, &tTracks.b_mtrkPfSumHcal);
+}
 
-//   t->SetBranchAddress("trkAlgo", tTracks.trkAlgo, &tTracks.b_trkAlgo);
-   if (doCheck) {
-//      if (t->GetMaximum("nv")>4) cout <<"FATAL ERROR: Arrary size of nv too small!!!  "<<t->GetMaximum("nv")<<endl;
-      if (t->GetMaximum("nVtx") > MAXVTX) cout <<"FATAL ERROR: Arrary size of nVtx too small!!!  "<<t->GetMaximum("nVtx")<<endl;
-      if (t->GetMaximum("nTrk")>maxTracks) cout <<"FATAL ERROR: Arrary size of nTrk too small!!!  "<<t->GetMaximum("nTrk")<<endl;
-   }
+void setupParticleTree(TTree *t, Tracks &tTracks)
+{
+   t->SetBranchAddress("nParticle", &tTracks.nParticle, &tTracks.b_nParticle);
+   t->SetBranchAddress("pStatus", tTracks.pStatus, &tTracks.b_pStatus);
+   t->SetBranchAddress("pPId", tTracks.pPId, &tTracks.b_pPId);
+   t->SetBranchAddress("pEta", tTracks.pEta, &tTracks.b_pEta);
+   t->SetBranchAddress("pPhi", tTracks.pPhi, &tTracks.b_pPhi);
+   t->SetBranchAddress("pPt", tTracks.pPt, &tTracks.b_pPt);
 }

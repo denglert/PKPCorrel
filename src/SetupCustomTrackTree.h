@@ -66,6 +66,7 @@ public :
    Float_t         pAccPair[maxTracks];   //[nParticle]
    Int_t         pNRec[maxTracks];   //[nParticle]
    Int_t           pNHit[maxTracks];   //[nParticle]
+   Float_t         mtrkdedx[maxTracks];   //[nParticle]
    Float_t         mtrkPt[maxTracks];   //[nParticle]
    Float_t         mtrkPtError[maxTracks];   //[nParticle]
    Int_t           mtrkNHit[maxTracks];   //[nParticle]
@@ -140,6 +141,7 @@ public :
    TBranch        *b_pAccPair;   //!
    TBranch        *b_pNRec;   //!
    TBranch        *b_pNHit;   //!
+   TBranch        *b_mtrkdedx;   //!
    TBranch        *b_mtrkPt;   //!
    TBranch        *b_mtrkPtError;   //!
    TBranch        *b_mtrkNHit;   //!
@@ -165,4 +167,5 @@ public :
 };
 
 void setupTrackTree(TTree *t,Tracks &tTracks,bool doCheck);
+void setupParticleTree(TTree *t, Tracks &tTracks);
 #endif

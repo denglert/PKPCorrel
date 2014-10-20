@@ -1,5 +1,7 @@
 #include "PIDUtils.h"
 
+const int nPIDBins = 4;
+
 const int npBins 		= 300;
 const double pMin 	= 0;
 const double pMax 	= 3;
@@ -85,6 +87,13 @@ int GetPID(float p, float dEdx)
 	return PID;
 }
 
+int McPID2AnaPID ( int McPID)
+{
+	if (( McPID == 211)  || (McPID == -211) ) { return 1; }
+	if (( McPID == 321)  || (McPID == -321) ) { return 2; }
+	if (( McPID == 2212) || (McPID == -2212)) { return 3; }
+	return 99;
+};
 
 void makedEdxvspFiglinlin(TH2D* dEdxvsP, std::string figurename)
 {
@@ -241,3 +250,36 @@ void makedEdxvspFigloglog(TH2D* dEdxvsP, std::string figurename)
 	c.SaveAs(figurename.c_str());
 	
 }
+
+////////////////////////////
+// === class dEdxMaps === //
+////////////////////////////
+
+// Constructor
+dEdxMaps::dEdxMaps( const char tag[])
+{
+ // dEdxvsp map
+ dEdxvspAll = new TH2D (Form("%s - dEdxVsPAll", tag),";p(GeV/c);dE/dx",npBins,pMin,pMax,ndEdxBins,dEdxMin,dEdxMax);
+
+ for(int iPID = 0; iPID < nPIDBins; iPID++)
+ {
+ dEdxvspPID[iPID] = new TH2D (Form("%s dEdxVsP PID %d", tag, iPID), Form("dEdxVsP %d ;p(GeV/c);dE/dx", iPID ),npBins,pMin,pMax,ndEdxBins,dEdxMin,dEdxMax);
+ }
+}
+
+dEdxMaps::~dEdxMaps()
+{};
+
+void dEdxMaps::Fill(int PID, double p, double dedx)
+{
+	dEdxvspAll->Fill(p,dedx);
+	if ( PID != 99)
+   { dEdxvspPID[PID]->Fill(p,dedx); }	
+}
+
+
+//void dEdxMaps::PlotFigs(const char tag[])
+//{
+//void makedEdxvspFigloglog(TH2D* dEdxvsP, std::string figurename)
+//void makedEdxvspFiglinlin(TH2D* dEdxvsP, std::string figurename)
+//}

@@ -27,9 +27,9 @@ const double zVtxDistrMin = -13;
 const double zVtxDistrMax =  13;
 
 //const int npt = 58;
-const int npt[4]      = {20,    10,   10,  10};
-const double ptMin[4] = {0.1, 0.15, 0.15, 0.1};
-const double ptMax[4] = {3.0, 1.00, 3.00, 1.8};
+const int npt[4]      = {20,    10,   5,  5};
+const double ptMin[4] = {0.1, 0.15, 0.15, 0.15};
+const double ptMax[4] = {3.0, 1.00, 1.00, 1.8 };
 
 const double ptGlobalMin = 0.1;
 
@@ -54,15 +54,6 @@ TH3D** Setup_TH3D_nCorrTyp(const char histoname[], const char histolabel[], cons
 
 	return histos;
 };
-
-int McPID2AnaPID ( int McPID)
-{
-	if (( McPID == 211)  || (McPID == -211) ) { return 1; }
-	if (( McPID == 321)  || (McPID == -321) ) { return 2; }
-	if (( McPID == 2212) || (McPID == -2212)) { return 3; }
-	return 99;
-};
-
 
 int main( int argc, const char *argv[] )
 {
@@ -198,7 +189,7 @@ int main( int argc, const char *argv[] )
  {
 
 	// Event counter info
-	log.EventCounter(iEv, "DATA ")
+	log.EventCounter(iEv, "MC ");
 
 	// EventSelection
 	if ( !EvSelMC.isGoodEv_pPb( iEv ) ) continue;
@@ -215,7 +206,7 @@ int main( int argc, const char *argv[] )
  TFile *output = new TFile(Form("./trkCorrections_%s.root", tag.c_str() ),"RECREATE");
  output->cd();
 
- ratiozvtx = (TH1D*)zvtxDistrMC->Clone("zvtxratio");
+ ratiozvtx = (TH1D*)zvtxDistrDATA->Clone("zvtxratio");
  ratiozvtx->Divide( zvtxDistrMC );
 
 //////////////////////////////////////
@@ -267,10 +258,10 @@ int main( int argc, const char *argv[] )
   {
 
 		// EventCounter
-		log.EventCounter(iEvA, "MC ")
+		log.EventCounter(iEvA, "MC ");
 		
 		// Event Selection
-		if ( !EvSelMC.isGoodEv_pPb( iEvA ) ) continue;
+		if ( !EvSelMC.isGoodEv_pPb( iEvA ) ) continue;;
 		
 		// Event zvtx
 		EvAnaMC.GetEntry( iEvA );
@@ -288,6 +279,9 @@ int main( int argc, const char *argv[] )
 		// Track loop
 		for (int iTrk = 0; iTrk < nTrk; iTrk++)
 		{
+
+			// *** Track selection *** //
+			if ( !TrackSelection(tTracks, iTrk ) ) continue;
 			
 			double pt  = tTracks.trkPt [iTrk];
 			double eta = tTracks.trkEta[iTrk]; 
@@ -295,9 +289,6 @@ int main( int argc, const char *argv[] )
 			float p    = pt * cosh(eta);
 			int PID    = GetPID(p, tTracks.dedx[iTrk]);
 			bool isPID = (PID != 99);
-			
-			// *** Track selection *** //
-			if ( !TrackSelection(tTracks, iTrk ) ) continue;
 			
 			// Fake tracks
 			if( tTracks.trkFake[iTrk] )
@@ -340,17 +331,22 @@ int main( int argc, const char *argv[] )
 		
 								hgen[ 0 ]->Fill( pt,eta,phi,wzvtx );
 			if ( isPID ) { hgen[PID]->Fill( pt,eta,phi,wzvtx ); }
-		
+
 			// matched track selection
 			if( !( mTrackSelection( tTracks, iPart) )) continue;
-		
+
+			double mpt  = tTracks.mtrkPt [iPart];
+			double meta = tTracks.pEta[iPart]; 
+			float  mp   = mpt * cosh(meta);
+			int    mPID = GetPID(mp, tTracks.mtrkdedx[iPart]);
+			bool   misPID = (mPID != 99);
 		
 				hmatched[ 0 ]->Fill(pt,eta,phi,wzvtx); 
 				hmultrec[ 0 ]->Fill(pt,eta,phi,wzvtx*tTracks.pNRec[iPart]);
-			if ( isPID )
+			if ( misPID )
 			{ 
-				hmatched[PID]->Fill(pt,eta,phi,wzvtx); 
-				hmultrec[PID]->Fill(pt,eta,phi,wzvtx*tTracks.pNRec[iPart]);
+				hmatched[mPID]->Fill(pt,eta,phi,wzvtx); 
+				hmultrec[mPID]->Fill(pt,eta,phi,wzvtx*tTracks.pNRec[iPart]);
 			}
 		
 		   }
@@ -367,15 +363,27 @@ int main( int argc, const char *argv[] )
    	hmultrec  [iPar] -> Divide( hmatched[iPar] );
   }
 
+  // Filling track correction table
+  double ptbw[4];
+  for(int i = 0; i < nPart; i++)
+  {
+	ptbw[i] = (ptMax[i]-ptMin[i])/npt[i];
+  }
+  const double etabw = (etaMax-etaMin)/neta;
+  const double phibw = (phiMax-phiMin)/nphi;
 
   for(int i = 0; i < nPart; i++)
   for(int x = 1; x < npt[i]  +1; x++)
   for(int y = 1; y < neta +1; y++)
   for(int z = 1; z < nphi +1; z++)
- {
+  {
+	  double pt  = ptMin[i]+x*ptbw[i]; 
+	  double eta = etaMin+y*etabw; 
+	  double phi = phiMin+z*phibw; 
+
      double value = (1.0-hfake[i]->GetBinContent(x,y,z))*(1.0-hsecondary[i]->GetBinContent(x,y,z)) / ((heff[i]->GetBinContent(x,y,z)) * (1+hmultrec[i]->GetBinContent(x,y,z)));
 	  hcorr[i]->SetBinContent(x,y,z,value);
- 	  log.wr(Form("%d %.3f %.2f %.2f : %.4f", i, x, y, z, value));
+ 	  log.wr(Form("%d %.3f %.2f %.2f : %.4f", i, pt, eta, phi, value));
   }
 
 

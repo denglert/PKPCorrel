@@ -42,8 +42,6 @@ void LogFile::EventCounter( int iEv, const char label[])
 	 std::cout << Form("%s Event: %d", label, iEv ) << std::endl; 
     ofs       << Form("%s Event: %d", label, iEv ) << std::endl;
   }
-  else
-  {return 1;}
 }
 
 void LogFile::Close()
@@ -159,8 +157,8 @@ bool mTrackSelection( const Tracks &tTracks, int iTrk )
 	return true;
 }
 
-// ReadIn
-void EventData::ReadIn( Tracks &tTracks, TH2D *dEdxvsP)
+// ReadInDATA
+void EventData::ReadInDATA( Tracks &tTracks, TH2D *dEdxvsP)
 {
 	int nTrk = tTracks.nTrk;
 
@@ -214,6 +212,53 @@ void EventData::ReadIn( Tracks &tTracks, TH2D *dEdxvsP)
 
 }
 
+// ReadInMC
+void EventData::ReadInMC( Tracks &tTracks)
+{
+	int nPart = tTracks.nParticle;
+
+	for (int iPar = 0; iPar < nPart; iPar++)
+	{
+
+  		float p = tTracks.pPt[iPar] * cosh(tTracks.pEta[iPar]);
+
+		int PID = McPID2AnaPID ( tTracks.pPId[iPar] );
+		int ptBin_CH = ptbin(   0 , tTracks.pPt[iPar]);
+		int ptBin_ID = ptbin( PID , tTracks.pPt[iPar]);
+
+		bool isOutsideReferencePartPtRange = ( ( tTracks.pPt[iPar] < ptref1 ) || ( ptref2 < tTracks.pPt[iPar] ) );
+		bool isOutsideIdentifHadronPtRange = ( ptBin_ID == -1);
+		bool isOutsideChargedHadronPtRange = ( ptBin_CH == -1);
+
+		if ( isOutsideReferencePartPtRange && isOutsideChargedHadronPtRange && isOutsideIdentifHadronPtRange ) continue;
+		// *** Track selection *** //
+		
+  		// Track fill up
+  		track part;
+  		part.charge  = 0;
+  		part.pid  	 = PID;
+  		part.pt      = tTracks.pPt[iPar];
+  		part.phi     = tTracks.pPhi[iPar];
+  		part.eta     = tTracks.pEta[iPar];
+
+		EventData::AddTrack(part);
+
+		// chadron
+		if( !isOutsideChargedHadronPtRange )
+		{ nTriggerParticles[0][ ptBin_CH ]++; }
+ 
+		// reference
+		if ( !isOutsideReferencePartPtRange )
+		{ nTriggerParticles_cpar_ref++; }
+
+		// pid particle
+		if( (part.pid != 99) && !isOutsideIdentifHadronPtRange )
+		{ nTriggerParticles[ part.pid ][ ptBin_ID ]++; }
+
+	}
+
+}
+
 ////////////////////////////
 // *** Setup function *** //
 ////////////////////////////
@@ -258,7 +303,7 @@ void Setup_nEvents_Processed(TH1D *&nEvents_Processed_signal_total, TH1D *&nEven
 // *** Read In functions *** //
 ///////////////////////////////
 //
-TH3D **Read_trkEff(TFile *f, const char histoname)
+TH3D **Read_trkEff(TFile *f, const char histoname[])
 {
 	TH3D **trkEff = new TH3D*[nCorrTyp_];
 	

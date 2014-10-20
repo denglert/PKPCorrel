@@ -51,8 +51,6 @@ int main( int argc, const char *argv[] )
  // ****** Opening input file ****** //
  //                                  //
  //////////////////////////////////////
- //
- 
  
  // Open trkCorr file
  TFile *f_trkCorr = new TFile(trkCorrFilename, "READ");
@@ -61,8 +59,6 @@ int main( int argc, const char *argv[] )
 
 
  TH3D **trkEff = Read_trkEff(f_trkCorr, "hcorr typ");
-
-		Form("avgtrkCorr typ %d", TypBin)
 
  for (int i = 0; i < nCorrTyp; i++)
  {
@@ -83,8 +79,8 @@ int main( int argc, const char *argv[] )
  TTree *trackTree = (TTree*)f->Get("pptracks/trackTree");
  //TTree *trackTree = (TTree*)f->Get("ppTrack/trackTree");
  Tracks tTracks;
- bool doCheck = true;
- setupTrackTree(trackTree, tTracks, doCheck);
+ bool isMC = false;
+ setupTrackTree(trackTree, tTracks, isMC);
 
 
  // hiEvtAnalyzer
@@ -108,7 +104,6 @@ int main( int argc, const char *argv[] )
  
  TFile *output = new TFile(Form("./EtaPhi_distr_%s.root", tag.c_str() ),"RECREATE");
  output->cd();
-
 
  //////////////////////////////
  //                          //
@@ -147,12 +142,10 @@ int main( int argc, const char *argv[] )
  double ddEdxlog = ( TMath::Log(dEdxmaxlog)-TMath::Log(dEdxminlog) )/ndEdxBinslog/l10;
 
  for (int i=0; i<=npBinslog; i++)
- { pBins[i] = TMath::Exp(l10*(i*dplog + TMath::Log(pminlog)/l10));
- }
+ { pBins[i] = TMath::Exp(l10*(i*dplog + TMath::Log(pminlog)/l10)); }
 
  for (int i=0; i<=ndEdxBinslog; i++)
- { dEdxBins[i] = TMath::Exp(l10*(i*ddEdxlog+ TMath::Log(dEdxminlog)/l10));
- }
+ { dEdxBins[i] = TMath::Exp(l10*(i*ddEdxlog+ TMath::Log(dEdxminlog)/l10)); }
 
 
  for (int i = 0; i < 4 ; i++)
@@ -382,6 +375,22 @@ int main( int argc, const char *argv[] )
  	canvas_dEdxvsplin.SaveAs(dEdxvspFigPDF.c_str() );
  }
 
+ ////////////////////
+ // Eta distribution
+ for (int pid = 0; pid < nParticles; pid++)
+ {
+	TCanvas canvas_pTDistr ("pTDistr", ";Eta;Phi", 800, 600);
+ 	pTDistr[pid]->Draw("");
+
+ 	std::string pTDistrFigBase = Form("pTDistr_typ_%d", pid);
+
+ 	std::string pTDistrFigPNG = pTDistrFigBase+".png";
+ 	std::string pTDistrFigPDF = pTDistrFigBase+".pdf";
+
+ 	canvas_pTDistr.SaveAs(pTDistrFigPNG.c_str() );
+ 	canvas_pTDistr.SaveAs(pTDistrFigPDF.c_str() );
+ }
+
  // zVtxDistr
  gStyle->SetOptStat(1);
  	TCanvas canvas_zVtxDistr ("canvas_zvtx", ";vz;nEvents", 800, 600);
@@ -422,10 +431,10 @@ int main( int argc, const char *argv[] )
  	std::string dEdxvsplogFigallPNG = dEdxvsploglogallFigBase+".png";
  	std::string dEdxvsplogFigallPDF = dEdxvsploglogallFigBase+".pdf";
 
-	makedEdxvspFigloglog( dEdxvsploglogall, dEdxvsplogFigallPNG);
-	makedEdxvspFigloglog( dEdxvsploglogall, dEdxvsplogFigallPDF);
-	makedEdxvspFiglinlin( dEdxvsplinlinall, dEdxvsplinFigallPNG);
-	makedEdxvspFiglinlin( dEdxvsplinlinall, dEdxvsplinFigallPDF);
+//	makedEdxvspFigloglog( dEdxvsploglogall, dEdxvsplogFigallPNG);
+//	makedEdxvspFigloglog( dEdxvsploglogall, dEdxvsplogFigallPDF);
+//	makedEdxvspFiglinlin( dEdxvsplinlinall, dEdxvsplinFigallPNG);
+//	makedEdxvspFiglinlin( dEdxvsplinlinall, dEdxvsplinFigallPDF);
 
  //////////////////////
  //                  //

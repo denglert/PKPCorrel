@@ -56,7 +56,7 @@ int main( int argc, const char *argv[] )
  TH2::SetDefaultSumw2( );
 
  CorrelationFramework CFW(nCorrTyp, nPtBins, nMultiplicityBins_Ana, nMultiplicityBins_EvM);
- CFW.DoSelfCorrelation = true;
+ CFW.DoSelfCorrelation = false;
  CFW.SetupForProcess();
  CFW.ReadIn_CorrelationFuncs( f );
  CFW.Set_dEtacut();

@@ -26,13 +26,13 @@ class track
 class LogFile
 {
 	public:
-   LogFile();
+   LogFile(const char filename[]);
    ~LogFile(){};
 
 	std::ofstream ofs;
 
-	void Write( const char str[]);
-	void nEvents( int nEv);
+	void wr( const char str[]);
+	void EventCounter( int iEv, const char label[]);
 	void Close();
 };
 
@@ -60,7 +60,8 @@ class EventData
 	int GetMultiplicityBin_Ana(int nMultiplicityBins_Ana);
 	int GetMultiplicityBin_EvM();
 
-	void ReadIn(Tracks &tTracks, TH2D *dEdxvsP);
+	void ReadInDATA(Tracks &tTracks, TH2D *dEdxvsP);
+	void ReadInMC  (Tracks &tTracks);
 
 	void Clear(int nCorrTyp, int *nPtBins);
 };
@@ -102,7 +103,7 @@ void Setup_nEvents_Processed (TH1D *&nEvents_Processed_signal_total, TH1D *&nEve
 ///////////////////////
 // Read In function
 void Read_nEvents_Processed(TFile *f, TH1D **&nEvents_Processed_signal, TH1D **&nEvents_ProcessedBit_backgr, int nMultiplicityBins );
-TH3D **Read_trkEff(TFile *f);
+TH3D **Read_trkEff(TFile *f, const char histoname[]);
 
 ///////////////////////////////
 // AnalysisFW functions

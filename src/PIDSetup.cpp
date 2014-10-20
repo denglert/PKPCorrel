@@ -40,6 +40,7 @@ int main(int argc, const char *argv[])
  TH2D *dEdxvsP = (TH2D*)f->Get("dEdxVsP");
  
  // Save dEdx value map
- viewdEdxvsP(dEdxvsP, "./PIDtest/dedxvsp_withBBcurves.pdf", delta );
+ std::string figurename = "dEdxtest.png";
+ makedEdxvspFiglinlin(dEdxvsP, figurename);
 
 }

@@ -28,22 +28,25 @@ void plottable( TH3D **table, const char figbasename[] )
 	for (int pid = 0; pid < nParticles; pid++)
 	for (int ptBin = 1; ptBin < npt[pid]; ptBin++)
 	{
-	  TCanvas canvas_table ("trkTable", ";Eta;Phi", 900, 600);
-	  canvas_table.Divide(2,1);
+		TCanvas canvas_table ("trkTable", ";Eta;Phi", 900, 600);
+	  	canvas_table.Divide(2,1);
 	
-	  table[pid]->GetXaxis()->SetRange(ptBin, ptBin+1);
-	  TH2D *histo = (TH2D*)table[pid]->Project3D("zy");
+	  	table[pid]->GetXaxis()->SetRange(ptBin, ptBin+1);
+	  	TH2D *histo = (TH2D*)table[pid]->Project3D("zy");
 	
-	  canvas_table.cd(1);
-		histo->Draw("SURF1");
-	  canvas_table.cd(2);
-		histo->Draw("COLZ");
+	  	canvas_table.cd(1);
+	  	histo->Draw("SURF1");
+	  	canvas_table.cd(2);
+	   histo->Draw("COLZ");
+
+		double pt1 = ptMin[pid] + ptbw[pid] * (ptBin-1);
+		double pt2 = ptMin[pid] + ptbw[pid] * (ptBin );
 	
-		std::string tableFigBase = Form("%s_typ_%d_pt_%d-%d", figbasename, pid, ptBin, ptBin+1);
-	
+		std::string tableFigBase = Form("%s_typ_%d_pt_%.3f-%.3f", figbasename, pid, pt1, pt2);
+		
 		std::string tableFigPNG = tableFigBase+".png";
 		std::string tableFigPDF = tableFigBase+".pdf";
-	
+		
 		canvas_table.SaveAs(tableFigPNG.c_str() );
 		canvas_table.SaveAs(tableFigPDF.c_str() );
 	}

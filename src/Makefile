@@ -30,6 +30,13 @@ process_light.o : process_light.cpp
 preprocess.o : preprocess.cpp $(CMN) $(OBJS)
 	$(CC) $(CFLAGS) -o $@ -c $<
 
+# preprocess_genlevel
+../bin/preprocess_genlevel : preprocess_genlevel.o $(CMN) $(OBJS)
+	$(CC) $(LFLAGS) -o $@ $< $(OBJS)
+
+preprocess_genlevel.o : preprocess_genlevel.cpp $(CMN) $(OBJS)
+	$(CC) $(CFLAGS) -o $@ -c $<
+
 # SimplePreProc
 ../bin/SimplePreProc : SimplePreProc.o $(CMN) $(OBJS)
 	$(CC) $(LFLAGS) -o $@ $< $(OBJS)
@@ -40,10 +47,10 @@ SimplePreProc.o : SimplePreProc.cpp $(CMN) $(OBJS)
 
 ####################################################################################
 ### dEdxMap
-../bin/dEdxMap : dEdxMap.o $(CMN) $(OBJS)
+../bin/makedEdxMap : makedEdxMap.o $(CMN) $(OBJS)
 	$(CC) $(LFLAGS) -o $@ $< $(OBJS) 
 
-dEdxMap.o : dEdxMap.cpp
+makedEdxMap.o : makedEdxMap.cpp
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 
@@ -80,11 +87,11 @@ TrackCorrection.o : TrackCorrection.cpp
 AnaFwTest.o : AnaFwTest.cpp
 	$(CC) $(CFLAGS)-o $@ -c $<  
 
-# quickLook
-../bin/quickLook : quickLook.o $(CMN) $(OBJS)
+# TrackCorrection_viewer
+../bin/TrackCorrection_viewer : TrackCorrection_viewer.o $(CMN) $(OBJS)
 	$(CC) $(LFLAGS) -o $@ $< $(OBJS) 
 
-quickLook.o : quickLook.cpp
+TrackCorrection_viewer.o : TrackCorrection_viewer.cpp
 	$(CC) $(CFLAGS)-o $@ -c $<  
 
 # UtilityTest

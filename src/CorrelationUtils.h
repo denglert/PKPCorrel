@@ -68,6 +68,7 @@ class CorrelationFramework
 	// === Variables === //
 	
 	bool DoSelfCorrelation;
+	bool DoTrackWeight;
 	
 	// correl2D current event
  	TH2D ***correl2D_currev_signal;
@@ -97,6 +98,9 @@ class CorrelationFramework
  	TH1D ****correl1D_self;
  	TH1D   **correl1D_cpar_ref;
 
+	// TrackCorrection table
+	TH3D **trkCorr;
+
 	// number of events counter
 	TH1D  *nEvents_Processed_signal_total;
  	TH1D  *nEvents_Processed_backgr_total;
@@ -118,6 +122,8 @@ class CorrelationFramework
 	void ReadIn_CorrelationFuncs( TFile *f );
 	void Set_dEtacut( int negdEtaCut1Bin, int negdEtaCut2Bin, int posdEtaCut1Bin, int posdEtaCut2Bin );
 	void Set_dEtacut( );
+
+	double trackWeight(int PID, float pt, float eta, float phi);
 
 	void SignalCorrelation(EventData *ev);
 	void MixedCorrelation( EventData *ev, std::deque< EventData > **&EventCache);

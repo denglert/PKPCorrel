@@ -6,7 +6,7 @@ const int npBins 		= 300;
 const double pMin 	= 0;
 const double pMax 	= 3;
 const int ndEdxBins 	= 300;
-const double dEdxMin = 0;
+const double dEdxMin = -2;
 const double dEdxMax = 30;
 
 const double pminlog    = 0.1;

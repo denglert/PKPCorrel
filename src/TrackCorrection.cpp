@@ -135,9 +135,8 @@ int main( int argc, const char *argv[] )
  for (int iEv = 0; iEv < nEvMaxDATA; iEv++)
  {
 
-	// Event counter info
-	if ( (iEv % 1000) == 0 )
-	{ std::cout << "Event: " << iEv << std::endl; }
+	// EventCounter
+	log.EventCounter(iEv, "making DATA zvtx distribution");
 
 	// EventSelection
 	if ( !EvSelDATA.isGoodEv_pPb( iEv ) ) continue;
@@ -189,7 +188,7 @@ int main( int argc, const char *argv[] )
  {
 
 	// Event counter info
-	log.EventCounter(iEv, "MC ");
+	log.EventCounter(iEv, "making MC zvtx distribution ");
 
 	// EventSelection
 	if ( !EvSelMC.isGoodEv_pPb( iEv ) ) continue;

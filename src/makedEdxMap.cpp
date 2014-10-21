@@ -29,6 +29,7 @@ int main(int argc, const char *argv[])
 	 exit(1);
   }
 
+
  TString inpFilename   = 		 argv[1];
  std::string jobid 	  = 		 argv[2];
  int nEvMax 	  		  = atoi( argv[3] );
@@ -65,6 +66,8 @@ int main(int argc, const char *argv[])
  
  dEdxMaps *dEdxmaps_trk  = new dEdxMaps("trk");
  dEdxMaps *dEdxmaps_mtrk = new dEdxMaps("mtrk");
+
+ TH1D *pDistr = new TH1D("pDistr", ";p;nTrks", 30, 0., 3.);
 
  // Histograms with errors
  TH1::SetDefaultSumw2( );
@@ -107,7 +110,7 @@ int main(int argc, const char *argv[])
 
 	}
 
-	if ( DoMtrk)
+	if ( DoMtrk )
 	{
 
 	// === Particle loop === //
@@ -115,18 +118,18 @@ int main(int argc, const char *argv[])
 	{
 		double meta = tTracks.pEta[iPart]; 
 
-		// matched track selection
+		//// matched track selection
 		if( !( mTrackSelection( tTracks, iPart) )) continue;
-			// particle selection
-		if( fabs(meta) > 2.4 ) continue;
+		// particle selection
+		if( 2.4 < fabs(meta) ) continue;
 
 		double mpt   = tTracks.mtrkPt [iPart];
 		double mdedx = tTracks.mtrkdedx [iPart];
 		float  mp    = mpt * cosh(meta);
-		int    mPID  = GetPID(mp, tTracks.mtrkdedx[iPart]);
+		int    mPID  = GetPID(mp, mdedx);
 
-		int mPID = GetPID(mp, mdedx  );
-	
+		pDistr->Fill(mp);
+
 		dEdxmaps_mtrk->Fill(mPID, mp, mdedx);
 
 	}

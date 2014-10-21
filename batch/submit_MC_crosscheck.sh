@@ -24,7 +24,7 @@ queue=2nd
 # ./submitall.sh test
 # parameteres
 testworkdir=MC_comparison_test
-testnEvents=100
+testnEvents=5
 testqueue=test
 
 

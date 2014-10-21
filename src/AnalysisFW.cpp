@@ -142,7 +142,6 @@ bool mTrackSelection( const Tracks &tTracks, int iTrk )
 	// *** Track selection *** //
 	if ( tTracks.mtrkQual[iTrk] == false ) {return false;}
 	
-	// WARNING: NEEDS TO CHECKED
 	if ( 2.4 < abs(tTracks.pEta[iTrk]) ) {return false;}
 
 	float z_sep_significance  = tTracks.mtrkDz1 [iTrk] / tTracks.mtrkDzError1  [iTrk];

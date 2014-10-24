@@ -13,16 +13,17 @@
 #include "PIDUtils.h"
 #include "CorrelationUtils.h"
 #include "SetupCustomTrackTree.h"
+#include "EvtSelection.h"
 
 int main( int argc, const char *argv[] )
 { 
 
-  if(argc != 4)
+  if(argc != 6)
   {
-    std::cerr << "Usage: process <.root file to be preprocessed> <tag> <nEvents>" << std::endl;
+    std::cerr << "Usage: preprocess <.root file to be preprocessed> <tag> <nEvents>" << std::endl;
 	 exit(1);
-  }
 
+  }
 
  TString inpFilename     = argv[1];
  TString dotrkCorr_str 	 = argv[2];
@@ -41,9 +42,11 @@ int main( int argc, const char *argv[] )
  int nMultiplicityBins_EvM = nMultiplicityBins_EvM_HDR;
  int nZvtxBins 		      = nZvtxBins_; 
 
+ std::cout << "dotrkCorr: " << dotrkCorr_str << std::endl;
+
  bool dotrkCorr;
       if( dotrkCorr_str == "yes" ) { dotrkCorr =  true; }
- else if( dotrkCorr_str == "no " ) { dotrkCorr = false; }
+ else if( dotrkCorr_str == "no" ) { dotrkCorr = false; }
  else {std::cerr << "dotrkCorr not defined." << std::endl; exit(-1);}
 
  //////////////////////////////////////
@@ -67,10 +70,9 @@ int main( int argc, const char *argv[] )
  int hiNtracks; EvtAna->SetBranchAddress("hiNtracks", &hiNtracks);
  float vz; EvtAna->SetBranchAddress("vz", &vz);
 
- // skimanalysis for event selection
- TTree *SkimAna= (TTree*)f->Get("skimanalysis/HltTree");
- int pPAcollisionEventSelection; SkimAna->SetBranchAddress("pPAcollisionEventSelection", &pPAcollisionEventSelection);
- int pileUpBit;                  SkimAna->SetBranchAddress("pVertexFilterCutGplus", &pileUpBit);
+ // Event Selection
+ EvtSelection EvSel;
+ EvSel.setupSkimTree_pPb( f, true);
 
  ////////////////////////////////
  //                            //
@@ -104,7 +106,7 @@ int main( int argc, const char *argv[] )
  CorrelationFramework CFW(nCorrTyp, nPtBins, nMultiplicityBins_Ana, nMultiplicityBins_EvM);
  std::cout << "Correlation Analysis Framework loaded." << std::endl;
 
- CFW.DoSelfCorrelation = true;
+ CFW.DoSelfCorrelation = false;
  if ( CFW.DoSelfCorrelation ) { std::cout << "Analysis includes self correlation computation." << std::endl;}
 
  CFW.DoTrackWeight = dotrkCorr;
@@ -149,13 +151,14 @@ int main( int argc, const char *argv[] )
 
 		// Get current event info
 		EvtAna->GetEntry(iEv);
-		SkimAna->GetEntry(iEv);
 
-		// Event selection //
-		if ( EventSelection(pPAcollisionEventSelection, pileUpBit) )
+		// EventSelection
+
+		if ( EvSel.isGoodEv_pPb( iEv ) )
 		if (     zvtxbin(vz, nZvtxBins_)    == zvtxBin )
 		if ( multiplicitybin_EvM(hiNtracks) == multBin )
 		{
+
 
 			trackTree->GetEntry(iEv);
 			int nTrk = tTracks.nTrk;
@@ -167,7 +170,7 @@ int main( int argc, const char *argv[] )
 				if ( !TrackSelection(tTracks, iTrk ) ) continue;
 
   				float p = tTracks.trkPt[iTrk] * cosh(tTracks.trkEta[iTrk]);
-				int PID   = GetPID(p, tTracks.dedx[iTrk]);
+				int PID   = GetPID(p, tTracks.dedx[iTrk], tTracks.trkEta[iTrk]);
 
 				int ptBin_CH = ptbin(   0 , tTracks.trkPt[iTrk]);
 				int ptBin_ID = ptbin( PID , tTracks.trkPt[iTrk]);
@@ -237,16 +240,13 @@ int main( int argc, const char *argv[] )
 
 	// Get current event info
 	EvtAna->GetEntry(iEvA);
-	SkimAna->GetEntry(iEvA);
-
 
 	// Event Selection
-	if ( !EventSelection( pPAcollisionEventSelection, pileUpBit) ) continue;
+	if ( !EvSel.isGoodEv_pPb( iEvA ) ) continue;
 	if ( zvtxbin(vz, nZvtxBins) == -1 ) continue;
 	CFW.nEvents_Processed_signal_total->Fill(0.);
 	if ( multiplicitybin_Ana(hiNtracks, nMultiplicityBins_Ana) == -1) continue;
 	CFW.nEvents_Processed_signal[ multiplicitybin_Ana(hiNtracks, nMultiplicityBins_Ana) ]->Fill(0.);
-
 
  	ev->Clear(nCorrTyp, nPtBins);
 

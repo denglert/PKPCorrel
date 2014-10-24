@@ -209,39 +209,42 @@ int main( int argc, const char *argv[] )
 // std::cerr << "result " << result << std::endl;
 
 // === Histogram projection test ==== ///
-  TFile *output = new TFile("file.root","RECREATE");
-
-	const double dEtaMin = -4.8;
-	const double dEtaMax =  4.8;
+//  TFile *output = new TFile("file.root","RECREATE");
+//
+//	const double dEtaMin = -4.8;
+//	const double dEtaMax =  4.8;
+//	
+//	const double dEtaMin_plot = -2.8;
+//	const double dEtaMax_plot =  2.8;
+//	
+//	const double dPhiMin = -TMath::Pi()/2;
+//	const double dPhiMax = 3*TMath::Pi()/2;
+//	
+//	const int ndEtaBins = 96;
+//	const int ndPhiBins = 96;
+//
+//  TH2D histo2D = TH2D("histo2D","title; #DELTA #eta; #Delta #phi",ndEtaBins,dEtaMin,dEtaMin, ndPhiBins,dPhiMin, dPhiMax);
+//  TH1D histo1D = TH1D("histo1D","title; #DELTA #phi; y axis",ndPhiBins, dPhiMin, dPhiMax);
+//
+//  histo2D.Fill(3.95,0.);
+//
+//  int bin1 = 87;
+//  int bin2 = 88;
+//
+//  histo2D.ProjectionY("histo1D",bin1,bin2);
+//
+//  histo2D.Draw();
+//  histo1D.Draw();
+//
+//  charargtest("test");
+//
+//
+// output->Write();
+// output->Close();
 	
-	const double dEtaMin_plot = -2.8;
-	const double dEtaMax_plot =  2.8;
-	
-	const double dPhiMin = -TMath::Pi()/2;
-	const double dPhiMax = 3*TMath::Pi()/2;
-	
-	const int ndEtaBins = 96;
-	const int ndPhiBins = 96;
 
-  TH2D histo2D = TH2D("histo2D","title; #DELTA #eta; #Delta #phi",ndEtaBins,dEtaMin,dEtaMin, ndPhiBins,dPhiMin, dPhiMax);
-  TH1D histo1D = TH1D("histo1D","title; #DELTA #phi; y axis",ndPhiBins, dPhiMin, dPhiMax);
-
-  histo2D.Fill(3.95,0.);
-
-  int bin1 = 87;
-  int bin2 = 88;
-
-  histo2D.ProjectionY("histo1D",bin1,bin2);
-
-  histo2D.Draw();
-  histo1D.Draw();
-
-  charargtest("test");
-
-
- output->Write();
- output->Close();
-	
-
+	std::cout << "zvtxbin: " << zvtxbin(-12.5, nZvtxBins_) << std::endl;
+	std::cout << "zvtxbin: " << zvtxbin(-13.5, nZvtxBins_) << std::endl;
+	std::cout << "zvtxbin: " << zvtxbin(12.5, nZvtxBins_) << std::endl;
 
 }

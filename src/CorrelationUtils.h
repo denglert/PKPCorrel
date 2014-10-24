@@ -98,6 +98,9 @@ class CorrelationFramework
  	TH1D ****correl1D_self;
  	TH1D   **correl1D_cpar_ref;
 
+	// Log
+	LogFile *log;
+
 	// TrackCorrection table
 	TH3D **trkCorr;
 

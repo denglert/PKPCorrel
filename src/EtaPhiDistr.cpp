@@ -63,6 +63,7 @@ int main( int argc, const char *argv[] )
  for (int i = 0; i < nCorrTyp; i++)
  {
   trkEff[i]->SetDirectory(0);
+
  }
 
  f_trkCorr->Close();

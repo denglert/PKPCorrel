@@ -281,7 +281,7 @@ int main( int argc, const char *argv[] )
 
 			// *** Track selection *** //
 			if ( !TrackSelection(tTracks, iTrk ) ) continue;
-			
+
 			double pt  = tTracks.trkPt [iTrk];
 			double eta = tTracks.trkEta[iTrk]; 
 			double phi = tTracks.trkPhi[iTrk];
@@ -316,7 +316,7 @@ int main( int argc, const char *argv[] )
 		// === Particle loop === //
 		for(int iPart = 0; iPart < tTracks.nParticle; iPart++)
 		{
-		
+
 			double pt  = tTracks.pPt [iPart];
 			double eta = tTracks.pEta[iPart];
 			double phi = tTracks.pPhi[iPart];

@@ -74,17 +74,17 @@ bool isProt(float p, float dEdx)
 }
 
 // GetPID
-// 10 - unknown
+// 99 - pion
 //  1 - pion
 //  2 - kaon
 //  3 - prot
-int GetPID(float p, float dEdx)
+int GetPID(float p, float dEdx, float eta)
 {
-	int PID = 99;
-	if ( isPion(p, dEdx) == true) {PID = 1; return PID;}
-	if ( isKaon(p, dEdx) == true) {PID = 2; return PID;}
-	if ( isProt(p, dEdx) == true) {PID = 3; return PID;}
-	return PID;
+	if ( 0.8 < fabs(eta) ) return 99;
+	if ( isPion(p, dEdx) == true) {return 1;}
+	if ( isKaon(p, dEdx) == true) {return 2;}
+	if ( isProt(p, dEdx) == true) {return 3;}
+	return 99;
 }
 
 int McPID2AnaPID ( int McPID)

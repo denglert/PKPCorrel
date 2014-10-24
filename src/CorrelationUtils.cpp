@@ -71,6 +71,7 @@ void CorrelationFramework::SetupForProcess()
 // - SetupForPreprocess()
 void CorrelationFramework::SetupForPreprocess()
 {
+	log = new LogFile("log");
 
 	// current event
 	Setup_TH2Ds_nCorrnPt( correl2D_currev_signal, nCorrTyp, nPtBins, "correl2D_currev", "signal" );
@@ -172,36 +173,45 @@ void CorrelationFramework::SignalCorrelation(EventData *ev)
 {
 	int nTrkA = (*ev).tracks.size();
 	for (int iTrkA = 0; iTrkA < nTrkA; iTrkA++)
+	{
+
+		double iPID = (*ev).tracks[iTrkA].pid;
+		double ipt  = (*ev).tracks[iTrkA].pt;
+		double ieta = (*ev).tracks[iTrkA].eta;
+		double iphi = (*ev).tracks[iTrkA].phi;
+
+		int ptBin_TriggerCh = ptbin(  0  , ipt );
+		int ptBin_TriggerID = ptbin( iPID, ipt );
+
+		bool IsTriggerPIDparticle = ( iPID != 99 );
+
+		bool IsTriggerInsideReferencePtRange =  ( (ptref1 < ipt) && ( ipt < ptref2 ));
+		bool IsTriggerInsideChParticlPtRange =  ( ptBin_TriggerCh != -1 );
+		bool IsTriggerInsideIDParticlPtRange =  ( ptBin_TriggerID != -1 );
+		bool IsTriggertruePID                = IsTriggerPIDparticle*IsTriggerInsideIDParticlPtRange;
+
+		double  iw0 = CorrelationFramework::trackWeight(    0 , ipt, ieta, iphi); 
+		double iw;
+		if ( IsTriggertruePID )
+		{iw  = CorrelationFramework::trackWeight( iPID , ipt, ieta, iphi); }
+
 	for (int jTrkA = 0; jTrkA < nTrkA; jTrkA++)
 	{
 
 		if( iTrkA == jTrkA ) continue;
 
-		double iPID = (*ev).tracks[iTrkA].pid;
-		double jPID = (*ev).tracks[jTrkA].pid;
-		double ipt  = (*ev).tracks[iTrkA].pt;
 		double jpt  = (*ev).tracks[jTrkA].pt;
-		double ieta = (*ev).tracks[iTrkA].eta;
 		double jeta = (*ev).tracks[jTrkA].eta;
-		double iphi = (*ev).tracks[iTrkA].phi;
 		double jphi = (*ev).tracks[jTrkA].phi;
-
-		int ptBin_TriggerCh = ptbin(  0  , ipt );
-		int ptBin_TriggerID = ptbin( iPID, ipt );
-
-		int ptBin_AssociaCh = ptbin(   0 , jpt );
-		int ptBin_AssociaID = ptbin( jPID, jpt );
-
-		bool IsTriggerPIDparticle = ( iPID != 99 );
-		bool IsAssociaPIDparticle = ( jPID != 99 );
-
-		bool IsTriggerInsideReferencePtRange =  ( (ptref1 < ipt) && ( ipt < ptref2 ));
-		bool IsTriggerInsideChParticlPtRange =  ( ptBin_TriggerCh != -1 );
-		bool IsTriggerInsideIDParticlPtRange =  ( ptBin_TriggerID != -1 );
 
 		bool IsAssociaInsideReferencePtRange =  ( ptref1 < jpt) && ( jpt < ptref2 );
 
-		double w = CorrelationFramework::trackWeight( iPID, ipt, ieta, iphi)*CorrelationFramework::trackWeight( jPID, jpt, jeta, jphi);
+		double  jw0 = CorrelationFramework::trackWeight(    0 , jpt, jeta, jphi); 
+
+		double w0 = iw0 * jw0;
+		double w;
+		if (IsTriggertruePID)
+		{w  = iw  * jw0;}
 
 		double dEtaA = dEta( ieta, jeta );
 		double dPhiA = dPhi( iphi, jphi );
@@ -211,28 +221,35 @@ void CorrelationFramework::SignalCorrelation(EventData *ev)
 		{		  
 			// charged particle reference
 			if ( IsTriggerInsideReferencePtRange )
-			{ correl2D_currev_cpar_ref_signal->Fill(dEtaA, dPhiA, w); }
+			{ correl2D_currev_cpar_ref_signal->Fill(dEtaA, dPhiA, w0); }
 
 			// charged particle
 			if ( IsTriggerInsideChParticlPtRange )
-			{ correl2D_currev_signal[ 0 ][ ptBin_TriggerCh ]->Fill(dEtaA, dPhiA, w); }
+			{ correl2D_currev_signal[ 0 ][ ptBin_TriggerCh ]->Fill(dEtaA, dPhiA, w0); }
 
 			// PID particle
 			if ( IsTriggerPIDparticle && IsTriggerInsideIDParticlPtRange )
 			{  correl2D_currev_signal[ (*ev).tracks[iTrkA].pid ][ ptBin_TriggerID ]->Fill(dEtaA, dPhiA, w);};
 		}
 
-		if ( DoSelfCorrelation )
-		{
-			// self correlation - charged particle
-			if ( IsTriggerInsideChParticlPtRange && ( ptBin_TriggerCh == ptBin_AssociaCh ) )
-			{ correl2D_self_currev_signal[ 0 ][ ptBin_TriggerCh ]->Fill(dEtaA, dPhiA, w); }
+// Commented out, need to be reviewed if you want to activate this feature
+//		if ( DoSelfCorrelation )
+//		{
+//			double jPID = (*ev).tracks[jTrkA].pid;
+//			int ptBin_AssociaID = ptbin( jPID, jpt );
+//			bool IsAssociaPIDparticle = ( jPID != 99 );
+//			int ptBin_AssociaCh = ptbin(   0 , jpt );
+//
+//			// self correlation - charged particle
+//			if ( IsTriggerInsideChParticlPtRange && ( ptBin_TriggerCh == ptBin_AssociaCh ) )
+//			{ correl2D_self_currev_signal[ 0 ][ ptBin_TriggerCh ]->Fill(dEtaA, dPhiA, w); }
+//
+//			// self correlation - pid particle
+//			if ( IsTriggerPIDparticle && IsAssociaPIDparticle && IsTriggerInsideIDParticlPtRange && ( ptBin_TriggerID == ptBin_AssociaID ) )
+//			{ correl2D_self_currev_signal[ (*ev).tracks[iTrkA].pid ][ ptBin_TriggerID ]->Fill(dEtaA, dPhiA, w); }
+//		}
 
-			// self correlation - pid particle
-			if ( IsTriggerPIDparticle && IsAssociaPIDparticle && IsTriggerInsideIDParticlPtRange && ( ptBin_TriggerID == ptBin_AssociaID ) )
-			{ correl2D_self_currev_signal[ (*ev).tracks[iTrkA].pid ][ ptBin_TriggerID ]->Fill(dEtaA, dPhiA, w); }
-		}
-
+	}
 	}
 }
 
@@ -240,7 +257,6 @@ void CorrelationFramework::SignalCorrelation(EventData *ev)
 // - CorrelationFramework::MixedCorrelation( ... )
 void CorrelationFramework::MixedCorrelation( EventData *ev, std::deque< EventData > **&EventCache)
 {
-
 	int nTrkA = (*ev).tracks.size();
 
 	int nMixEvs = EventCache[ ev->GetMultiplicityBin_EvM() ][ ev->GetzVtxBin() ].size();
@@ -262,68 +278,80 @@ void CorrelationFramework::MixedCorrelation( EventData *ev, std::deque< EventDat
 		int nTrkB = EventCache[multBin][zvtxBin][iEvB].tracks.size();
 
 		for (int iTrkA = 0; iTrkA < nTrkA; iTrkA++)
-		for (int jTrkB = 0; jTrkB < nTrkB; jTrkB++)
 		{
 
 		   double iPID = (*ev).tracks[iTrkA].pid;
-		   double jPID = EventCache[multBin][zvtxBin][iEvB].tracks[jTrkB].pid;
 		   double ipt  = (*ev).tracks[iTrkA].pt;
-		   double jpt  = EventCache[multBin][zvtxBin][iEvB].tracks[jTrkB].pt;
 		   double ieta = (*ev).tracks[iTrkA].eta;
-		   double jeta = EventCache[multBin][zvtxBin][iEvB].tracks[jTrkB].eta;
 		   double iphi = (*ev).tracks[iTrkA].phi;
-		   double jphi = EventCache[multBin][zvtxBin][iEvB].tracks[jTrkB].phi;
-			
-			double ptassoc = EventCache[multBin][zvtxBin][iEvB].tracks[jTrkB].pt;
 
 			int ptBin_TriggerCh = ptbin(   0 , ipt );
 			int ptBin_TriggerID = ptbin( iPID, ipt );
 
-			int ptBin_AssociaCh = ptbin(    0, jpt );
-			int ptBin_AssociaID = ptbin( jPID, jpt );
-
 			bool IsTriggerPIDparticle = ( iPID != 99 );
-			bool IsAssociaPIDparticle = ( jPID != 99 );
 
 			bool IsTriggerInsideReferencePtRange =  ( ptref1 < ipt) && ( ipt < ptref2 );
 			bool IsTriggerInsideChParticlPtRange =  ( ptBin_TriggerCh != -1    );
 			bool IsTriggerInsideIDParticlPtRange =  ( ptBin_TriggerID != -1    );
+
+
+		for (int jTrkB = 0; jTrkB < nTrkB; jTrkB++)
+		{
+
+		   double jpt  = EventCache[multBin][zvtxBin][iEvB].tracks[jTrkB].pt;
+		   double jeta = EventCache[multBin][zvtxBin][iEvB].tracks[jTrkB].eta;
+		   double jphi = EventCache[multBin][zvtxBin][iEvB].tracks[jTrkB].phi;
+			
+			double ptassoc = EventCache[multBin][zvtxBin][iEvB].tracks[jTrkB].pt;
+
+
+
+
 
 			bool IsAssociaInsideReferencePtRange =  ( ptref1 < jpt ) && ( jpt < ptref2 );
 
 			double dEtaB = dEta( ieta, jeta);
 			double dPhiB = dPhi( iphi, jphi);
 
-			double w = CorrelationFramework::trackWeight( iPID, ipt, ieta, iphi)*CorrelationFramework::trackWeight( jPID, jpt, jeta, jphi);
+			double w0 = CorrelationFramework::trackWeight(   0 , ipt, ieta, iphi)*CorrelationFramework::trackWeight(   0 , jpt, jeta, jphi);
+			double w  = CorrelationFramework::trackWeight( iPID, ipt, ieta, iphi)*CorrelationFramework::trackWeight(   0 , jpt, jeta, jphi);
 
 			// Associated particle pt is in reference range
 			if ( IsAssociaInsideReferencePtRange )
 			{		  
 				// charged particle reference
 				if ( IsTriggerInsideReferencePtRange )
-				{ correl2D_currev_cpar_ref_backgr->Fill(dEtaB, dPhiB, w); }
+				{ correl2D_currev_cpar_ref_backgr->Fill(dEtaB, dPhiB, w0); }
 
 				// charged particle
 				if ( IsTriggerInsideChParticlPtRange )
-				{ correl2D_currev_backgr[ 0 ][ ptBin_TriggerCh ]->Fill(dEtaB, dPhiB, w); }
+				{ correl2D_currev_backgr[ 0 ][ ptBin_TriggerCh ]->Fill(dEtaB, dPhiB, w0); }
 
 				// PID particle
 				if ( IsTriggerPIDparticle && IsTriggerInsideIDParticlPtRange )
 				{  correl2D_currev_backgr[ (*ev).tracks[iTrkA].pid ][ ptBin_TriggerID ]->Fill(dEtaB, dPhiB, w);};
 			}
 
-			if ( DoSelfCorrelation )
-			{
-			// self correlation - charged particle
-			if ( IsTriggerInsideChParticlPtRange && ( ptBin_TriggerCh == ptBin_AssociaCh ) )
-			{ correl2D_self_currev_backgr[ 0 ][ ptBin_TriggerCh ]->Fill(dEtaB, dPhiB, w); }
+// Commented out, need to be reviewed if you want to activate this feature
+//			if ( DoSelfCorrelation )
+//			{
+//		   double jPID = EventCache[multBin][zvtxBin][iEvB].tracks[jTrkB].pid;
+//			bool IsAssociaPIDparticle = ( jPID != 99 );
+//			int ptBin_AssociaID = ptbin( jPID, jpt );
+//			int ptBin_AssociaCh = ptbin(    0, jpt );
+//
+//			// self correlation - charged particle
+//			if ( IsTriggerInsideChParticlPtRange && ( ptBin_TriggerCh == ptBin_AssociaCh ) )
+//			{ correl2D_self_currev_backgr[ 0 ][ ptBin_TriggerCh ]->Fill(dEtaB, dPhiB, w); }
+//
+//			// self correlation - pid particle
+//			if ( IsTriggerPIDparticle && IsAssociaPIDparticle && IsTriggerInsideIDParticlPtRange && ( ptBin_TriggerID == ptBin_AssociaID ) )
+//			{ correl2D_self_currev_backgr[ (*ev).tracks[iTrkA].pid ][ ptBin_TriggerID ]->Fill(dEtaB, dPhiB, w); }
+//			}
 
-			// self correlation - pid particle
-			if ( IsTriggerPIDparticle && IsAssociaPIDparticle && IsTriggerInsideIDParticlPtRange && ( ptBin_TriggerID == ptBin_AssociaID ) )
-			{ correl2D_self_currev_backgr[ (*ev).tracks[iTrkA].pid ][ ptBin_TriggerID ]->Fill(dEtaB, dPhiB, w); }
-			}
 
 
+		}
 
 		}
 	}

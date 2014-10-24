@@ -14,7 +14,10 @@ flag=$1
 # parameters
 
 #workdir=MinBias_Etalon_2nd
-workdir=HighMultiplicty_1nw
+workdir=MinBias_withTrackCorrection_2nw_eta_0.8_fixedcode
+dotrkCorr=yes
+trkCorrlabel=batchjob_TrackCorrection_full_mtrkdedx_added_minptfixed
+trkCorrFile=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/trkCorr/${trkCorrlabel}/trkCorrections_0.root
 nEvents=-1
 queue=2nw
 
@@ -24,13 +27,16 @@ queue=2nw
 # ./submitall.sh test
 # parameteres
 testworkdir=testsubmission
-testnEvents=100
+testdotrkCorr=yes
+testtrkCorrlabel=batchjob_TrackCorrection_full_mtrkdedx_added_minptfixed
+testtrkCorrFile=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/trkCorr/${trkCorrlabel}/trkCorrections_0.root
+testnEvents=10
 testqueue=test
 
 
 ##########################################################
 # script environment
-inputlist="list_highmult"
+inputlist="list_minbias"
 
 sourcedir=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/src
 batchdir=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/batch
@@ -65,7 +71,7 @@ if [ "$flag" == "test" ]; then
 	for (( i = 1; i < 3; i++ )); do
 		source=$(awk "NR == $i" $inputlist)
 		echo $source 
-		bsub -J PreProcess_PKP_test_$i -q $testqueue tasks.sh $testworkdir $source $i $testnEvents 
+		bsub -J PreProcess_PKP_test_$i -q $testqueue tasks.sh $testworkdir $source $testdotrkCorr $testtrkCorrFile $i $testnEvents 
 	done
 elif [ "$flag" == "full" ]; then
 	# Remove previous workdir and create new one
@@ -85,7 +91,7 @@ elif [ "$flag" == "full" ]; then
 	for (( i = 1; i < ($lim); i++ )); do
 	source=$(awk "NR == $i" $inputlist)
 	echo $source 
-	bsub -J PrepProcess_PKP_$i -q $queue tasks.sh $workdir $source $i $nEvents
+	bsub -J PrepProcess_PKP_$i -q $queue tasks.sh $workdir $source $dotrkCorr $trkCorrFile $i $nEvents
 	done
 fi 
 

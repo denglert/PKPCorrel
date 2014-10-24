@@ -26,7 +26,7 @@ void plottable( TH3D **table, const char figbasename[] )
 	{ ptbw[i] = (ptMax[i]-ptMin[i])/npt[i]; }
 	
 	for (int pid = 0; pid < nParticles; pid++)
-	for (int ptBin = 1; ptBin < npt[pid]; ptBin++)
+	for (int ptBin = 1; ptBin < (npt[pid]+1); ptBin++)
 	{
 		TCanvas canvas_table ("trkTable", ";Eta;Phi", 900, 600);
 	  	canvas_table.Divide(2,1);
@@ -49,6 +49,49 @@ void plottable( TH3D **table, const char figbasename[] )
 		
 		canvas_table.SaveAs(tableFigPNG.c_str() );
 		canvas_table.SaveAs(tableFigPDF.c_str() );
+
+	  	canvas_table.cd(1);
+	  	histo->GetXaxis()->SetRangeUser(-1.0,1.0);
+	  	histo->Draw("SURF1");
+	  	canvas_table.cd(2);
+	   histo->Draw("COLZ");
+
+		tableFigBase = Form("etacut_1_%s_typ_%d_pt_%.3f-%.3f", figbasename, pid, pt1, pt2);
+		
+		tableFigPNG = tableFigBase+".png";
+		tableFigPDF = tableFigBase+".pdf";
+		
+		canvas_table.SaveAs(tableFigPNG.c_str() );
+		canvas_table.SaveAs(tableFigPDF.c_str() );
+
+	  	canvas_table.cd(1);
+	  	histo->GetXaxis()->SetRangeUser(-0.5,0.5);
+	  	histo->Draw("SURF1");
+	  	canvas_table.cd(2);
+	   histo->Draw("COLZ");
+
+		tableFigBase = Form("etacut_0.5_%s_typ_%d_pt_%.3f-%.3f", figbasename, pid, pt1, pt2);
+		
+		tableFigPNG = tableFigBase+".png";
+		tableFigPDF = tableFigBase+".pdf";
+		
+		canvas_table.SaveAs(tableFigPNG.c_str() );
+		canvas_table.SaveAs(tableFigPDF.c_str() );
+
+	  	canvas_table.cd(1);
+	  	histo->GetXaxis()->SetRangeUser(-1.5,1.5);
+	  	histo->Draw("SURF1");
+	  	canvas_table.cd(2);
+	   histo->Draw("COLZ");
+
+		tableFigBase = Form("etacut_1.5_%s_typ_%d_pt_%.3f-%.3f", figbasename, pid, pt1, pt2);
+		
+		tableFigPNG = tableFigBase+".png";
+		tableFigPDF = tableFigBase+".pdf";
+		
+		canvas_table.SaveAs(tableFigPNG.c_str() );
+		canvas_table.SaveAs(tableFigPDF.c_str() );
+
 	}
 }
 
@@ -76,13 +119,15 @@ int main( int argc, const char *argv[] )
  TH3D **hgen       = Read_trkEff( f, "hgen typ" );
  TH3D **hmatched   = Read_trkEff( f, "hmatched typ" );
  TH3D **hmultrec   = Read_trkEff( f, "hmultrec typ" );
+ TH3D **heff       = Read_trkEff( f, "heff part" );
 
+ plottable( hgen,       "hgen");
  plottable( trkCorr,    "trkCorr");
+ plottable( heff,       "heff");
  plottable( hfake,      "hfake");
  plottable( hreco,      "hreco");
  plottable( hsecondary, "hsecondary");
  plottable( hreco,      "hreal");
- plottable( hgen,       "hgen");
  plottable( hmatched,   "hmatched");
  plottable( hmultrec,   "hmultrec");
 

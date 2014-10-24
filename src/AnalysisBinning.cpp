@@ -80,23 +80,23 @@ const float assoptmax = 3.0;
 ////	  { 300, 350 }
 //};
 
-//// MINBIAS
-//const int nMultiplicityBins_Ana_HDR = 5;
-//const int multiplicitybins_Ana[nMultiplicityBins_Ana_HDR][2] = 
-//{
-//	  {   0,  30 },
-//	  {  30,  50 },
-//	  {  50,  80 },
-//	  {  80, 100 },
-//	  { 100, 120 }
-//};
-
-// MC comparison
-const int nMultiplicityBins_Ana_HDR = 1;
+// MINBIAS
+const int nMultiplicityBins_Ana_HDR = 5;
 const int multiplicitybins_Ana[nMultiplicityBins_Ana_HDR][2] = 
 {
-	  {   0,  120 },
+	  {   0,  30 },
+	  {  30,  50 },
+	  {  50,  80 },
+	  {  80, 100 },
+	  { 100, 120 }
 };
+
+//// MC comparison
+//const int nMultiplicityBins_Ana_HDR = 1;
+//const int multiplicitybins_Ana[nMultiplicityBins_Ana_HDR][2] = 
+//{
+//	  {   0,  120 },
+//};
 
 // HIGH-MULTIPLICITY
 //const int nMultiplicityBins_Ana_HDR = 4;
@@ -248,7 +248,7 @@ int ptbin(int TypBin, double pt)
 		for(int ptBin = 0; ptBin < nPtBins_[0]; ptBin++)
 		{ if ( (trigptbins[0][ptBin][0] <= pt) && (pt <= trigptbins[0][ptBin][1] ) ) {return ptBin;}; }
 	}
-	// if TypBin = 1,2,3
+	// if TypBin = 0,1,2,3
 	else
 	{
 		for(int ptBin = 0; ptBin < nPtBins_[TypBin]; ptBin++)

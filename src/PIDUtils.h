@@ -56,7 +56,7 @@ extern const float mindEdx;
 
 float BBcurve1c(float *x, const float *par);
 double BBcurve1 (double *x, double *par);
-int  GetPID(float p, float dEdx);
+int GetPID(float p, float dEdx, float eta);
 int McPID2AnaPID ( int McPID);
 bool isPion(float p, float dEdx);
 bool isKaon(float p, float dEdx);

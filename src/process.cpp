@@ -15,6 +15,7 @@
 int main( int argc, const char *argv[] )
 { 
 
+
  if(argc != 3)
  { std::cerr << "Usage: process <.root file to be processed> <tag>" << std::endl; }
 
@@ -89,7 +90,7 @@ int main( int argc, const char *argv[] )
  {
 	CFW.makeFigv2vspT_allparticles(multBin, tag);
 	CFW.makeFigv3vspT_allparticles(multBin, tag);
-	CFW.makeFigv2vspT_allparticles_with_selfcorrelation(multBin, tag);
+//	CFW.makeFigv2vspT_allparticles_with_selfcorrelation(multBin, tag);
 
  }
 

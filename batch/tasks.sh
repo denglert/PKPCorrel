@@ -10,15 +10,16 @@ tdir=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_
 workdir=$tdir$1
 # preprocessor parameters:
 file=$2
-jobid=$3
-nEvents=$4
+dotrkCorr=$3
+trkCorrFile=$4
+jobid=$5
+nEvents=$6
 
 # workdir is tdir/arg2
 cd $workdir
 eval `scramv1 runtime -sh`
-#cmsenv       ## doesn't work
 
 ### preprocessor usage:
 ### preprocessor <inputfile> <jobid> <nEvents> 
 ### Run preprocessor
-../../bin/preprocess $file $jobid $nEvents
+../../bin/preprocess $file $dotrkCorr $trkCorrFile $jobid $nEvents

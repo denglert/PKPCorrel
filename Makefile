@@ -46,8 +46,9 @@ tag_preproc_gen=$(label_preproc_gen)_nEv_$(nEvents_preproc_gen)
 #batchjobtag=full_withone_ev_1nd_temp
 #batchjobtag=full_withone_ev_and_faultyassocPID_temp
 #batchjobtag=MinBias_Etalon_2nd
-batchjobtag=MinBias_HighMulti_All
-filetoprocess=correl_MinBiasHighMulti.root
+#batchjobtag=MinBias_HighMulti_All
+batchjobtag=MinBias_noTrackCorrection_1nw_eta_0.8_temp
+filetoprocess=correl_ana.root
 #filetoprocess=correl_selection20.root
 
 ##################################
@@ -74,8 +75,8 @@ procbatchjob_and_publish_wwwwtag=FULLDATA_EventSel_Finezvtxbins_dEtamax_3.00_rev
 #batchjobtag=full_withone_ev_1nd_temp
 #batchjobtag=full_withone_ev_and_faultyassocPID_temp
 #batchjobtag=MinBias_Etalon_2nd
-batchjobtag=MinBias_HighMulti_All
-filetoprocess=correl_MinBiasHighMulti.root
+#batchjobtag=MinBias_HighMulti_All
+#filetoprocess=correl_MinBiasHighMulti.root
 #filetoprocess=correl_selection20.root
 
 
@@ -94,22 +95,27 @@ publish_wwwtag=MinBias_HighMulti_All_rev4
 # Commands:  preproctest, proctest, test
 #testfile=root://eoscms.cern.ch//eos/cms/store/group/phys_heavyions/denglert/pPb2013_minBiasForest_merged/pPb2013_minBias_ReReco_run_210498-210658_merged.root
 #testfile=root://eoscms//eos/cms/store/group/phys_heavyions/denglert/pPb2013_minBiasForest_merged/HiForest_pPb2013_ReReco_run_210498-210658_9.root
-testfile=root://eoscms.cern.ch//eos/cms/store/group/phys_heavyions/denglert/pPb2013_HighMultiplicityForest_merged/HIRun2013-28Sep2013-v1_pPb_run_210498-210658/pPb2013_HM_28Sep2013_v1_HiForest_pPb_run_210498-210658_0.root
+testfile=root://eoscms//eos/cms/store/group/phys_heavyions/denglert/pPb2013_minBiasForest_merged/HiForest_pPb2013_ReReco_run_210498-210658_0.root
+#testfile=root://eoscms.cern.ch//eos/cms/store/group/phys_heavyions/denglert/pPb2013_HighMultiplicityForest_merged/HIRun2013-28Sep2013-v1_pPb_run_210498-210658/pPb2013_HM_28Sep2013_v1_HiForest_pPb_run_210498-210658_0.root
 testnEvents=10000
 testjobid=0
+testdotrkCorr=yes
+testtrkCorrlabel=TrackCorrection_full_pT_typdep_coarsebins
+testtrkCorrFile=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/trkCorr/$(trkCorrlabel)/trkCorrections_0.root
 
 #########################
 #### - EtaPhiDistr - ####
 #########################
 # commands: EtaPhiDistr
 
-EtaPhiDistr_label=EtaPhiDistr_pPb_DATA_trkCorrected_pT_typdep_coarsebins
+EtaPhiDistr_label=EtaPhiDistr_pPb_DATA_trkCorrected_with_PIDcorrections
 # DATA
 EtaPhiDistr_inputfile=root://eoscms.cern.ch//store/group/phys_heavyions/denglert/pPb2013_HighMultiplicityForest_merged/HIRun2013-28Sep2013-v1_pPb_run_210498-210658/pPb2013_HM_28Sep2013_v1_HiForest_pPb_run_210498-210658_0.root
 # MC
 #EtaPhiDistr_inputfile=root://eoscms.cern.ch//store/group/phys_heavyions/denglert/pPb_MC_HIJING_MB_dEdxcalib_on_500kMCEv_1.9m/pPb_MC_HIJING_MB_mergedHiForest_1.9mEv.root
 EtaPhiDistr_dotrkCorr=yes
-EtaPhiDistr_trkCorrlabel=TrackCorrection_full_pT_typdep_coarsebins
+#EtaPhiDistr_trkCorrlabel=TrackCorrection_full_pT_typdep_coarsebins
+EtaPhiDistr_trkCorrlabel=batchjob_TrackCorrection_full_mtrkdedx_added_minptfixed
 EtaPhiDistr_trkCorr=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/trkCorr/$(EtaPhiDistr_trkCorrlabel)/trkCorrections_0.root
 EtaPhiDistr_nEvents=100000
 EtaPhiDistr_jobid=0
@@ -120,7 +126,7 @@ EtaPhiDistr_tag=$(EtaPhiDistr_label)_nEv_$(EtaPhiDistr_nEvents)
 #############################
 # commands: TrackCorrection
 
-TrackCorrection_label=TrackCorrection_full_mtrkdedx_added_minptfixed
+TrackCorrection_label=TrackCorrection_charge_negative
 TrackCorrection_inputfileDATA=root://eoscms.cern.ch//store/group/phys_heavyions/denglert/pPb2013_HighMultiplicityForest_merged/HIRun2013-28Sep2013-v1_pPb_run_210498-210658/pPb2013_HM_28Sep2013_v1_HiForest_pPb_run_210498-210658_0.root
 TrackCorrection_inputfileMC=root://eoscms.cern.ch//store/group/phys_heavyions/denglert/pPb_MC_HIJING_MB_HiForest_dEdxcalib_on_500kMCEv_1.9m_mtrkdedx_added_minptfix/pPb_MC_HIJING_MB_mergedHiForest_1.9mEv.root
 TrackCorrection_sampleType=kPAMC
@@ -134,7 +140,8 @@ TrackCorrection_tag=$(TrackCorrection_label)
 ### - TrackCorrection_viewer - ####
 ###################################
 # commands: TrackCorrection_viewer
-trkdir_TrackCorrection_viewer=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/trkCorr/TrackCorrection_full_pT_typdep_coarsebins/
+#trkdir_TrackCorrection_viewer=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/trkCorr/batchjob_TrackCorrection_full_mtrkdedx_added_minptfixed/
+trkdir_TrackCorrection_viewer=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/trkCorr/TrackCorrection_charge_negative/
 inputfilebase_TrackCorrection_viewer=trkCorrections_0.root
 inputfile_TrackCorrection_viewer=$(trkdir_TrackCorrection_viewer)$(inputfilebase_TrackCorrection_viewer)
 
@@ -222,7 +229,7 @@ preproctest : build_preproc
 	@echo Testfile: $(testfile)
 	@echo Number of events: $(testnEvents)
 	@echo
-	cd ./preprocessed/test; ../../bin/preprocess $(testfile) $(testjobid) $(testnEvents);
+	cd ./preprocessed/test; ../../bin/preprocess $(testfile) $(testdotrkCorr) $(testtrkCorrFile) $(testjobid) $(testnEvents);
 
 proctest : build_proc
 	@rm -rf ./correl1D/test ./correl2D/test ./sigtobkgrvspt/test/ ./spectrum/test/ ./v2vspt/test ./fit/test;

@@ -50,6 +50,21 @@ void charargtest( const char arg[] )
 	std::cerr << arg << std::endl;
 };
 
+class AnaConfig {
+public :
+   AnaConfig(){};
+   ~AnaConfig(){};
+
+	// Variables
+
+	// Functions
+};
+
+AnaConfig::AnaConfig()
+{
+}
+
+
 int main( int argc, const char *argv[] )
 { 
 //	std::cerr << "hello" << std::endl;

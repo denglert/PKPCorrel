@@ -2,11 +2,13 @@
 #define GRAPHSTYLES_H
 
 #include "TGraphErrors.h"
+#include "TLatex.h"
 #include "AnalysisFW.h"
 #include "AnalysisBinning.h"
 
 const double figuretextsize = 0.043;
 const double figuretextsize_correl1D = 0.035;
+const int fillstyle = 3009;
 
 ///////////////////////////////
 // cpar_v2
@@ -18,6 +20,16 @@ TGraphErrors cpar_v2 (int npoint, double *pt, double *v2, double *pt_Error, doub
 	// full circle
 	graph.SetMarkerStyle(21);
 	graph.SetMarkerSize(1);
+	return graph;
+};
+
+TGraphErrors cpar_v2_syst (int npoint, double *pt, double *v2, double *pt_Error, double *v2_Error )
+{ 
+	TGraphErrors graph (npoint, pt, v2, pt_Error, v2_Error);
+	graph.SetFillStyle(0);
+	graph.SetMarkerSize(0);
+	graph.SetLineColor(16);
+	graph.SetLineWidth(2);
 	return graph;
 };
 
@@ -35,6 +47,16 @@ TGraphErrors pion_v2 (int npoint, double *pt, double *v2, double *pt_Error, doub
 	return graph;
 };
 
+TGraphErrors pion_v2_syst (int npoint, double *pt, double *v2, double *pt_Error, double *v2_Error )
+{ 
+	TGraphErrors graph (npoint, pt, v2, pt_Error, v2_Error);
+	graph.SetFillStyle(0);
+	graph.SetMarkerSize(0);
+	graph.SetLineColor(46);
+	graph.SetLineWidth(2);
+	return graph;
+};
+
 //////////////////////////////////
 // kaon_v2
 TGraphErrors kaon_v2 (int npoint, double *pt, double *v2, double *pt_Error, double *v2_Error )
@@ -48,6 +70,16 @@ TGraphErrors kaon_v2 (int npoint, double *pt, double *v2, double *pt_Error, doub
 	return graph;
 };
 
+TGraphErrors kaon_v2_syst (int npoint, double *pt, double *v2, double *pt_Error, double *v2_Error )
+{ 
+	TGraphErrors graph (npoint, pt, v2, pt_Error, v2_Error);
+	graph.SetFillStyle(0);
+	graph.SetMarkerSize(0);
+	graph.SetLineColor(8);
+	graph.SetLineWidth(2);
+	return graph;
+};
+
 //////////////////////////////////
 // prot_v2
 TGraphErrors prot_v2 (int npoint, double *pt, double *v2, double *pt_Error, double *v2_Error )
@@ -58,6 +90,16 @@ TGraphErrors prot_v2 (int npoint, double *pt, double *v2, double *pt_Error, doub
 	graph.SetMarkerColor(kBlue);
 	graph.SetMarkerStyle(20);
 	graph.SetMarkerSize(1);
+	return graph;
+};
+
+TGraphErrors prot_v2_syst (int npoint, double *pt, double *v2, double *pt_Error, double *v2_Error )
+{ 
+	TGraphErrors graph (npoint, pt, v2, pt_Error, v2_Error);
+	graph.SetFillStyle(0);
+	graph.SetMarkerSize(0);
+	graph.SetLineColor(38);
+	graph.SetLineWidth(2);
 	return graph;
 };
 
@@ -132,7 +174,7 @@ TLatex label_Ntrk_pt(double posx, double posy, double figuretextsize, int TypBin
 	int mult1 = multiplicity_Ana(multBin, 0, nMultiplicityBins_Ana_HDR);
 	int mult2 = multiplicity_Ana(multBin, 1, nMultiplicityBins_Ana_HDR);
 
-	std::string binlabel  = Form("#splitline{#splitline{  %d #leq N #leq %d}{ %.1f < p_{T}^{trig}  < %.1f GeV/c}}{ %.1f < p_{T}^{assoc} < %.1f GeV/c}", mult1, mult2, pt1, pt2, ptref1, ptref2);
+	std::string binlabel  = Form("#splitline{#splitline{  %d #leq N_{trk}^{offline} #leq %d}{ %.1f < p_{T}^{trig}  < %.1f GeV/c}}{ %.1f < p_{T}^{assoc} < %.1f GeV/c}", mult1, mult2, pt1, pt2, ptref1, ptref2);
 
 	TLatex tlabel( posx, posy, binlabel.c_str()); 
 	tlabel.SetTextSize(figuretextsize);
@@ -146,9 +188,9 @@ TLatex label_Ntrk_pt(double posx, double posy, double figuretextsize, int TypBin
 TLatex label_CorrTyp(double posx, double posy, double figuretextsize, int TypBin)
 {
 
-	std::string rightlabel = Form("%s - c.p.", particletype(TypBin).c_str());
+	std::string rightlabel = Form("%s - charged", particletype(TypBin).c_str());
 
-	std::string binlabel = Form("%s - c.p.", particletype(TypBin).c_str());
+	std::string binlabel = Form("%s - charged", particletype(TypBin).c_str());
 
 	TLatex tlabel( posx, posy, binlabel.c_str()); 
 	tlabel.SetTextSize(figuretextsize);

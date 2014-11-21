@@ -11,8 +11,8 @@ const double dEdxMax = 30;
 
 const double pminlog    = 0.1;
 const double pmaxlog    = 2.0;
-const double dEdxminlog = 0.1;
-const double dEdxmaxlog = 20;
+const double dEdxminlog = 0.2;
+const double dEdxmaxlog = 50;
  
 const double pminlin    = 0.1;
 const double pmaxlin    = 2.0;
@@ -201,7 +201,7 @@ void makedEdxvspFigloglog(TH2D* dEdxvsP, std::string figurename)
 	
 	gStyle->SetOptStat(0);
 	dEdxvsP->GetXaxis()->SetRangeUser(pminlin,pmaxlin);
-	dEdxvsP->GetYaxis()->SetRangeUser(dEdxminlin,dEdxmaxlin);
+	dEdxvsP->GetYaxis()->SetRangeUser(dEdxminlog,dEdxmaxlog);
 	dEdxvsP->GetXaxis()->SetTitle("p [GeV/c]");
 	
 	double pion_maxpcut  = BB_Pion_maxpcut;
@@ -212,7 +212,7 @@ void makedEdxvspFigloglog(TH2D* dEdxvsP, std::string figurename)
 	double prot_lowcut  = BB_Prot_mindEdxcut;
 	double prot_maxpcut = BB_Prot_maxpcut;
 	
-	TLine *BB_Pion_maxpcut  = new TLine(pion_maxpcut,0.1,pion_maxpcut,2); 
+	TLine *BB_Pion_maxpcut  = new TLine(pion_maxpcut,0.2,pion_maxpcut,2); 
 	
 	TLine *BB_Kaon_lowcut  = new TLine(0.6,kaon_lowcut,kaon_maxpcut,kaon_lowcut); 
 	TLine *BB_Kaon_maxpcut = new TLine(kaon_maxpcut,kaon_lowcut,kaon_maxpcut,4); 
@@ -278,8 +278,7 @@ void dEdxMaps::Fill(int PID, double p, double dedx)
 }
 
 
-//void dEdxMaps::PlotFigs(const char tag[])
-//{
-//void makedEdxvspFigloglog(TH2D* dEdxvsP, std::string figurename)
-//void makedEdxvspFiglinlin(TH2D* dEdxvsP, std::string figurename)
-//}
+// void dEdxMaps::PlotFigs(const char tag[])
+// {
+// 	makedEdxvspFigloglog(TH2D* dEdxvsP, std::string figurename)
+// }

@@ -143,6 +143,7 @@ class CorrelationFramework
 	void makeFigCorrel2D( std::string tag );
 	void makeFigv2vspT(int TypBin, int multBin, std::string tag);
 	void makeFigv2vspT_allparticles(int multBin, std::string tag);
+	void makeFigv2vspT_allparticles_ALICE_comparison(int multBin, std::string tag);
 	void makeFigv2vspT_HIN13002(std::string tag);
 	void makeFigv3vspT_allparticles(int multBin, std::string tag);
 	void makeFigv2vspT_allparticles_with_selfcorrelation(int multBin, std::string tag);
@@ -163,6 +164,8 @@ class CorrelationFramework
 
 	std::vector< double > Getv2_StatErrorvec( int TypBin, int multBin);
 	std::vector< double > Getv3_StatErrorvec( int TypBin, int multBin);
+	std::vector< double > Getv2_SystErrorvec( int TypBin, int multBin);
+	std::vector< double > Getv3_SystErrorvec( int TypBin, int multBin);
 
 	std::vector< double > Get_self_v2vec ( int TypBin, int multBin);
 	std::vector< double > Get_self_v2_StatErrorvec ( int TypBin, int multBin);

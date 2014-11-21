@@ -16,6 +16,7 @@ TGraphAsymmErrors ALICE_pPB_0_20_cpar()
   double p8404_d5x1y1_ystatplus[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
   int p8404_d5x1y1_numpoints = 9;
   TGraphAsymmErrors p8404_d5x1y1 = TGraphAsymmErrors(p8404_d5x1y1_numpoints, p8404_d5x1y1_xval, p8404_d5x1y1_yval, p8404_d5x1y1_xerrminus, p8404_d5x1y1_xerrplus, p8404_d5x1y1_yerrminus, p8404_d5x1y1_yerrplus);
+  p8404_d5x1y1.SetMarkerSize(1.4);
   p8404_d5x1y1.SetMarkerStyle(32);
   p8404_d5x1y1.SetLineColor(1);	
   p8404_d5x1y1.SetMarkerColor(1);	
@@ -36,6 +37,7 @@ TGraphAsymmErrors ALICE_pPB_0_20_pion()
   double p8404_d6x1y1_ystatplus[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
   int p8404_d6x1y1_numpoints = 9;
   TGraphAsymmErrors p8404_d6x1y1 = TGraphAsymmErrors(p8404_d6x1y1_numpoints, p8404_d6x1y1_xval, p8404_d6x1y1_yval, p8404_d6x1y1_xerrminus, p8404_d6x1y1_xerrplus, p8404_d6x1y1_yerrminus, p8404_d6x1y1_yerrplus);
+  p8404_d6x1y1.SetMarkerSize(1.4);
   p8404_d6x1y1.SetMarkerStyle(32);
   p8404_d6x1y1.SetLineColor(2);	
   p8404_d6x1y1.SetMarkerColor(2);	
@@ -56,6 +58,7 @@ TGraphAsymmErrors ALICE_pPB_0_20_kaon()
   double p8404_d7x1y1_ystatplus[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
   int p8404_d7x1y1_numpoints = 8;
   TGraphAsymmErrors p8404_d7x1y1 = TGraphAsymmErrors(p8404_d7x1y1_numpoints, p8404_d7x1y1_xval, p8404_d7x1y1_yval, p8404_d7x1y1_xerrminus, p8404_d7x1y1_xerrplus, p8404_d7x1y1_yerrminus, p8404_d7x1y1_yerrplus);
+  p8404_d7x1y1.SetMarkerSize(1.4);
   p8404_d7x1y1.SetMarkerStyle(32);
   p8404_d7x1y1.SetLineColor(3);	
   p8404_d7x1y1.SetMarkerColor(3);	
@@ -76,6 +79,7 @@ TGraphAsymmErrors ALICE_pPB_0_20_prot()
   double p8404_d8x1y1_ystatplus[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
   int p8404_d8x1y1_numpoints = 8;
   TGraphAsymmErrors p8404_d8x1y1 = TGraphAsymmErrors(p8404_d8x1y1_numpoints, p8404_d8x1y1_xval, p8404_d8x1y1_yval, p8404_d8x1y1_xerrminus, p8404_d8x1y1_xerrplus, p8404_d8x1y1_yerrminus, p8404_d8x1y1_yerrplus);
+  p8404_d8x1y1.SetMarkerSize(1.4);
   p8404_d8x1y1.SetMarkerStyle(32);
   p8404_d8x1y1.SetLineColor(4);	
   p8404_d8x1y1.SetMarkerColor(4);	

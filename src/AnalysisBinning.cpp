@@ -18,7 +18,7 @@ const int nCorrTyp_ = 4;
 ////////////////////////
 
 const int nPtBinsMax_      	= 7; 
-const int nPtBins_[nCorrTyp_] = { 6, 4, 4, 7 };
+const int nPtBins_[nCorrTyp_] = { 6, 3, 3, 6 };
 
 const float trigptbins[nCorrTyp_][nPtBinsMax_][2] = 
 {
@@ -32,14 +32,14 @@ const float trigptbins[nCorrTyp_][nPtBinsMax_][2] =
 	 {{  0.15,  0.40 },
 	  {  0.40,  0.60 },
 	  {  0.60,  0.80 },
-	  {  0.80,  1.00 },
+	  { -1.00, -1.00 },
 	  { -1.00, -1.00 },
 	  { -1.00, -1.00 },
 	  { -1.00, -1.00 }},
 	 {{  0.15,  0.40 },
 	  {  0.40,  0.60 },
 	  {  0.60,  0.80 },
-	  {  0.80,  0.90 },
+	  { -1.00, -1.00 },
 	  { -1.00, -1.00 },
 	  { -1.00, -1.00 },
 	  { -1.00, -1.00 }},
@@ -49,7 +49,7 @@ const float trigptbins[nCorrTyp_][nPtBinsMax_][2] =
 	  {  0.80,  1.00 },
 	  {  1.00,  1.20 },
 	  {  1.20,  1.40 },
-	  {  1.40,  1.60 }}
+	  {  0.80,  0.90 }}
 };
 
 const float ptref1 = 0.3;
@@ -64,39 +64,40 @@ const float assoptmax = 3.0;
 // Analysis multiplicity binning
 
 ////// MinBias and HighMultiplicity
-//const int nMultiplicityBins_Ana_HDR = 9;
+// const int nMultiplicityBins_Ana_HDR = 9;
+// const int multiplicitybins_Ana[nMultiplicityBins_Ana_HDR][2] = 
+// {
+// 	  {   0,  30 },
+// 	  {  30,  50 },
+// 	  {  50,  80 },
+// 	  {  80, 100 },
+// 	  { 100, 120 },
+// 	  { 120, 150 },
+// 	  { 150, 185 },
+// 	  { 185, 220 },
+// 	  { 220, 260 }
+////	  { 260, 300 }
+////	  { 300, 350 }
+//};
+
+
+// MINBIAS
+//const int nMultiplicityBins_Ana_HDR = 1;
 //const int multiplicitybins_Ana[nMultiplicityBins_Ana_HDR][2] = 
 //{
 //	  {   0,  30 },
 //	  {  30,  50 },
 //	  {  50,  80 },
 //	  {  80, 100 },
-//	  { 100, 120 },
-//	  { 120, 150 },
-//	  { 150, 185 },
-//	  { 185, 220 },
-//	  { 220, 260 }
-////	  { 260, 300 }
-////	  { 300, 350 }
+//	  { 100, 120 }
 //};
-
-// MINBIAS
-const int nMultiplicityBins_Ana_HDR = 5;
-const int multiplicitybins_Ana[nMultiplicityBins_Ana_HDR][2] = 
-{
-	  {   0,  30 },
-	  {  30,  50 },
-	  {  50,  80 },
-	  {  80, 100 },
-	  { 100, 120 }
-};
 
 //// MC comparison
-//const int nMultiplicityBins_Ana_HDR = 1;
-//const int multiplicitybins_Ana[nMultiplicityBins_Ana_HDR][2] = 
-//{
-//	  {   0,  120 },
-//};
+const int nMultiplicityBins_Ana_HDR = 1;
+const int multiplicitybins_Ana[nMultiplicityBins_Ana_HDR][2] = 
+{
+	  {   0,  120 }
+};
 
 // HIGH-MULTIPLICITY
 //const int nMultiplicityBins_Ana_HDR = 4;
@@ -106,8 +107,8 @@ const int multiplicitybins_Ana[nMultiplicityBins_Ana_HDR][2] =
 //	  { 150, 185 },
 //	  { 185, 220 },
 //	  { 220, 260 }
-//	  { 260, 300 }
-//	  { 300, 350 }
+////	  { 260, 300 }
+////	  { 300, 350 }
 //};
 
 //// Event Mix multiplicity binning
@@ -140,8 +141,8 @@ const int multiplicitybins_Ana[nMultiplicityBins_Ana_HDR][2] =
 //	  { 150, 185 },
 //	  { 185, 220 },
 //	  { 220, 260 }
-//	  { 260, 300 }
-//	  { 300, 350 }
+////	  { 260, 300 }
+////	  { 300, 350 }
 //};
 
 //MINBIAS
@@ -182,7 +183,7 @@ const float zvtxbins[nZvtxBins_][2] =
 	  {   1.0,   2.0 },
 	  {   2.0,   3.0 },
 	  {   3.0,   4.0 },
- 	  {   4.0,   5.0 },
+  	  {   4.0,   5.0 },
 	  {   5.0,   6.0 },
 	  {   6.0,   7.0 },
 	  {   7.0,   8.0 },
@@ -201,7 +202,7 @@ const double dEtaMax =  4.8;
 const double dEtaMin_plot = -3.0;
 const double dEtaMax_plot =  2.9;
 
-const double dPhiMin = -TMath::Pi()/2;
+const double dPhiMin = - TMath::Pi()/2;
 const double dPhiMax = 3*TMath::Pi()/2;
 
 const int ndEtaBins = 96;
@@ -210,12 +211,23 @@ const int ndPhiBins = 96;
 const double dEta_binWidth = (dEtaMax-dEtaMin)/ndEtaBins;
 const double dPhi_binWidth = (dPhiMax-dPhiMin)/ndPhiBins;
 
+// ALICE bin
+// const int negdEtaCut1Bin_ = 33;
+// //const int negdEtaCut1Bin_ = 19;
+// const int negdEtaCut2Bin_ = 40;
+// const int posdEtaCut1Bin_ = 57;
+// //const int posdEtaCut2Bin_ = 78;
+// const int posdEtaCut2Bin_ = 64;
+
+// CMS bins
 const int negdEtaCut1Bin_ = 9;
-//const int negdEtaCut1Bin_ = 19;
 const int negdEtaCut2Bin_ = 28;
 const int posdEtaCut1Bin_ = 69;
-//const int posdEtaCut2Bin_ = 78;
 const int posdEtaCut2Bin_ = 88;
+
+// Constrained bins
+//const int negdEtaCut1Bin_ = 19;
+//const int posdEtaCut2Bin_ = 78;
 
 const double negdEtaCut1 = (dEtaMin                ) + (dEta_binWidth*(negdEtaCut1Bin_-1));
 const double negdEtaCut2 = (dEtaMin + dEta_binWidth) + (dEta_binWidth*(negdEtaCut2Bin_-1));
@@ -248,7 +260,7 @@ int ptbin(int TypBin, double pt)
 		for(int ptBin = 0; ptBin < nPtBins_[0]; ptBin++)
 		{ if ( (trigptbins[0][ptBin][0] <= pt) && (pt <= trigptbins[0][ptBin][1] ) ) {return ptBin;}; }
 	}
-	// if TypBin = 0,1,2,3
+	// if TypBin = 1,2,3
 	else
 	{
 		for(int ptBin = 0; ptBin < nPtBins_[TypBin]; ptBin++)

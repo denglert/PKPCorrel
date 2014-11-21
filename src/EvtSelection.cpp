@@ -13,6 +13,11 @@ void EvtSelection::setupSkimTree_pPb( TFile *f, bool isOLD )
 }
 
 
+int EvtSelection::GetEntries()
+{
+	return SkimAna->GetEntries();
+}
+
 bool EvtSelection::isGoodEv_pPb( int iEv )
 {
 	SkimAna->GetEntry(iEv);

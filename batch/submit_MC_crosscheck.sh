@@ -14,9 +14,9 @@ flag=$1
 # parameters
 
 #workdir=MinBias_Etalon_2nd
-workdir=MC_comparison_genlevel_mergednTrk_2nd
-nEvents=-1
-queue=2nd
+workdir=MC_comparison_genlevel_2nw_500kEv
+nEvents=500000
+queue=2nw
 
 ####################
 ### --- TEST --- ###
@@ -26,7 +26,6 @@ queue=2nd
 testworkdir=MC_comparison_test
 testnEvents=5
 testqueue=test
-
 
 ##########################################################
 # script environment
@@ -65,7 +64,7 @@ if [ "$flag" == "test" ]; then
 	for (( i = 1; i < 3; i++ )); do
 		source=$(awk "NR == $i" $inputlist)
 		echo $source 
-		bsub -J PreProcess_PKP_test_$i -q $testqueue task_MC_crosscheck.sh $testworkdir $source $i $testnEvents 
+		bsub -J PKP_MC_crosscheck_test_$i -q $testqueue task_MC_crosscheck.sh $testworkdir $source $i $testnEvents 
 	done
 elif [ "$flag" == "full" ]; then
 	# Remove previous workdir and create new one
@@ -85,7 +84,8 @@ elif [ "$flag" == "full" ]; then
 	for (( i = 1; i < ($lim); i++ )); do
 	source=$(awk "NR == $i" $inputlist)
 	echo $source 
-	bsub -J PrepProcess_PKP_$i -q $queue task_MC_crosscheck.sh $workdir $source $i $nEvents
+	echo "bsub -J PKP_MC_crosscheck_test_$i -q $testqueue task_MC_crosscheck.sh $testworkdir $source $i $testnEvents"
+	bsub -J PKP_MC_crosscheck_$i -q $queue task_MC_crosscheck.sh $workdir $source $i $nEvents
 	done
 fi 
 

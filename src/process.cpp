@@ -89,6 +89,7 @@ int main( int argc, const char *argv[] )
  for(int multBin=0; multBin < nMultiplicityBins_Ana; multBin++)
  {
 	CFW.makeFigv2vspT_allparticles(multBin, tag);
+	CFW.makeFigv2vspT_allparticles_ALICE_comparison(multBin, tag);
 	CFW.makeFigv3vspT_allparticles(multBin, tag);
 //	CFW.makeFigv2vspT_allparticles_with_selfcorrelation(multBin, tag);
 
@@ -97,7 +98,8 @@ int main( int argc, const char *argv[] )
  CFW.makeFigv2vspT_HIN13002(tag);
  CFW.makeFigv2vsnTrk_cpar_ref(tag);
 
- CFW.makeFigCorrel1D( tag );
  CFW.makeFigCorrel2D( tag );
+ CFW.ReBin();
+ CFW.makeFigCorrel1D( tag );
 
 }

@@ -20,6 +20,7 @@ public :
 
 	void setupSkimTree_pPb( TFile *f , bool isOLD);
 	bool isGoodEv_pPb( int iEv );
+	int GetEntries();
 };
 
 #endif

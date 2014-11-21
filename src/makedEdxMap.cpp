@@ -52,6 +52,7 @@ int main(int argc, const char *argv[])
  EvSel.setupSkimTree_pPb( f, isOLD);
 
  LogFile log("log");
+ log.repeat = 1000;
 
  ////////////////////
  // Setting output //
@@ -82,7 +83,7 @@ int main(int argc, const char *argv[])
  {
 	
 	// Event counter info
-	log.EventCounter(iEv, "DATA ");
+	log.EventCounter(iEv);
 
 	// EventSelection
 	if ( !EvSel.isGoodEv_pPb( iEv ) ) continue;
@@ -104,7 +105,7 @@ int main(int argc, const char *argv[])
 		float p    = pt * cosh(eta);
 		float dedx = tTracks.dedx[iTrk];
 
-		int PID = GetPID(p, dedx);
+		int PID = GetPID(p, dedx, eta);
 
 		dEdxmaps_trk->Fill(PID, p, dedx);
 
@@ -126,7 +127,7 @@ int main(int argc, const char *argv[])
 		double mpt   = tTracks.mtrkPt [iPart];
 		double mdedx = tTracks.mtrkdedx [iPart];
 		float  mp    = mpt * cosh(meta);
-		int    mPID  = GetPID(mp, mdedx);
+		int    mPID  = GetPID(mp, mdedx, meta);
 
 		pDistr->Fill(mp);
 
@@ -144,6 +145,9 @@ int main(int argc, const char *argv[])
  
  //for(int ptBin = 0; ptBin < nPtBins; ptBin++)
  //{ viewdEdxvsP(dEdxvspPt[ptBin], Form("./PIDtest/dedxvsp_%s_pt_%.2f-%.2f.png", jobid.c_str(), trigptbins[ptBin][0], trigptbins[ptBin][1]), delta );}
+
+
+ dEdxmaps_trk->PlotFigs("lel");
 
   log.Close();
 

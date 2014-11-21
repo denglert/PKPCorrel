@@ -35,12 +35,12 @@ void LogFile::wr( const char str[])
 	std::cout << str << std::endl;
 }
 
-void LogFile::EventCounter( int iEv, const char label[])
+void LogFile::EventCounter( int iEv)
 {
-  if ( (iEv % 1000) == 0 )
+  if ( (iEv % repeat) == 0 )
   { 
-	 std::cout << Form("%s Event: %d", label, iEv ) << std::endl; 
-    ofs       << Form("%s Event: %d", label, iEv ) << std::endl;
+	 std::cout << Form("%s Event: %d", label.c_str(), iEv ) << std::endl; 
+    ofs       << Form("%s Event: %d", label.c_str(), iEv ) << std::endl;
   }
 }
 

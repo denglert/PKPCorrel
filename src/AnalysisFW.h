@@ -3,6 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <string>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include "PIDUtils.h"
@@ -30,9 +31,11 @@ class LogFile
    ~LogFile(){};
 
 	std::ofstream ofs;
+	int repeat;
+	std::string label;
 
 	void wr( const char str[]);
-	void EventCounter( int iEv, const char label[]);
+	void EventCounter( int iEv);
 	void Close();
 };
 

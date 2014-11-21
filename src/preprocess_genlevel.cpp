@@ -38,6 +38,12 @@ int main( int argc, const char *argv[] )
  int nMultiplicityBins_EvM = nMultiplicityBins_EvM_HDR;
  int nZvtxBins 		      = nZvtxBins_; 
 
+ // Log
+ LogFile *log = new LogFile("log");
+ log->repeat = 1000;
+ log->label = "DATA";
+
+
  //////////////////////////////////////
  //                                  //
  // ****** Opening input file ****** //
@@ -114,6 +120,11 @@ int main( int argc, const char *argv[] )
  //                                       //
  ///////////////////////////////////////////
  
+ log->wr(Form("trackTree entries: %d", trackTree->GetEntries()));
+ log->wr(Form("SkimAna entries: %d",   SkimAna->GetEntries()));
+ log->wr(Form("nEvMax: %d", nEvMax));
+
+ 
  std::cout << "Preloading events in memory..." << std::endl;
  for(int multBin = 0; multBin < nMultiplicityBins_EvM; multBin++)
  for(int zvtxBin = 0; zvtxBin < nZvtxBins_; zvtxBin++)
@@ -161,7 +172,7 @@ int main( int argc, const char *argv[] )
 	
 				// Track fill up
 				track particle;
-				// WARNING: no charge fill!;
+				// Warning: no charge fill!;
 				particle.charge  = 0;
 				particle.pid  	  = PID;
 				particle.pt      = tTracks.pPt[iPar];
@@ -201,6 +212,9 @@ int main( int argc, const char *argv[] )
    std::cout << Form("multBin: %3d, zvtxBin: %3d, found: %2d/10", multBin, zvtxBin, EventCache[multBin][zvtxBin].size()) << std::endl;
  }
 
+ log->wr(Form("trackTree entries: %d", trackTree->GetEntries()));
+ log->wr(Form("SkimAna entries: %d", SkimAna->GetEntries()));
+ log->wr(Form("nEvMax: %d", nEvMax));
 
  ///////////////////////////
  //                       //
@@ -212,9 +226,8 @@ int main( int argc, const char *argv[] )
  for (int iEvA = 0; iEvA < nEvMax; iEvA++)
  {
 	
-	// Event counter info
-	if ( (iEvA % 1000) == 0 )
-	{ std::cout << "Event: " << iEvA << std::endl; }
+
+	log->EventCounter(iEvA);
 
 	// Get current event info
 	EvtAna->GetEntry(iEvA);

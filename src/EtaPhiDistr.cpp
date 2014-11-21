@@ -6,6 +6,7 @@
 #include <TH2D.h>
 #include <TMath.h>
 #include <TCanvas.h>
+#include <TLatex.h>
 #include <TNtuple.h>
 #include <iostream>
 #include <deque>
@@ -13,6 +14,35 @@
 #include "AnalysisBinning.h"
 #include "PIDUtils.h"
 #include "SetupCustomTrackTree.h"
+
+const double latextxtsize_std = 0.043;
+
+
+TLatex MakeLabel ( double posx, double posy, double textsize, const char text[] )
+{
+ TLatex tlabel( posx, posy, text); 
+ tlabel.SetTextSize(textsize);
+ tlabel.SetNDC(kTRUE);
+ return tlabel;
+}
+
+
+void plotEtaDistr ( TH1D *EtaDistr, const char figurebasename[], const char text[] )
+{
+ TCanvas canvas_etadistr ("EtaDistr", ";Eta;Entries", 800, 600);
+ double posx = 0.15;
+ double posy = 0.20;
+ TLatex label = MakeLabel(posx, posy, latextxtsize_std, text);
+ EtaDistr->SetTitleOffset(1.2,"X");
+ EtaDistr->SetTitleOffset(1.6,"Y");
+ EtaDistr->GetXaxis()->SetTitleSize(0.052);
+ EtaDistr->GetYaxis()->SetTitleSize(0.052);
+ EtaDistr->Draw();
+ label.Draw();
+ canvas_etadistr.SaveAs(Form("%s.png", figurebasename));
+ canvas_etadistr.SaveAs(Form("%s.pdf", figurebasename));
+
+}
 
 int main( int argc, const char *argv[] )
 { 
@@ -22,7 +52,6 @@ int main( int argc, const char *argv[] )
     std::cerr << "Usage: process <.root file to be preprocessed> <dotrkCorr> <trkCorrFilename> <tag> <nEvents>" << std::endl;
 	 exit(1);
   }
-
 
  TString inpFilename     = argv[1];
  TString dotrkCorr_str 	 = argv[2];
@@ -43,7 +72,7 @@ int main( int argc, const char *argv[] )
 
  bool dotrkCorr;
       if( dotrkCorr_str == "yes") { dotrkCorr = true;}
- else if( dotrkCorr_str == "no ") { dotrkCorr = false;}
+ else if( dotrkCorr_str == "no") { dotrkCorr = false;}
  else {std::cerr << "dotrkCorr not defined." << std::endl; exit(-1);}
 
  //////////////////////////////////////
@@ -131,8 +160,8 @@ int main( int argc, const char *argv[] )
 
  double pminlog    = 0.1;
  double pmaxlog    = 2.0;
- double dEdxminlog = 0.1;
- double dEdxmaxlog = 20;
+ double dEdxminlog = 0.2;
+ double dEdxmaxlog = 50;
 
  double pminlin    = 0.1;
  double pmaxlin    = 2.0;
@@ -151,12 +180,12 @@ int main( int argc, const char *argv[] )
 
  for (int i = 0; i < 4 ; i++)
  {
- dEdxvsplinlintyp[i] = new TH2D (Form("dEdxVsP lin-lin %s", particletype(i).c_str()) ,";p(GeV/c);dE/dx", npBins, pminlin, pmaxlin, ndEdxBins, dEdxminlin, dEdxmaxlin);
- dEdxvsploglogtyp[i] = new TH2D (Form("dEdxVsP log-log %s", particletype(i).c_str()) ,";p(GeV/c);dE/dx", npBinslog, pBins, ndEdxBinslog, dEdxBins);
+ dEdxvsplinlintyp[i] = new TH2D (Form("dEdxVsP lin-lin %s", particletype(i).c_str()) ,";p(GeV/c);dE/dx [MeV/cm]", npBins, pminlin, pmaxlin, ndEdxBins, dEdxminlin, dEdxmaxlin);
+ dEdxvsploglogtyp[i] = new TH2D (Form("dEdxVsP log-log %s", particletype(i).c_str()) ,";p(GeV/c);dE/dx [MeV/cm]", npBinslog, pBins, ndEdxBinslog, dEdxBins);
  }
 
- TH2D* dEdxvsplinlinall = new TH2D ("dEdxVsP lin-lin " ,";p(GeV/c);dE/dx", npBins, pminlin, pmaxlin, ndEdxBins, dEdxminlin, dEdxmaxlin);
- TH2D* dEdxvsploglogall = new TH2D ("dEdxVsP log-log " ,";p(GeV/c);dE/dx", npBinslog, pBins, ndEdxBinslog, dEdxBins);
+ TH2D* dEdxvsplinlinall = new TH2D ("dEdxVsP lin-lin " ,";p(GeV/c);dE/dx [MeV/cm]", npBins, pminlin, pmaxlin, ndEdxBins, dEdxminlin, dEdxmaxlin);
+ TH2D* dEdxvsploglogall = new TH2D ("dEdxVsP log-log " ,";p(GeV/c);dE/dx [MeV/cm]", npBinslog, pBins, ndEdxBinslog, dEdxBins);
 
  // Eta and (Eta,Phi) distributions
 
@@ -252,7 +281,7 @@ int main( int argc, const char *argv[] )
 		// *** Track selection *** //
 		if ( !TrackSelection(tTracks, iTrk ) ) continue;
 
-		int PID   = GetPID(p, tTracks.dedx[iTrk]);
+		int PID   = GetPID(p, tTracks.dedx[iTrk], tTracks.trkEta[iTrk]);
 
 		int ptBin_ID = ptbin( PID , tTracks.trkPt[iTrk]);
 		int ptBin_CH = ptbin(   0 , tTracks.trkPt[iTrk]);
@@ -301,6 +330,15 @@ int main( int argc, const char *argv[] )
 
  }
 
+ // Normalization
+ for (int pid = 0; pid < nParticles; pid++)
+ for (int ptBin = 0; ptBin < nPtBins[pid]; ptBin++)
+ {
+	EtaPhiDistr[pid][ptBin]->Scale(1./nEvMax);
+	   EtaDistr[pid][ptBin]->Scale(1./nEvMax);
+ }
+
+
  ////////////////////////////
  //                        //
  // **** Plot Figures **** //
@@ -317,6 +355,8 @@ int main( int argc, const char *argv[] )
 	TCanvas canvas_EtaPhiDistr ("EtaPhiDistr", ";Eta;Phi", 800, 600);
  	EtaPhiDistr[pid][ptBin]->Draw("COLZ");
 
+	canvas_EtaPhiDistr.SetRightMargin(0.15);
+
  	std::string EtaPhiDistrFigBase = Form("EtaPhiDistr_typ_%d_pt_%.2f-%.2f", pid, pt(pid, ptBin, 0), pid, pt(pid, ptBin, 1));
 
  	std::string EtaPhiDistrFigPNG = EtaPhiDistrFigBase+".png";
@@ -327,6 +367,9 @@ int main( int argc, const char *argv[] )
  }
 
  TCanvas canvas_EtaPhiDistr_cpar ("EtaPhiDistr", ";Eta;Phi", 800, 600);
+ canvas_EtaPhiDistr_cpar.SetRightMargin(0.15);
+
+ EtaPhiDistr_cpar->Draw("COLZ");
  EtaPhiDistr_cpar->Draw("COLZ");
 
  canvas_EtaPhiDistr_cpar.SaveAs(Form("EtaPhiDistr_typ_0_pt_%.2f-%.2f.png", ptref1, ptref2));
@@ -349,11 +392,16 @@ int main( int argc, const char *argv[] )
  	canvas_EtaDistr.SaveAs(EtaDistrFigPDF.c_str() );
  }
 
- TCanvas canvas_EtaDistr_cpar ("EtaDistr", ";Eta;Entries", 800, 600);
- EtaDistr_cpar->Draw("COLZ");
+ plotEtaDistr( EtaDistr_cpar, Form("EtaDistr_typ_0_pt_%.2f-%.2f", ptref1, ptref2), Form("#splitline{CMS Preliminary pPb, #sqrt{s_{NN}} = 5.02 TeV}{charged %.2f < p_{T} < %.2f GeV/c}", ptref1, ptref2) );
 
- canvas_EtaDistr_cpar.SaveAs(Form("EtaDistr_typ_0_pt_%.2f-%.2f.png", ptref1, ptref2));
- canvas_EtaDistr_cpar.SaveAs(Form("EtaDistr_typ_0_pt_%.2f-%.2f.pdf", ptref1, ptref2));
+// TCanvas canvas_EtaDistr_cpar ("EtaDistr", ";Eta;Entries", 800, 600);
+// EtaDistr_cpar->Draw("COLZ");
+// canvas_EtaPhiDistr_cpar.SetTitleOffset(1.2,"X")
+// canvas_EtaPhiDistr_cpar.SetTitleOffset(1.6,"Y")
+//
+//
+// canvas_EtaDistr_cpar.SaveAs(Form("EtaDistr_typ_0_pt_%.2f-%.2f.png", ptref1, ptref2));
+// canvas_EtaDistr_cpar.SaveAs(Form("EtaDistr_typ_0_pt_%.2f-%.2f.pdf", ptref1, ptref2));
 
  /////////////////
  // dEdx vs p plots
@@ -415,6 +463,15 @@ int main( int argc, const char *argv[] )
 	canvas_dEdxvsplog.SetLogy(1);
 
 	dEdxvsploglogtyp[i]->Draw("COLZ");
+//	dEdxvsploglogtyp[i]->GetYaxis()->SetUserRange(0.2,50);
+
+	std::string PID = particletype (i);
+	std::string label = PID;
+
+	TLatex tlabel ( 0.25,0.25, label.c_str() ); 
+	tlabel.SetTextSize(0.062);
+	tlabel.SetNDC(kTRUE);
+	tlabel.Draw();
 
  	std::string dEdxvsploglogFigBase = Form("dEdxvspLog_typ_%d", i);
 
@@ -432,10 +489,10 @@ int main( int argc, const char *argv[] )
  	std::string dEdxvsplogFigallPNG = dEdxvsploglogallFigBase+".png";
  	std::string dEdxvsplogFigallPDF = dEdxvsploglogallFigBase+".pdf";
 
-//	makedEdxvspFigloglog( dEdxvsploglogall, dEdxvsplogFigallPNG);
-//	makedEdxvspFigloglog( dEdxvsploglogall, dEdxvsplogFigallPDF);
-//	makedEdxvspFiglinlin( dEdxvsplinlinall, dEdxvsplinFigallPNG);
-//	makedEdxvspFiglinlin( dEdxvsplinlinall, dEdxvsplinFigallPDF);
+	//makedEdxvspFigloglog( dEdxvsploglogall, dEdxvsplogFigallPNG);
+	makedEdxvspFigloglog( dEdxvsploglogall, dEdxvsplogFigallPDF);
+	//makedEdxvspFiglinlin( dEdxvsplinlinall, dEdxvsplinFigallPNG);
+	//makedEdxvspFiglinlin( dEdxvsplinlinall, dEdxvsplinFigallPDF);
 
  //////////////////////
  //                  //

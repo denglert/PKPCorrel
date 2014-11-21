@@ -13,13 +13,17 @@ flag=$1
 # ./submitall.sh full
 # parameters
 
-#workdir=MinBias_Etalon_2nd
-workdir=MinBias_withTrackCorrection_2nw_eta_0.8_fixedcode
-dotrkCorr=yes
+workdir=MC_comparison_recolevel_trkCorrOFF_2nw_fullEv
+#workdir=MinBias_withTrackCorrection_2nw_eta_0.8
+#workdir=HighMult_withTrackCorrection_2nw_eta_0.8_gogo
+dotrkCorr=no
 trkCorrlabel=batchjob_TrackCorrection_full_mtrkdedx_added_minptfixed
 trkCorrFile=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/trkCorr/${trkCorrlabel}/trkCorrections_0.root
 nEvents=-1
 queue=2nw
+#inputlist="list_minbias"
+#inputlist="list_highmult"
+inputlist="list_MC_comparison"
 
 ####################
 ### --- TEST --- ###
@@ -36,11 +40,11 @@ testqueue=test
 
 ##########################################################
 # script environment
-inputlist="list_minbias"
 
 sourcedir=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/src
 batchdir=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/batch
 tdir=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/preprocessed/
+trkFilebase=trkCorr
 
 #########################################################
 
@@ -56,22 +60,24 @@ lim=`expr $njobs + 1`
 ### Submit jobs
 ## Test submission
 if [ "$flag" == "test" ]; then
-	rm -rf test
-	mkdir test
-	cp $inputlist ./test
-	cp tasks.sh ./test
+	rm -rf $testworkdir
+	mkdir $testworkdir
+	cp $inputlist ./$testworkdir
+	cp tasks.sh ./$testworkdir
    cd $tdir
 	rm -rf $testworkdir
 	mkdir $testworkdir
-	cd $batchdir/test
+	cd $batchdir/$testworkdir
 	echo "TEST SUBMISSION"
 	echo "Number of jobs: 2"
 	echo -e "\nSending jobs..."
 	# Send jobs
 	for (( i = 1; i < 3; i++ )); do
+		testtrkCorrFileit=$batchdir/$testworkdir/${trkFilebase}_${i}.root
+		cp $testtrkCorrFile ${testtrkCorrFileit}
 		source=$(awk "NR == $i" $inputlist)
 		echo $source 
-		bsub -J PreProcess_PKP_test_$i -q $testqueue tasks.sh $testworkdir $source $testdotrkCorr $testtrkCorrFile $i $testnEvents 
+		bsub -J PreProcess_PKP_test_$i -q $testqueue tasks.sh $testworkdir $source $testdotrkCorr $testtrkCorrFileit $i $testnEvents 
 	done
 elif [ "$flag" == "full" ]; then
 	# Remove previous workdir and create new one
@@ -89,9 +95,11 @@ elif [ "$flag" == "full" ]; then
 	echo -e "\nSending jobs..."
 	# Send jobs
 	for (( i = 1; i < ($lim); i++ )); do
-	source=$(awk "NR == $i" $inputlist)
-	echo $source 
-	bsub -J PrepProcess_PKP_$i -q $queue tasks.sh $workdir $source $dotrkCorr $trkCorrFile $i $nEvents
+		trkCorrFileit=$batchdir/$workdir/${trkFilebase}_${i}.root
+		cp $trkCorrFile ${trkCorrFileit}
+		source=$(awk "NR == $i" $inputlist)
+		echo $source
+		bsub -J ${workdir}_$i -q $queue tasks.sh $workdir $source $dotrkCorr $trkCorrFileit $i $nEvents
 	done
 fi 
 

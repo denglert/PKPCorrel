@@ -22,7 +22,6 @@ int main( int argc, const char *argv[] )
   {
     std::cerr << "Usage: preprocess <.root file to be preprocessed> <tag> <nEvents>" << std::endl;
 	 exit(1);
-
   }
 
  TString inpFilename     = argv[1];
@@ -41,6 +40,10 @@ int main( int argc, const char *argv[] )
  int nMultiplicityBins_Ana = nMultiplicityBins_Ana_HDR;
  int nMultiplicityBins_EvM = nMultiplicityBins_EvM_HDR;
  int nZvtxBins 		      = nZvtxBins_; 
+
+ LogFile *log = new LogFile("log");
+ log->repeat = 1000;
+ log->label = "DATA";
 
  std::cout << "dotrkCorr: " << dotrkCorr_str << std::endl;
 
@@ -117,6 +120,7 @@ int main( int argc, const char *argv[] )
  if ( f_trkCorr->IsZombie() ) {std::cerr << "Error opening file: " << trkCorrFilename << std::endl; exit(-1);}
  else {std::cout << "trkCorr File successfully opened." << std::endl;}
 
+
  CFW.trkCorr = Read_trkEff(f_trkCorr, "hcorr typ");
 
  for (int i = 0; i < nCorrTyp; i++)
@@ -135,6 +139,10 @@ int main( int argc, const char *argv[] )
  // **** PRELOAD MIXEVENTS IN MEMORY **** //
  //                                       //
  ///////////////////////////////////////////
+ 
+ log->wr(Form("trackTree entries: %d", trackTree->GetEntries()));
+ log->wr(Form("SkimAna entries: %d", EvSel.GetEntries()));
+ log->wr(Form("nEvMax: %d", nEvMax));
  
  std::cout << "Preloading events in memory..." << std::endl;
  for(int multBin = 0; multBin < nMultiplicityBins_EvM; multBin++)
@@ -168,24 +176,14 @@ int main( int argc, const char *argv[] )
 
 				// TRACK SELECTION //
 				if ( !TrackSelection(tTracks, iTrk ) ) continue;
-
-  				float p = tTracks.trkPt[iTrk] * cosh(tTracks.trkEta[iTrk]);
-				int PID   = GetPID(p, tTracks.dedx[iTrk], tTracks.trkEta[iTrk]);
-
-				int ptBin_CH = ptbin(   0 , tTracks.trkPt[iTrk]);
-				int ptBin_ID = ptbin( PID , tTracks.trkPt[iTrk]);
-		
 				bool isOutsideReferencePartPtRange = ( ( tTracks.trkPt[iTrk] < ptref1 ) || ( ptref2 < tTracks.trkPt[iTrk] ) );
-				bool isOutsideIdentifHadronPtRange = ( ptBin_ID == -1);
-				bool isOutsideChargedHadronPtRange = ( ptBin_CH == -1);
-		
-				if ( isOutsideReferencePartPtRange && isOutsideChargedHadronPtRange && isOutsideIdentifHadronPtRange ) continue;	
+				if ( isOutsideReferencePartPtRange ) continue;	
 				// TRACK SELECTION //
 	
 				// Track fill up
 				track trk;
 				trk.charge  = tTracks.trkCharge[iTrk];
-				trk.pid  	= PID;
+				trk.pid  	= 0;
 				trk.pt      = tTracks.trkPt[iTrk];
 				trk.phi     = tTracks.trkPhi[iTrk];
 				trk.eta     = tTracks.trkEta[iTrk];
@@ -231,12 +229,15 @@ int main( int argc, const char *argv[] )
  ///////////////////////////
  
  if (nEvMax == -1) {nEvMax = trackTree->GetEntries();}
+
+ log->wr(Form("trackTree entries: %d", trackTree->GetEntries()));
+ log->wr(Form("SkimAna entries: %d", EvSel.GetEntries()));
+ log->wr(Form("nEvMax: %d", nEvMax));
+
  for (int iEvA = 0; iEvA < nEvMax; iEvA++)
  {
 	
-	// Event counter info
-	if ( (iEvA % 1000) == 0 )
-	{ std::cout << "Event: " << iEvA << std::endl; }
+	log->EventCounter(iEvA);
 
 	// Get current event info
 	EvtAna->GetEntry(iEvA);
@@ -258,6 +259,7 @@ int main( int argc, const char *argv[] )
 	CFW.nEvents_Processed_signal_total->Fill(1.);
 	CFW.nEvents_Processed_signal[ multiplicitybin_Ana(hiNtracks, nMultiplicityBins_Ana) ]->Fill(1.);
 	nTrkDistr_signal->Fill( hiNtracks );
+
 	
 	CFW.ResetCurrentEventCorrelation();
 

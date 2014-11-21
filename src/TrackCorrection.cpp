@@ -27,9 +27,13 @@ const double zVtxDistrMin = -13;
 const double zVtxDistrMax =  13;
 
 //const int npt = 58;
-const int npt[4]      = {20,    10,   5,  5};
-const double ptMin[4] = {0.1, 0.15, 0.15, 0.15};
-const double ptMax[4] = {3.0, 1.00, 1.00, 1.8 };
+//const int npt[4]      = {20,    10,   5,  5};
+//const double ptMin[4] = {0.1, 0.15, 0.15, 0.15};
+//const double ptMax[4] = {3.0, 1.00, 1.00, 1.8 };
+const int npt[4]      = {1,    1,   1,  1};
+const double ptMin[4] = {0.3, 0.15, 0.15, 0.15};
+const double ptMax[4] = {0.5, 0.40, 0.40, 0.4 };
+
 
 const double ptGlobalMin = 0.1;
 
@@ -85,6 +89,7 @@ int main( int argc, const char *argv[] )
  int nZvtxBins 		      = nZvtxBins_; 
 
  LogFile log("log");
+ log.repeat = 1000;
 
  ///////////////////////////
  // Global initialization //
@@ -136,7 +141,7 @@ int main( int argc, const char *argv[] )
  {
 
 	// EventCounter
-	log.EventCounter(iEv, "making DATA zvtx distribution");
+	log.EventCounter(iEv);
 
 	// EventSelection
 	if ( !EvSelDATA.isGoodEv_pPb( iEv ) ) continue;
@@ -188,7 +193,7 @@ int main( int argc, const char *argv[] )
  {
 
 	// Event counter info
-	log.EventCounter(iEv, "making MC zvtx distribution ");
+	log.EventCounter(iEv);
 
 	// EventSelection
 	if ( !EvSelMC.isGoodEv_pPb( iEv ) ) continue;
@@ -257,7 +262,7 @@ int main( int argc, const char *argv[] )
   {
 
 		// EventCounter
-		log.EventCounter(iEvA, "MC ");
+		log.EventCounter(iEvA);
 		
 		// Event Selection
 		if ( !EvSelMC.isGoodEv_pPb( iEvA ) ) continue;;
@@ -286,7 +291,7 @@ int main( int argc, const char *argv[] )
 			double eta = tTracks.trkEta[iTrk]; 
 			double phi = tTracks.trkPhi[iTrk];
 			float p    = pt * cosh(eta);
-			int PID    = GetPID(p, tTracks.dedx[iTrk]);
+			int PID    = GetPID(p, tTracks.dedx[iTrk], tTracks.trkEta[iTrk]);
 			bool isPID = (PID != 99);
 			
 			// Fake tracks
@@ -337,7 +342,7 @@ int main( int argc, const char *argv[] )
 			double mpt  = tTracks.mtrkPt [iPart];
 			double meta = tTracks.pEta[iPart]; 
 			float  mp   = mpt * cosh(meta);
-			int    mPID = GetPID(mp, tTracks.mtrkdedx[iPart]);
+			int    mPID = GetPID(mp, tTracks.mtrkdedx[iPart], eta);
 			bool   misPID = (mPID != 99);
 		
 				hmatched[ 0 ]->Fill(pt,eta,phi,wzvtx); 

@@ -71,7 +71,7 @@ void CorrelationFramework::SetupForProcess()
 // - SetupForPreprocess()
 void CorrelationFramework::SetupForPreprocess()
 {
-	log = new LogFile("log");
+	log = new LogFile("correl_log");
 
 	// current event
 	Setup_TH2Ds_nCorrnPt( correl2D_currev_signal, nCorrTyp, nPtBins, "correl2D_currev", "signal" );
@@ -188,9 +188,10 @@ void CorrelationFramework::SignalCorrelation(EventData *ev)
 		bool IsTriggerInsideReferencePtRange =  ( (ptref1 < ipt) && ( ipt < ptref2 ));
 		bool IsTriggerInsideChParticlPtRange =  ( ptBin_TriggerCh != -1 );
 		bool IsTriggerInsideIDParticlPtRange =  ( ptBin_TriggerID != -1 );
-		bool IsTriggertruePID                = IsTriggerPIDparticle*IsTriggerInsideIDParticlPtRange;
+		bool IsTriggertruePID                =  (IsTriggerPIDparticle && IsTriggerInsideIDParticlPtRange);
+		
 
-		double  iw0 = CorrelationFramework::trackWeight(    0 , ipt, ieta, iphi); 
+		double iw0 = CorrelationFramework::trackWeight( 0 , ipt, ieta, iphi); 
 		double iw;
 		if ( IsTriggertruePID )
 		{iw  = CorrelationFramework::trackWeight( iPID , ipt, ieta, iphi); }
@@ -211,7 +212,18 @@ void CorrelationFramework::SignalCorrelation(EventData *ev)
 		double w0 = iw0 * jw0;
 		double w;
 		if (IsTriggertruePID)
-		{w  = iw  * jw0;}
+		{ w  = iw  * jw0; }
+
+		//// Debuggg 
+		//std::cerr << "IsTriggertruePID: " << IsTriggertruePID << std::endl;
+		//std::cerr << "ieta: " << ieta << std::endl;
+		//std::cerr << "ipt: " << ipt << std::endl;
+		//std::cerr << "jpt: " << jpt << std::endl;
+		//std::cerr << "iw0: " << iw0 << std::endl;
+		//std::cerr << "iw : " << iw << std::endl;
+		//std::cerr << "jw0 : " << jw0 << std::endl;
+		//std::cerr << "w : " << w << std::endl;
+		//std::cerr << "w0 : " << w0 << std::endl;
 
 		double dEtaA = dEta( ieta, jeta );
 		double dPhiA = dPhi( iphi, jphi );
@@ -228,7 +240,7 @@ void CorrelationFramework::SignalCorrelation(EventData *ev)
 			{ correl2D_currev_signal[ 0 ][ ptBin_TriggerCh ]->Fill(dEtaA, dPhiA, w0); }
 
 			// PID particle
-			if ( IsTriggerPIDparticle && IsTriggerInsideIDParticlPtRange )
+			if ( IsTriggertruePID )
 			{  correl2D_currev_signal[ (*ev).tracks[iTrkA].pid ][ ptBin_TriggerID ]->Fill(dEtaA, dPhiA, w);};
 		}
 
@@ -270,7 +282,7 @@ void CorrelationFramework::MixedCorrelation( EventData *ev, std::deque< EventDat
 		int EvA_ID = ev->EventID;
 		int EvB_ID = EventCache[multBin][zvtxBin][iEvB].EventID;
 
-		if ( EvA_ID == EvB_ID  ) {std::cerr << "WARNING! Trying to mix same events in making the background function" << std::endl;} 
+		if ( EvA_ID == EvB_ID  ) {std::cerr << "Warning! Trying to mix same events in making the background function" << std::endl;} 
 
 		nEvents_Processed_backgr_total->Fill(1.);
 		nEvents_Processed_backgr[ ev->GetMultiplicityBin_Ana(nMultiplicityBins_Ana) ]->Fill(1.);
@@ -294,8 +306,13 @@ void CorrelationFramework::MixedCorrelation( EventData *ev, std::deque< EventDat
 			bool IsTriggerInsideChParticlPtRange =  ( ptBin_TriggerCh != -1    );
 			bool IsTriggerInsideIDParticlPtRange =  ( ptBin_TriggerID != -1    );
 
+			bool IsTriggertruePID                =  (IsTriggerPIDparticle && IsTriggerInsideIDParticlPtRange);
+			
+			double iw0 = CorrelationFramework::trackWeight(   0 , ipt, ieta, iphi);
+			double iw  = CorrelationFramework::trackWeight( iPID, ipt, ieta, iphi);
 
 		for (int jTrkB = 0; jTrkB < nTrkB; jTrkB++)
+
 		{
 
 		   double jpt  = EventCache[multBin][zvtxBin][iEvB].tracks[jTrkB].pt;
@@ -304,17 +321,17 @@ void CorrelationFramework::MixedCorrelation( EventData *ev, std::deque< EventDat
 			
 			double ptassoc = EventCache[multBin][zvtxBin][iEvB].tracks[jTrkB].pt;
 
-
-
-
-
 			bool IsAssociaInsideReferencePtRange =  ( ptref1 < jpt ) && ( jpt < ptref2 );
 
 			double dEtaB = dEta( ieta, jeta);
 			double dPhiB = dPhi( iphi, jphi);
 
-			double w0 = CorrelationFramework::trackWeight(   0 , ipt, ieta, iphi)*CorrelationFramework::trackWeight(   0 , jpt, jeta, jphi);
-			double w  = CorrelationFramework::trackWeight( iPID, ipt, ieta, iphi)*CorrelationFramework::trackWeight(   0 , jpt, jeta, jphi);
+			double jw0 = CorrelationFramework::trackWeight(   0 , jpt, jeta, jphi);
+
+			double w0 = iw0 * jw0;
+			double w;
+			if ( IsTriggertruePID )
+			{w  = iw  * jw0;}
 
 			// Associated particle pt is in reference range
 			if ( IsAssociaInsideReferencePtRange )
@@ -328,7 +345,7 @@ void CorrelationFramework::MixedCorrelation( EventData *ev, std::deque< EventDat
 				{ correl2D_currev_backgr[ 0 ][ ptBin_TriggerCh ]->Fill(dEtaB, dPhiB, w0); }
 
 				// PID particle
-				if ( IsTriggerPIDparticle && IsTriggerInsideIDParticlPtRange )
+				if ( IsTriggertruePID )
 				{  correl2D_currev_backgr[ (*ev).tracks[iTrkA].pid ][ ptBin_TriggerID ]->Fill(dEtaB, dPhiB, w);};
 			}
 
@@ -372,6 +389,11 @@ void CorrelationFramework::AddCurrentEventCorrelation( EventData* ev )
  	for(int TypBin=0; TypBin < nCorrTyp; TypBin++)
 	for(int ptBin=0; ptBin < nPtBins[TypBin]; ptBin++)
 	{
+
+//		std::cerr << Form("TypBin: %d ptBin: %d nTrig: %d", TypBin, ptBin, (*ev).nTriggerParticles[TypBin][ptBin]) << std::endl;
+//		std::cerr << Form("Entries of correl2D: %f", correl2D_currev_signal[TypBin][ptBin]->GetEntries()) << std::endl;
+//		std::cerr << Form("Entries of correl2D/ntrig: %f", double(correl2D_currev_signal[TypBin][ptBin]->GetEntries())/(*ev).nTriggerParticles[TypBin][ptBin]) << std::endl;
+
 		if( (*ev).nTriggerParticles[TypBin][ptBin] == 0 ) continue;
 	 	correl2D_signal[TypBin][ptBin][currev_multBin]->Add( correl2D_currev_signal[TypBin][ptBin], 1./double((*ev).nTriggerParticles[TypBin][ptBin]) );
 	 	correl2D_backgr[TypBin][ptBin][currev_multBin]->Add( correl2D_currev_backgr[TypBin][ptBin], 1./double((*ev).nTriggerParticles[TypBin][ptBin]) );
@@ -412,13 +434,17 @@ void CorrelationFramework::Calcvns()
 		double V3_Err    = correl1D_FitResults[TypBin][ptBin][multBin].V3_Error;
 		double V3_cp_Err = correl1D_FitResults_cpar_ref[multBin].V3_Error;
 
-		correl_Results[TypBin][ptBin][multBin].v2           = V2 / sqrt( V2_cp);
+		double v2 = V2 / sqrt( V2_cp);
+		double v3 = V3 / sqrt( V3_cp);
+
+		correl_Results[TypBin][ptBin][multBin].v2           = v2;
 		correl_Results[TypBin][ptBin][multBin].v2_StatError = sqrt( (V2_Err*V2_Err/ V2_cp) + (0.25 * V2 * V2 * V2_cp_Err * V2_cp_Err / pow( V2_cp, 3)) );
-		correl_Results[TypBin][ptBin][multBin].v2_SystError = 0;
+		correl_Results[TypBin][ptBin][multBin].v2_SystError = v2 * 0.055;
 
 		correl_Results[TypBin][ptBin][multBin].v3           = V3 / sqrt( V3_cp);
 		correl_Results[TypBin][ptBin][multBin].v3_StatError = sqrt( (V3_Err*V3_Err/ V3_cp) + (0.25 * V3 * V3 * V3_cp_Err * V3_cp_Err / pow( V3_cp, 3)) );
-		correl_Results[TypBin][ptBin][multBin].v3_SystError = 0;
+		correl_Results[TypBin][ptBin][multBin].v3_SystError = v3 * 0.055;
+
 
 
 		if ( DoSelfCorrelation )
@@ -652,6 +678,18 @@ std::vector< double > CorrelationFramework::Getv2_StatErrorvec( int TypBin, int 
 }
 
 //////////////////////////
+// Getv2_SystErrorvec
+std::vector< double > CorrelationFramework::Getv2_SystErrorvec( int TypBin, int multBin)
+{
+	std::vector< double > v2_SystErrorvec(nPtBins[TypBin]);
+	for (int ptBin = 0; ptBin < nPtBins[TypBin]; ptBin++)
+	{
+		v2_SystErrorvec[ptBin] = correl_Results[TypBin][ptBin][multBin].v2_SystError;
+	}
+	return v2_SystErrorvec;
+}
+
+//////////////////////////
 // Getv3_StatErrorvec
 std::vector< double > CorrelationFramework::Getv3_StatErrorvec( int TypBin, int multBin)
 {
@@ -661,6 +699,18 @@ std::vector< double > CorrelationFramework::Getv3_StatErrorvec( int TypBin, int 
 		v3_StatErrorvec[ptBin] = correl_Results[TypBin][ptBin][multBin].v3_StatError;
 	}
 	return v3_StatErrorvec;
+}
+
+//////////////////////////
+// Getv3_SystErrorvec
+std::vector< double > CorrelationFramework::Getv3_SystErrorvec( int TypBin, int multBin)
+{
+	std::vector< double > v3_SystErrorvec(nPtBins[TypBin]);
+	for (int ptBin = 0; ptBin < nPtBins[TypBin]; ptBin++)
+	{
+		v3_SystErrorvec[ptBin] = correl_Results[TypBin][ptBin][multBin].v3_SystError;
+	}
+	return v3_SystErrorvec;
 }
 
 void CorrelationFramework::ReBin()
@@ -811,6 +861,7 @@ void sum_and_project2Dto1D(TH2D *correl_signal, TH2D *correl_backgr, TH1D* corre
 	correl1D_backgr_sum.Add(&correl1D_backgr_back);
 	
 	correl_1D->Divide(&correl1D_signal_sum, &correl1D_backgr_sum, 1.00, 1.00 );
+	correl_1D->Rebin(3);
 }
 
 
@@ -904,9 +955,6 @@ Correl1DfitResultsData fit1DCorrelation(TH1D *correl_1D, std::string figurename,
 	TCanvas canvas_correl_1D ("canvas_correl_1D","",800,600);
 	gStyle->SetOptStat(0);
 
-	// Debuggg 
-	std::cerr << "cicamica " << std::endl;
-
 	TF1 *fitFunc = new TF1 ("fitFunc", "[0] * ( 1 + 2*[1]*cos(x) + 2*[2]*cos(2*x) + 2*[3]*cos(3*x) )");
 	correl_1D->Fit( fitFunc);
 
@@ -919,9 +967,6 @@ Correl1DfitResultsData fit1DCorrelation(TH1D *correl_1D, std::string figurename,
 	double V2_error = fitFunc->GetParError(2);
 	double V3_error = fitFunc->GetParError(3);
 	
-// Debuggg 
-	std::cerr << "vau " << std::endl;
-
 	Correl1DfitResultsData results;
 
 	results.V1 		  = V1;
@@ -1274,7 +1319,7 @@ void ReadIn_TH2Ds_nMult(TFile *f, TH2D **&correl2D, int nMultiplicityBins, const
 		int mult2  = multiplicity_Ana(multiplicityBin, 1, nMultiplicityBins);
 
 
-//		  // WARNING! -nTrk to _nTrk needed
+		  // Warning! -nTrk to _nTrk needed
 		   correl2D[multiplicityBin] = (TH2D*)f->Get(Form("%s_%s_pt_%.2f-%.2f_nTrk_%03d-%03d", histoname, tag, pt1, pt2, mult1, mult2  ) );
 			if (correl2D[multiplicityBin]->IsZombie() ) {std::cerr << "ReadIn_TH2Ds_nMult failed." << Form("No histogram named '%s_%s_pt_%.2f-%.2f_nTrk_%03d-%03d' is found.", histoname, tag, pt1, pt2, mult1, mult2  ) << std::endl;}
 		}

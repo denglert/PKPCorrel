@@ -30,9 +30,9 @@ const double zVtxDistrMax =  13;
 //const int npt[4]      = {20,    10,   5,  5};
 //const double ptMin[4] = {0.1, 0.15, 0.15, 0.15};
 //const double ptMax[4] = {3.0, 1.00, 1.00, 1.8 };
-const int npt[4]      = {1,    1,   1,  1};
-const double ptMin[4] = {0.3, 0.15, 0.15, 0.15};
-const double ptMax[4] = {0.5, 0.40, 0.40, 0.4 };
+// const int npt[4]      = {1,    1,   1,  1};
+// const double ptMin[4] = {0.3, 0.15, 0.15, 0.15};
+// const double ptMax[4] = {0.5, 0.40, 0.40, 0.4 };
 
 
 const double ptGlobalMin = 0.1;
@@ -389,8 +389,6 @@ int main( int argc, const char *argv[] )
 	  hcorr[i]->SetBinContent(x,y,z,value);
  	  log.wr(Form("%d %.3f %.2f %.2f : %.4f", i, pt, eta, phi, value));
   }
-
-
 
  //////////////////////
  //                  //

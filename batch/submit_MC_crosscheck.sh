@@ -14,9 +14,10 @@ flag=$1
 # parameters
 
 #workdir=MinBias_Etalon_2nd
-workdir=MC_comparison_genlevel_2nw_500kEv
-nEvents=500000
-queue=2nw
+inputlist="list_MC_vzhukova-EPOS_RECO_batch_HiForest"
+workdir=MC_vzhukova-EPOS_RECO_batch_comparison_genelevel_2nd_fullkEv
+nEvents=-1
+queue=2nd
 
 ####################
 ### --- TEST --- ###
@@ -29,7 +30,6 @@ testqueue=test
 
 ##########################################################
 # script environment
-inputlist="list_MC_comparison"
 
 sourcedir=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/src
 batchdir=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/batch

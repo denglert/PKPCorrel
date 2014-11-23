@@ -7,7 +7,8 @@ void EvtSelection::setupSkimTree_pPb( TFile *f, bool isOLD )
 	  if ( isOLD )
 	  { SkimAna->SetBranchAddress("pPAcollisionEventSelection", &pPAcollisionEventSelectionPA, &b_pPAcollisionEventSelectionPA); }
 	  else
-	  { SkimAna->SetBranchAddress("pPAcollisionEventSelectionPA", &pPAcollisionEventSelectionPA, &b_pPAcollisionEventSelectionPA); }
+	  { SkimAna->SetBranchAddress("pPAcollisionEventSelectionPA", &pPAcollisionEventSelectionPA, &b_pPAcollisionEventSelectionPA); 
+	  }
      SkimAna->SetBranchAddress("pVertexFilterCutGplus", &pVertexFilterCutGplus, &b_pVertexFilterCutGplus);
 
 }

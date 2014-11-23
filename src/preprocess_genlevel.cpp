@@ -43,7 +43,6 @@ int main( int argc, const char *argv[] )
  log->repeat = 1000;
  log->label = "DATA";
 
-
  //////////////////////////////////////
  //                                  //
  // ****** Opening input file ****** //
@@ -104,6 +103,7 @@ int main( int argc, const char *argv[] )
  std::cout << "Correlation Analysis Framework loaded." << std::endl;
 
  CFW.DoSelfCorrelation = false;
+ CFW.DoTrackWeight = false;
  if ( CFW.DoSelfCorrelation ) { std::cout << "Analysis includes self correlation computation." << std::endl;}
 
  CFW.SetupForPreprocess();

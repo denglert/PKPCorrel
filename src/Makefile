@@ -101,6 +101,13 @@ TrackCorrection_viewer.o : TrackCorrection_viewer.cpp
 UtilityTest.o : UtilityTest.cpp
 	$(CC) $(CFLAGS)-o $@ -c $<  
 
+# MC_CrosscheckFig
+../bin/MC_CrosscheckFig : MC_CrosscheckFig.o $(CMN) $(OBJS)
+	$(CC) $(LFLAGS) -o $@ $< $(OBJS) 
+
+MC_CrosscheckFig.o : MC_CrosscheckFig.cpp
+	$(CC) $(CFLAGS)-o $@ -c $<  
+
 ###########################################
 ### *** Framework classes
 # AnalysisBinning

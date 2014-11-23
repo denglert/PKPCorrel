@@ -18,12 +18,12 @@ void plottable( TH3D **table, const char figbasename[] )
 {
 	gStyle->SetOptStat(0);
 	int nParticles = 4;
-//	const int npt[4]      = {20,    10,   5,  5};
-//	const double ptMin[4] = {0.1, 0.15, 0.15, 0.15};
-//	const double ptMax[4] = {3.0, 1.00, 1.00, 1.8 };
-const int npt[4]      = {1,    1,   1,  1};
-const double ptMin[4] = {0.3, 0.15, 0.15, 0.15};
-const double ptMax[4] = {0.5, 0.40, 0.40, 0.4 };
+const int npt[4]      = {20,    10,   5,  5};
+const double ptMin[4] = {0.1, 0.15, 0.15, 0.15};
+const double ptMax[4] = {3.0, 1.00, 1.00, 1.8 };
+//const int npt[4]      = {1,    1,   1,  1};
+//const double ptMin[4] = {0.3, 0.15, 0.15, 0.15};
+//const double ptMax[4] = {0.5, 0.40, 0.40, 0.4 };
 
 	
 	double ptbw[4];
@@ -36,7 +36,7 @@ const double ptMax[4] = {0.5, 0.40, 0.40, 0.4 };
 		TCanvas canvas_table ("trkTable", ";Eta;Phi", 900, 600);
 	  	canvas_table.Divide(2,1);
 	
-	  	table[pid]->GetXaxis()->SetRange(ptBin, ptBin+1);
+	  	table[pid]->GetXaxis()->SetRange(ptBin, ptBin);
 	  	TH2D *histo = (TH2D*)table[pid]->Project3D("zy");
 
 		histo->SetTitle("");
@@ -58,49 +58,49 @@ const double ptMax[4] = {0.5, 0.40, 0.40, 0.4 };
 		std::string tableFigPDF = tableFigBase+".pdf";
 		
 		canvas_table.SaveAs(tableFigPNG.c_str() );
-		canvas_table.SaveAs(tableFigPDF.c_str() );
+//		canvas_table.SaveAs(tableFigPDF.c_str() );
 
-	  	canvas_table.cd(1);
-	  	histo->GetXaxis()->SetRangeUser(-1.0,1.0);
-	  	histo->Draw("SURF1");
-	  	canvas_table.cd(2);
-	   histo->Draw("COLZ");
-
-		tableFigBase = Form("etacut_1_%s_typ_%d_pt_%.3f-%.3f", figbasename, pid, pt1, pt2);
+//	  	canvas_table.cd(1);
+//	  	histo->GetXaxis()->SetRangeUser(-1.0,1.0);
+//	  	histo->Draw("SURF1");
+//	  	canvas_table.cd(2);
+//	   histo->Draw("COLZ");
+//
+//		tableFigBase = Form("etacut_1_%s_typ_%d_pt_%.3f-%.3f", figbasename, pid, pt1, pt2);
 		
-		tableFigPNG = tableFigBase+".png";
-		tableFigPDF = tableFigBase+".pdf";
-		
-		canvas_table.SaveAs(tableFigPNG.c_str() );
-		canvas_table.SaveAs(tableFigPDF.c_str() );
-
-	  	canvas_table.cd(1);
-	  	histo->GetXaxis()->SetRangeUser(-0.8,0.75);
-	  	histo->Draw("SURF1");
-	  	canvas_table.cd(2);
-	   histo->Draw("COLZ");
-
-		tableFigBase = Form("etacut_0.8_%s_typ_%d_pt_%.3f-%.3f", figbasename, pid, pt1, pt2);
-		
-		tableFigPNG = tableFigBase+".png";
-		tableFigPDF = tableFigBase+".pdf";
-		
-		canvas_table.SaveAs(tableFigPNG.c_str() );
-		canvas_table.SaveAs(tableFigPDF.c_str() );
-
-	  	canvas_table.cd(1);
-	  	histo->GetXaxis()->SetRangeUser(-1.5,1.5);
-	  	histo->Draw("SURF1");
-	  	canvas_table.cd(2);
-	   histo->Draw("COLZ");
-
-		tableFigBase = Form("etacut_1.5_%s_typ_%d_pt_%.3f-%.3f", figbasename, pid, pt1, pt2);
-		
-		tableFigPNG = tableFigBase+".png";
-		tableFigPDF = tableFigBase+".pdf";
-		
-		canvas_table.SaveAs(tableFigPNG.c_str() );
-		canvas_table.SaveAs(tableFigPDF.c_str() );
+//		tableFigPNG = tableFigBase+".png";
+//		tableFigPDF = tableFigBase+".pdf";
+//		
+//		canvas_table.SaveAs(tableFigPNG.c_str() );
+//		canvas_table.SaveAs(tableFigPDF.c_str() );
+//
+//	  	canvas_table.cd(1);
+//	  	histo->GetXaxis()->SetRangeUser(-0.8,0.75);
+//	  	histo->Draw("SURF1");
+//	  	canvas_table.cd(2);
+//	   histo->Draw("COLZ");
+//
+//		tableFigBase = Form("etacut_0.8_%s_typ_%d_pt_%.3f-%.3f", figbasename, pid, pt1, pt2);
+//		
+//		tableFigPNG = tableFigBase+".png";
+//		tableFigPDF = tableFigBase+".pdf";
+//		
+//		canvas_table.SaveAs(tableFigPNG.c_str() );
+//		canvas_table.SaveAs(tableFigPDF.c_str() );
+//
+//	  	canvas_table.cd(1);
+//	  	histo->GetXaxis()->SetRangeUser(-1.5,1.5);
+//	  	histo->Draw("SURF1");
+//	  	canvas_table.cd(2);
+//	   histo->Draw("COLZ");
+//
+//		tableFigBase = Form("etacut_1.5_%s_typ_%d_pt_%.3f-%.3f", figbasename, pid, pt1, pt2);
+//		
+//		tableFigPNG = tableFigBase+".png";
+//		tableFigPDF = tableFigBase+".pdf";
+//		
+//		canvas_table.SaveAs(tableFigPNG.c_str() );
+//		canvas_table.SaveAs(tableFigPDF.c_str() );
 
 	}
 }

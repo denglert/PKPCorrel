@@ -26,7 +26,8 @@ tag=$(label)_nEv_$(nEvents)
 
 # Parameters
 label_preproc_gen=genlevel
-inputfile_preproc_gen=root://eoscms.cern.ch//eos/cms/store/group/phys_heavyions/denglert/pPb_MC_HIJING_MB_dEdxcalib_on_500kMCEv_1.9m/pPb_MC_HIJING_MB_mergedHiForest_1.9mEv.root
+#inputfile_preproc_gen=root://eoscms.cern.ch//eos/cms/store/group/phys_heavyions/denglert/pPb_MC_HIJING_MB_HiForest_dEdxcalib_on_500kMCEv_1.9m_mtrkdedx_added_minptfix/pPb_MC_HIJING_MB_mergedHiForest_1.9mEv.root
+inputfile_preproc_gen=root://eoscms.cern.ch//eos/cms/store/group/phys_heavyions/denglert/pPb_MC_vzhukova-EPOS_RECO_batch_HiForest/pPb_MC_HiForest_allbatch.root
 nEvents_preproc_gen=2000
 jobid_preproc_gen=0
 
@@ -51,7 +52,8 @@ tag_preproc_gen=$(label_preproc_gen)_nEv_$(nEvents_preproc_gen)
 #batchjobtag=MinBias_Etalon_2nw_notrkCorr
 #batchjobtag=MinBias_HighMulti_All
 #batchjobtag=DipStudy_try1
-batchjobtag=MC_comparison_genlevel_2nw_1mEv
+batchjobtag=MC_vzhukova-EPOS_RECO_batch_comparison_genelevel_2nd_fullkEv
+#batchjobtag=MC_vzhukova-EPOS_RECO_batch_comparison_recolevel_2nd_fullkEv_notrkCorr
 #batchjobtag=MinBias_noTrackCorrection_1nw_eta_0.8_temp
 #batchjobtag=MinBias_withTrackCorrection_2nw_eta_0.8_fixedcode_temp
 #batchjobtag=MinBias_withTrackCorrection_eta_0.8_fixedcode_temp
@@ -113,13 +115,17 @@ publish_wwwtag=MinBias_HighMulti_All_rev4
 #testfile=root://eoscms//eos/cms/store/group/phys_heavyions/denglert/pPb2013_minBiasForest_merged/HiForest_pPb2013_PromptReco_run_211313-211631_11.root
 
 # MINBIAS
-testfile=root://eoscms//eos/cms/store/group/phys_heavyions/denglert/pPb2013_minBiasForest_merged/HiForest_pPb2013_PromptReco_run_211313-211631_8.root
+#testfile=root://eoscms//eos/cms/store/group/phys_heavyions/denglert/pPb2013_minBiasForest_merged/HiForest_pPb2013_PromptReco_run_211313-211631_8.root
 
 # HIGH MULT
 #testfile=root://eoscms.cern.ch//eos/cms/store/group/phys_heavyions/denglert/pPb2013_HighMultiplicityForest_merged/HIRun2013-28Sep2013-v1_pPb_run_210498-210658/pPb2013_HM_28Sep2013_v1_HiForest_pPb_run_210498-210658_0.root
+
+# MC
+testfile=root://eoscms.cern.ch//eos/cms/store/group/phys_heavyions/denglert/pPb_MC_vzhukova-EPOS_RECO_batch_HiForest/pPb_MC_HiForest_allbatch.root
+
 testnEvents=-1
 testjobid=0
-testdotrkCorr=yes
+testdotrkCorr=no
 testtrkCorrlabel=TrackCorrection_full_pT_typdep_coarsebins
 testtrkCorrFile=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/trkCorr/$(trkCorrlabel)/trkCorrections_0.root
 
@@ -151,6 +157,7 @@ EtaPhiDistr_tag=$(EtaPhiDistr_label)_nEv_$(EtaPhiDistr_nEvents)
 #############################
 # commands: TrackCorrection
 
+#TrackCorrection_label=TrackCorrection_singlebin_forfig
 TrackCorrection_label=TrackCorrection_singlebin_forfig
 TrackCorrection_inputfileDATA=root://eoscms.cern.ch//store/group/phys_heavyions/denglert/pPb2013_HighMultiplicityForest_merged/HIRun2013-28Sep2013-v1_pPb_run_210498-210658/pPb2013_HM_28Sep2013_v1_HiForest_pPb_run_210498-210658_0.root
 TrackCorrection_inputfileMC=root://eoscms.cern.ch//store/group/phys_heavyions/denglert/pPb_MC_HIJING_MB_HiForest_dEdxcalib_on_500kMCEv_1.9m_mtrkdedx_added_minptfix/pPb_MC_HIJING_MB_mergedHiForest_1.9mEv.root
@@ -161,12 +168,21 @@ TrackCorrection_jobid=0
 
 TrackCorrection_tag=$(TrackCorrection_label)
 
+##############################
+#### - MC_CrosscheckFig - ####
+##############################
+# commands: MC_CrosscheckFig
+
+MC_CrosscheckFig_label=MC_Crosscheck
+MC_CrosscheckFig_inputfileRECO=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/MC_vzhukova-EPOS_RECO_batch_comparison_recolevel_2nd_fullkEv_notrkCorr/dump.root
+MC_CrosscheckFig_inputfileGENE=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/MC_vzhukova-EPOS_RECO_batch_comparison_genelevel_2nd_fullkEv/dump.root
+
 ###################################
 ### - TrackCorrection_viewer - ####
 ###################################
 # commands: TrackCorrection_viewer
-#trkdir_TrackCorrection_viewer=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/trkCorr/batchjob_TrackCorrection_full_mtrkdedx_added_minptfixed/
-trkdir_TrackCorrection_viewer=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/trkCorr/TrackCorrection_singlebin_forfig/
+trkdir_TrackCorrection_viewer=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/trkCorr/batchjob_TrackCorrection_full_mtrkdedx_added_minptfixed/
+#trkdir_TrackCorrection_viewer=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/trkCorr/TrackCorrection_singlebin_forfig/
 inputfilebase_TrackCorrection_viewer=trkCorrections_0.root
 inputfile_TrackCorrection_viewer=$(trkdir_TrackCorrection_viewer)$(inputfilebase_TrackCorrection_viewer)
 
@@ -335,6 +351,17 @@ utiltest : build_utiltest
 
 build_utiltest :
 	@cd src; make ../bin/utilitytest
+
+### MC_CrosscheckFig
+MC_CrosscheckFig : build_MC_CrosscheckFig
+	@rm -rf ./results/$(MC_CrosscheckFig_label); mkdir ./results/$(MC_CrosscheckFig_label); 
+	@echo -e "\nMC_CrosscheckFig"
+	@echo
+	@echo WORKDIR: $(MC_CrosscheckFig_label)
+	cd ./results/$(MC_CrosscheckFig_label); ../../bin/MC_CrosscheckFig $(MC_CrosscheckFig_inputfileRECO) $(MC_CrosscheckFig_inputfileGENE)
+
+build_MC_CrosscheckFig : 
+	@cd src; make ../bin/MC_CrosscheckFig
 
 ######################################################
 # Build

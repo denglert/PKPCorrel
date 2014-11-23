@@ -22,7 +22,6 @@ int main( int argc, const char *argv[] )
  TString inpFilename   = argv[1];
  std::string tag		  = argv[2];
 
-
  // Binning
  int nCorrTyp 	    = nCorrTyp_;
  int *nPtBins      = new int[nCorrTyp_];
@@ -41,14 +40,7 @@ int main( int argc, const char *argv[] )
  
  TFile *f = new TFile(inpFilename, "READ");
  if ( f->IsZombie() ) {std::cerr << "Error opening file: " << inpFilename << std::endl; }
-
- ////////////////////////////////
- // ***** Setting output ***** //
- ////////////////////////////////
- 
- //TFile *output = new TFile(Form("./%s/correl_analysis.root", directory.c_str() ),"RECREATE");
- //output->cd();
-
+  
  //////////////////////////////
  // ***** Initializing ***** //
  //////////////////////////////
@@ -57,6 +49,7 @@ int main( int argc, const char *argv[] )
  TH2::SetDefaultSumw2( );
 
  CorrelationFramework CFW(nCorrTyp, nPtBins, nMultiplicityBins_Ana, nMultiplicityBins_EvM);
+ CFW.tag = tag;
  CFW.DoSelfCorrelation = false;
  CFW.SetupForProcess();
  CFW.ReadIn_CorrelationFuncs( f );
@@ -101,5 +94,10 @@ int main( int argc, const char *argv[] )
  CFW.makeFigCorrel2D( tag );
  CFW.ReBin();
  CFW.makeFigCorrel1D( tag );
+
+////////////////////////////////
+ // ***** Setting output ***** //
+ ////////////////////////////////
+
 
 }

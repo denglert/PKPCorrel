@@ -2,6 +2,7 @@
 #define CORRELATIONUTILS_H
 #include <TH2D.h>
 #include <deque>
+#include <string>
 #include "AnalysisBinning.h"
 #include "AnalysisFW.h"
 #include <TGraphErrors.h>
@@ -69,6 +70,12 @@ class CorrelationFramework
 	
 	bool DoSelfCorrelation;
 	bool DoTrackWeight;
+
+	// Project tag
+	std::string tag;
+
+	// Output dump
+	TFile *Corr_Results;
 	
 	// correl2D current event
  	TH2D ***correl2D_currev_signal;
@@ -148,7 +155,7 @@ class CorrelationFramework
 	void makeFigv3vspT_allparticles(int multBin, std::string tag);
 	void makeFigv2vspT_allparticles_with_selfcorrelation(int multBin, std::string tag);
 	void makeFigv2vsnTrk_cpar_ref( std::string tag );
-
+	void makeFigv2vsnTrk_allparticles( std::string tag );
 
 	TGraphErrors Getv2TGraphError (int TypBin, int multBin);
 	std::vector< double > Getptvec      ( int TypBin, double offset );

@@ -80,7 +80,8 @@ void CorrelationFramework::makeFigv2vspT_allparticles(int multBin, std::string t
 	double v2vspt_ptmin = 0.0;
 	double v2vspt_ptmax = 2.5;
 	double v2vspt_v2min = 0.0;
-	double v2vspt_v2max = 0.16;
+//	double v2vspt_v2max = 0.16;
+	double v2vspt_v2max = 0.6;
 
 	cparv2.SetTitle("");
    cparv2.GetXaxis()->SetLimits(v2vspt_ptmin,v2vspt_ptmax);
@@ -189,7 +190,28 @@ void CorrelationFramework::makeFigv2vspT_allparticles(int multBin, std::string t
 	canvas_v2_vs_pT.SaveAs( pngfigure.c_str() );
 	canvas_v2_vs_pT.SaveAs( pdffigure.c_str() );
 
+	// Save TGraphErrors to dump.root file
+	cparv2.SetName( Form("cpar_Ntrk_%03d-%03d", mult1, mult2) );
+	pionv2.SetName( Form("pion_Ntrk_%03d-%03d", mult1, mult2) );
+	kaonv2.SetName( Form("kaon_Ntrk_%03d-%03d", mult1, mult2) );
+	protv2.SetName( Form("prot_Ntrk_%03d-%03d", mult1, mult2) );
+
+	cparv2_syst.SetName( Form("cpar_syst_Ntrk_%03d-%03d", mult1, mult2) );
+	pionv2_syst.SetName( Form("pion_syst_Ntrk_%03d-%03d", mult1, mult2) );
+	kaonv2_syst.SetName( Form("kaon_syst_Ntrk_%03d-%03d", mult1, mult2) );
+	protv2_syst.SetName( Form("prot_syst_Ntrk_%03d-%03d", mult1, mult2) );
+
+	cparv2.Write(); 
+	pionv2.Write();
+	kaonv2.Write();
+	protv2.Write();
+	cparv2_syst.Write();
+	pionv2_syst.Write();
+	kaonv2_syst.Write();
+	protv2_syst.Write();
+
 }
+
 
 /////////////////////////////////////////////////////
 // - makeFigv2vspT_allparticles_ALICE_comparison()

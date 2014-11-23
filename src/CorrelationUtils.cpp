@@ -42,13 +42,16 @@ CorrelationFramework::CorrelationFramework( int nCorrTyp_a, int *nPtBins_a, int 
 void CorrelationFramework::SetupForProcess()
 {
 
+	std::cout << "Initializing Correlation Framework." << std::endl;
+	std::cout << "Setting up for process." << std::endl;
+	std::cout << "Project tag: " << tag << std::endl;
+
 	if ( DoSelfCorrelation )
 	{
 		Setup_TH2Ds_nCorrnPtnMult( correl2D_self_functi, nCorrTyp, nPtBins, nMultiplicityBins_Ana, "correl2D_self", "functi");
 		Setup_TH1Ds_nCorrnPtnMult( correl1D_self, nCorrTyp, nPtBins, nMultiplicityBins_Ana, "correl1D_self", "");
 		Setup_CorrelResults_nCorrnPtnMult          (correl_Results_self,      nCorrTyp, nPtBins, nMultiplicityBins_Ana);
 		Setup_Correl1DfitResultsData_nCorrnPtnMult (correl1D_FitResults_self, nCorrTyp, nPtBins, nMultiplicityBins_Ana);
-
 	}
 
 
@@ -63,6 +66,9 @@ void CorrelationFramework::SetupForProcess()
 
 	correl_Results_cpar_ref      = new          CorrelResults  [nMultiplicityBins_Ana];
 	correl1D_FitResults_cpar_ref = new  Correl1DfitResultsData [nMultiplicityBins_Ana];
+
+	Corr_Results = new TFile( Form("./results/%s/dump.root", tag.c_str() ), "RECREATE" );
+ 	Corr_Results->cd( );
 
 }
 

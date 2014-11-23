@@ -63,7 +63,8 @@ int main( int argc, const char *argv[] )
  if ( f->IsZombie() ) {std::cerr << "Error opening file: " << inpFilename << std::endl; exit(-1);}
 
  // trackTree
- TTree *trackTree = (TTree*)f->Get("pptracks/trackTree");
+ //TTree *trackTree = (TTree*)f->Get("pptracks/trackTree");
+ TTree *trackTree = (TTree*)f->Get("ppTrack/trackTree");
  Tracks tTracks;
  bool doMC = false;
  setupTrackTree(trackTree, tTracks, doMC);
@@ -74,8 +75,9 @@ int main( int argc, const char *argv[] )
  float vz; EvtAna->SetBranchAddress("vz", &vz);
 
  // Event Selection
+ bool isOLD = false;
  EvtSelection EvSel;
- EvSel.setupSkimTree_pPb( f, true);
+ EvSel.setupSkimTree_pPb( f, isOLD);
 
  ////////////////////////////////
  //                            //

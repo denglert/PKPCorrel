@@ -13,17 +13,18 @@ flag=$1
 # ./submitall.sh full
 # parameters
 
-workdir=MC_comparison_recolevel_trkCorrOFF_2nw_fullEv
+#workdir=MC_comparison_recolevel_2nw_fullEv_trkCorrOFF
 #workdir=MinBias_withTrackCorrection_2nw_eta_0.8
 #workdir=HighMult_withTrackCorrection_2nw_eta_0.8_gogo
+workdir=MC_vzhukova-EPOS_RECO_batch_comparison_recolevel_1nw_fullkEv_notrkCorr
 dotrkCorr=no
 trkCorrlabel=batchjob_TrackCorrection_full_mtrkdedx_added_minptfixed
 trkCorrFile=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/trkCorr/${trkCorrlabel}/trkCorrections_0.root
 nEvents=-1
-queue=2nw
+queue=1nw
 #inputlist="list_minbias"
 #inputlist="list_highmult"
-inputlist="list_MC_comparison"
+inputlist="list_MC_vzhukova-EPOS_RECO_batch_HiForest"
 
 ####################
 ### --- TEST --- ###
@@ -31,7 +32,7 @@ inputlist="list_MC_comparison"
 # ./submitall.sh test
 # parameteres
 testworkdir=testsubmission
-testdotrkCorr=yes
+testdotrkCorr=no
 testtrkCorrlabel=batchjob_TrackCorrection_full_mtrkdedx_added_minptfixed
 testtrkCorrFile=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/trkCorr/${trkCorrlabel}/trkCorrections_0.root
 testnEvents=10

@@ -15,7 +15,7 @@ flag=$1
 
 #workdir=MinBias_Etalon_2nd
 inputlist="list_MC_vzhukova-EPOS_RECO_batch_HiForest"
-workdir=MC_vzhukova-EPOS_RECO_batch_comparison_genelevel_2nd_fullkEv
+workdir=MC_vzhukova-EPOS_RECO_batch_comparison_genelevel_2nd_beta
 nEvents=-1
 queue=2nd
 
@@ -84,8 +84,8 @@ elif [ "$flag" == "full" ]; then
 	for (( i = 1; i < ($lim); i++ )); do
 	source=$(awk "NR == $i" $inputlist)
 	echo $source 
-	echo "bsub -J PKP_MC_crosscheck_test_$i -q $testqueue task_MC_crosscheck.sh $testworkdir $source $i $testnEvents"
-	bsub -J PKP_MC_crosscheck_$i -q $queue task_MC_crosscheck.sh $workdir $source $i $nEvents
+	echo "bsub -J PKP_MC_crosscheck_test_$i -q $queue task_MC_crosscheck.sh $workdir $source $i $nEvents"
+	bsub -J ${workdir}_$i -q $queue task_MC_crosscheck.sh $workdir $source $i $nEvents
 	done
 fi 
 

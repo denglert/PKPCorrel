@@ -113,15 +113,18 @@ void CorrelationFramework::SetupForPreprocess()
 void CorrelationFramework::ReadIn_CorrelationFuncs( TFile *f )
 {
 
+	std::cout << "Starting to read in correl2D signal and backgr" << std::endl;
 	ReadIn_TH2Ds_nCorrnPtnMult(f, correl2D_signal, nCorrTyp, nPtBins, nMultiplicityBins_Ana, "correl2D", "signal");
 	ReadIn_TH2Ds_nCorrnPtnMult(f, correl2D_backgr, nCorrTyp, nPtBins, nMultiplicityBins_Ana, "correl2D", "backgr");
 
 	if ( DoSelfCorrelation )
 	{
+	std::cout << "Starting to read in correl2D self signal and backgr" << std::endl;
 	ReadIn_TH2Ds_nCorrnPtnMult(f, correl2D_self_signal, nCorrTyp, nPtBins, nMultiplicityBins_Ana, "correl2D_self", "signal");
 	ReadIn_TH2Ds_nCorrnPtnMult(f, correl2D_self_backgr, nCorrTyp, nPtBins, nMultiplicityBins_Ana, "correl2D_self", "backgr");
 	}
 
+	std::cout << "Starting to read in correl2D cpar signal and backgr" << std::endl;
 	ReadIn_TH2Ds_nMult(f, correl2D_cpar_ref_signal, nMultiplicityBins_Ana, "correl2D", "cpar_ref_signal", ptref1, ptref2);
 	ReadIn_TH2Ds_nMult(f, correl2D_cpar_ref_backgr, nMultiplicityBins_Ana, "correl2D", "cpar_ref_backgr", ptref1, ptref2);
 
@@ -156,6 +159,7 @@ void CorrelationFramework::Set_dEtacut()
 // - trackWeight
 double CorrelationFramework::trackWeight(int PID, float pt, float eta, float phi)
 {
+
 	if( DoTrackWeight )
 	{ 
 		if( (PID == 0))
@@ -746,6 +750,7 @@ void CorrelationFramework::display_v2s()
  for(int multBin=0; multBin < nMultiplicityBins_Ana; multBin++)
  {
 
+
 	int mult1 = multiplicity_Ana(multBin, 0, nMultiplicityBins_Ana);
 	int mult2 = multiplicity_Ana(multBin, 1, nMultiplicityBins_Ana);
 
@@ -1311,7 +1316,6 @@ void ReadIn_TH2Ds_nCorrnPtnMult(TFile *f, TH2D ****&correl2D, int nCorrTyp, int 
 	}
 
 }
-
 
 // ReadIn_TH2Ds_nMult
 void ReadIn_TH2Ds_nMult(TFile *f, TH2D **&correl2D, int nMultiplicityBins, const char histoname[], const char tag[], double pt1, double pt2)

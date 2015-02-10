@@ -87,8 +87,9 @@ int GetPID(float p, float dEdx, float eta)
 	return 99;
 }
 
-int McPID2AnaPID ( int McPID)
+int McPID2AnaPID ( int McPID, double eta)
 {
+	if ( 0.8 < fabs(eta) ) {return 99;}
 	if (( McPID == 211)  || (McPID == -211) ) { return 1; }
 	if (( McPID == 321)  || (McPID == -321) ) { return 2; }
 	if (( McPID == 2212) || (McPID == -2212)) { return 3; }

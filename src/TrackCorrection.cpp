@@ -26,10 +26,10 @@ const int nPart = 4;
 const double zVtxDistrMin = -13;
 const double zVtxDistrMax =  13;
 
-//const int npt = 58;
-//const int npt[4]      = {20,    10,   5,  5};
-//const double ptMin[4] = {0.1, 0.15, 0.15, 0.15};
-//const double ptMax[4] = {3.0, 1.00, 1.00, 1.8 };
+const int npt[4]      = {20,    10,   5,  5};
+const double ptMin[4] = {0.1, 0.15, 0.15, 0.15};
+const double ptMax[4] = {3.0, 1.00, 1.00, 1.8 };
+
 // const int npt[4]      = {1,    1,   1,  1};
 // const double ptMin[4] = {0.3, 0.15, 0.15, 0.15};
 // const double ptMax[4] = {0.5, 0.40, 0.40, 0.4 };
@@ -38,13 +38,12 @@ const double zVtxDistrMax =  13;
 const double ptGlobalMin = 0.1;
 
 const int neta = 48;
-const double etaMin = -2.4;
-const double etaMax =  2.4;
+const double etaMin = -2.3;
+const double etaMax =  2.3;
 
 const int nphi = 70;
 const double phiMin = -TMath::Pi();
 const double phiMax =  TMath::Pi();
-
 
 
 TH3D** Setup_TH3D_nCorrTyp(const char histoname[], const char histolabel[], const int nXBins[], const double xmin[], const double xmax[], int nYBins, double ymin, double ymax, int nZBins, double zmin, double zmax )
@@ -58,6 +57,19 @@ TH3D** Setup_TH3D_nCorrTyp(const char histoname[], const char histolabel[], cons
 
 	return histos;
 };
+
+TH2D** Setup_TH2D_nCorrTyp(const char histoname[], const char histolabel[], const int nXBins[], const double xmin[], const double xmax[], int nYBins, double ymin, double ymax, int nZBins, double zmin, double zmax )
+{
+	TH2D **histos = new TH2D*[nPart];
+
+	for( int i = 0; i < nPart; i++)
+	{
+		 histos[i] = new TH3D( Form("%s typ %d", histoname, i), histolabel, nXBins[i], xmin[i], xmax[i], nYBins, ymin, ymax, nZBins, zmin, zmax);
+	}
+
+	return histos;
+};
+
 
 int main( int argc, const char *argv[] )
 {
@@ -105,9 +117,9 @@ int main( int argc, const char *argv[] )
 //                                 //
 /////////////////////////////////////
 
- //////////////////
- // === DATA === //
- //////////////////
+ ////////////////////////
+ // === DATA z-vtx === //
+ ////////////////////////
 
  ///////////////
  // Open file //
@@ -157,9 +169,9 @@ int main( int argc, const char *argv[] )
  fdt->Close();
  delete fdt;
 
- ////////////////
- // === MC === //
- ////////////////
+ //////////////////////
+ // === MC z-vtx === //
+ //////////////////////
  
   ///////////////
  // Open file //
@@ -177,6 +189,7 @@ int main( int argc, const char *argv[] )
 
  EvtSelection EvSelMC;
  EvSelMC.setupSkimTree_pPb( fmc, false);
+
  
  ////////////////
  // Event loop //
@@ -188,6 +201,7 @@ int main( int argc, const char *argv[] )
  { nEvMaxMC = EvSelMC.SkimAna->GetEntries(); }
 
  log.wr( Form("nEvMaxMC: %d", nEvMaxMC) );
+
 
  for (int iEv = 0; iEv < nEvMaxMC; iEv++)
  {
@@ -241,6 +255,7 @@ int main( int argc, const char *argv[] )
   TH3D **hmatched   = Setup_TH3D_nCorrTyp("hmatched",   ";p_{T};#eta;#phi", npt,ptMin,ptMax,neta,etaMin,etaMax,nphi,phiMin,phiMax);
   TH3D **hmultrec   = Setup_TH3D_nCorrTyp("hmultrec",   ";p_{T};#eta;#phi", npt,ptMin,ptMax,neta,etaMin,etaMax,nphi,phiMin,phiMax);
   TH3D *heff[nPart];
+  TH3D *hmultrecrate[nPart];
   TH3D **hcorr   = Setup_TH3D_nCorrTyp("hcorr",   ";p_{T};#eta;#phi", npt,ptMin,ptMax,neta,etaMin,etaMax,nphi,phiMin,phiMax);
 
 
@@ -326,7 +341,8 @@ int main( int argc, const char *argv[] )
 			double eta = tTracks.pEta[iPart];
 			double phi = tTracks.pPhi[iPart];
 		
-			int PID = McPID2AnaPID( tTracks.pPId[iPart] );
+			// No eta cut
+			int PID = McPID2AnaPID( tTracks.pPId[iPart] , 2.0);
 			bool isPID = (PID != 99);
 		
 			// particle selection
@@ -355,7 +371,6 @@ int main( int argc, const char *argv[] )
 		
 		   }
 		
-		
   }
 
   for( int iPar = 0; iPar < nPart; iPar++)
@@ -364,7 +379,8 @@ int main( int argc, const char *argv[] )
    	hsecondary[iPar] -> Divide( hreal   [iPar] );
    	heff      [iPar]  = (TH3D*)hmatched [iPar]->Clone(Form("heff part %d", iPar));
    	heff      [iPar] -> Divide( hgen    [iPar] );
-   	hmultrec  [iPar] -> Divide( hmatched[iPar] );
+   	hmultrecrate [iPar] = (TH3D*)hmultrec [iPar]->Clone(Form("hmultrecrate part %d", iPar));
+   	hmultrecrate [iPar] -> Divide( hmatched[iPar] );
   }
 
   // Filling track correction table
@@ -385,7 +401,7 @@ int main( int argc, const char *argv[] )
 	  double eta = etaMin+y*etabw; 
 	  double phi = phiMin+z*phibw; 
 
-     double value = (1.0-hfake[i]->GetBinContent(x,y,z))*(1.0-hsecondary[i]->GetBinContent(x,y,z)) / ((heff[i]->GetBinContent(x,y,z)) * (1+hmultrec[i]->GetBinContent(x,y,z)));
+     double value = (1.0-hfake[i]->GetBinContent(x,y,z))*(1.0-hsecondary[i]->GetBinContent(x,y,z)) / ((heff[i]->GetBinContent(x,y,z)) * (hmultrec[i]->GetBinContent(x,y,z)));
 	  hcorr[i]->SetBinContent(x,y,z,value);
  	  log.wr(Form("%d %.3f %.2f %.2f : %.4f", i, pt, eta, phi, value));
   }

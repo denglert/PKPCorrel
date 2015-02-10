@@ -13,15 +13,17 @@
 #include "PIDUtils.h"
 #include "CorrelationUtils.h"
 #include "SetupCustomTrackTree.h"
+#include "EvtSelection.h"
 
 int main( int argc, const char *argv[] )
 { 
 
   if(argc != 4)
   {
-    std::cerr << "Usage: process <.root file to be preprocessed> <tag> <nEvents>" << std::endl;
+    std::cerr << "Usage: preprocess <.root file to be preprocessed> <tag> <nEvents>" << std::endl;
 	 exit(1);
   }
+
 
  TString inpFilename   = argv[1];
  std::string tag		  = argv[2];
@@ -64,10 +66,10 @@ int main( int argc, const char *argv[] )
  int hiNtracks; EvtAna->SetBranchAddress("hiNtracks", &hiNtracks);
  float vz; EvtAna->SetBranchAddress("vz", &vz);
 
- // skimanalysis for event selection
- TTree *SkimAna= (TTree*)f->Get("skimanalysis/HltTree");
- int pPAcollisionEventSelection; SkimAna->SetBranchAddress("pPAcollisionEventSelectionPA", &pPAcollisionEventSelection);
- int pileUpBit;                  SkimAna->SetBranchAddress("pVertexFilterCutGplus", &pileUpBit);
+ // Event Selection (SkimAnalysis)
+ bool isOLD = false;
+ EvtSelection EvSel;
+ EvSel.setupSkimTree_pPb( f, isOLD);
 
  ////////////////////////////////
  //                            //
@@ -103,10 +105,13 @@ int main( int argc, const char *argv[] )
  std::cout << "Correlation Analysis Framework loaded." << std::endl;
 
  CFW.DoSelfCorrelation = false;
- CFW.DoTrackWeight = false;
  if ( CFW.DoSelfCorrelation ) { std::cout << "Analysis includes self correlation computation." << std::endl;}
 
+ CFW.DoTrackWeight = false;
  CFW.SetupForPreprocess();
+ if ( CFW.DoSelfCorrelation ) { std::cout << "Analysis includes self correlation computation." << std::endl;}
+
+
 
  // EventData
  EventData *ev;
@@ -121,10 +126,9 @@ int main( int argc, const char *argv[] )
  ///////////////////////////////////////////
  
  log->wr(Form("trackTree entries: %d", trackTree->GetEntries()));
- log->wr(Form("SkimAna entries: %d",   SkimAna->GetEntries()));
+ log->wr(Form("EventSelection (SkimAna) entries: %d", EvSel.GetEntries()));
  log->wr(Form("nEvMax: %d", nEvMax));
 
- 
  std::cout << "Preloading events in memory..." << std::endl;
  for(int multBin = 0; multBin < nMultiplicityBins_EvM; multBin++)
  for(int zvtxBin = 0; zvtxBin < nZvtxBins_; zvtxBin++)
@@ -140,10 +144,10 @@ int main( int argc, const char *argv[] )
 
 		// Get current event info
 		EvtAna->GetEntry(iEv);
-		SkimAna->GetEntry(iEv);
 
-		// Event selection //
-		if ( EventSelection(pPAcollisionEventSelection, pileUpBit) )
+		// Event Selection //
+
+		if ( EvSel.isGoodEv_pPb( iEv ) )
 		if (     zvtxbin(vz, nZvtxBins_)    == zvtxBin )
 		if ( multiplicitybin_EvM(hiNtracks) == multBin )
 		{
@@ -154,27 +158,17 @@ int main( int argc, const char *argv[] )
 	 		for (int iPar = 0; iPar < nPar; iPar++)
 			{
 
-				// TRACK SELECTION //
-				if ( !TrackSelection(tTracks, iPar ) ) continue;
-
-  				float p = tTracks.pPt[iPar] * cosh(tTracks.pEta[iPar]);
-				int PID = McPID2AnaPID ( tTracks.pPId[iPar] );
-
-				int ptBin_CH = ptbin(   0 , tTracks.pPt[iPar]);
-				int ptBin_ID = ptbin( PID , tTracks.pPt[iPar]);
-		
+				// Particle selection //
+				if ( 2.4 < abs(tTracks.pEta[iPar]) )  continue;
 				bool isOutsideReferencePartPtRange = ( ( tTracks.pPt[iPar] < ptref1 ) || ( ptref2 < tTracks.pPt[iPar] ) );
-				bool isOutsideIdentifHadronPtRange = ( ptBin_ID == -1);
-				bool isOutsideChargedHadronPtRange = ( ptBin_CH == -1);
-		
-				if ( isOutsideReferencePartPtRange && isOutsideChargedHadronPtRange && isOutsideIdentifHadronPtRange ) continue;	
-				// TRACK SELECTION //
-	
-				// Track fill up
+				if ( isOutsideReferencePartPtRange ) continue;	
+				// Particle selection //
+
+
+				// Particle fill up
 				track particle;
 				// Warning: no charge fill!;
 				particle.charge  = 0;
-				particle.pid  	  = PID;
 				particle.pt      = tTracks.pPt[iPar];
 				particle.phi     = tTracks.pPhi[iPar];
 				particle.eta     = tTracks.pEta[iPar];
@@ -213,7 +207,7 @@ int main( int argc, const char *argv[] )
  }
 
  log->wr(Form("trackTree entries: %d", trackTree->GetEntries()));
- log->wr(Form("SkimAna entries: %d", SkimAna->GetEntries()));
+ log->wr(Form("EventSelection (SkimAna) entries: %d", EvSel.GetEntries()));
  log->wr(Form("nEvMax: %d", nEvMax));
 
  ///////////////////////////
@@ -223,6 +217,11 @@ int main( int argc, const char *argv[] )
  ///////////////////////////
  
  if (nEvMax == -1) {nEvMax = trackTree->GetEntries();}
+
+ log->wr(Form("trackTree entries: %d", trackTree->GetEntries()));
+ log->wr(Form("SkimAna entries: %d", EvSel.GetEntries()));
+ log->wr(Form("nEvMax: %d", nEvMax));
+
  for (int iEvA = 0; iEvA < nEvMax; iEvA++)
  {
 	
@@ -231,11 +230,10 @@ int main( int argc, const char *argv[] )
 
 	// Get current event info
 	EvtAna->GetEntry(iEvA);
-	SkimAna->GetEntry(iEvA);
 
 
 	// Event Selection
-	if ( !EventSelection( pPAcollisionEventSelection, pileUpBit) ) continue;
+	if ( !EvSel.isGoodEv_pPb( iEvA ) ) continue;
 	if ( zvtxbin(vz, nZvtxBins) == -1 ) continue;
 	CFW.nEvents_Processed_signal_total->Fill(0.);
 	if ( multiplicitybin_Ana(hiNtracks, nMultiplicityBins_Ana) == -1) continue;
@@ -253,7 +251,6 @@ int main( int argc, const char *argv[] )
 	nTrkDistr_signal->Fill( hiNtracks );
 	
 	CFW.ResetCurrentEventCorrelation();
-
 
 	// Load in tracks
 	trackTree->GetEntry(iEvA);

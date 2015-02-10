@@ -32,6 +32,7 @@ int main( int argc, const char *argv[] )
  int nMultiplicityBins_EvM = nMultiplicityBins_EvM_HDR; 
  int nZvtxBins 	 = nZvtxBins_; 
 
+
  prepareDIR(tag);
 
  //////////////////////////////////////
@@ -40,6 +41,7 @@ int main( int argc, const char *argv[] )
  
  TFile *f = new TFile(inpFilename, "READ");
  if ( f->IsZombie() ) {std::cerr << "Error opening file: " << inpFilename << std::endl; }
+ else{ std::cout << "TFile seems to be loaded." << std::endl; };
   
  //////////////////////////////
  // ***** Initializing ***** //
@@ -77,6 +79,7 @@ int main( int argc, const char *argv[] )
 
  CFW.Calcvns();
  CFW.display_v2s();
+
 
  // Make figures
  for(int multBin=0; multBin < nMultiplicityBins_Ana; multBin++)

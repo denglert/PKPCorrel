@@ -29,21 +29,21 @@ const float trigptbins[nCorrTyp_][nPtBinsMax_][2] =
 	  {  2.00,  2.50 },
 	  {  2.50,  3.00 },
 	  { -1.00, -1.00 }},
-	 {{  0.15,  0.40 },
+	 {{  0.20,  0.40 },
 	  {  0.40,  0.60 },
 	  {  0.60,  0.80 },
 	  { -1.00, -1.00 },
 	  { -1.00, -1.00 },
 	  { -1.00, -1.00 },
 	  { -1.00, -1.00 }},
-	 {{  0.15,  0.40 },
+	 {{  0.20,  0.40 },
 	  {  0.40,  0.60 },
 	  {  0.60,  0.80 },
 	  { -1.00, -1.00 },
 	  { -1.00, -1.00 },
 	  { -1.00, -1.00 },
 	  { -1.00, -1.00 }},
-	 {{  0.15,  0.40 },
+	 {{  0.20,  0.40 },
 	  {  0.40,  0.60 },
 	  {  0.60,  0.80 },
 	  {  0.80,  1.00 },
@@ -64,21 +64,21 @@ const float assoptmax = 3.0;
 // Analysis multiplicity binning
 
 ////// MinBias and HighMultiplicity
-// const int nMultiplicityBins_Ana_HDR = 9;
-// const int multiplicitybins_Ana[nMultiplicityBins_Ana_HDR][2] = 
-// {
-// 	  {   0,  30 },
-// 	  {  30,  50 },
-// 	  {  50,  80 },
-// 	  {  80, 100 },
-// 	  { 100, 120 },
-// 	  { 120, 150 },
-// 	  { 150, 185 },
-// 	  { 185, 220 },
-// 	  { 220, 260 }
-////	  { 260, 300 }
-////	  { 300, 350 }
-//};
+//  const int nMultiplicityBins_Ana_HDR = 9;
+//  const int multiplicitybins_Ana[nMultiplicityBins_Ana_HDR][2] = 
+//  {
+//  	  {   0,  30 },
+//  	  {  30,  50 },
+//  	  {  50,  80 },
+//  	  {  80, 100 },
+//  	  { 100, 120 },
+//  	  { 120, 150 },
+//  	  { 150, 185 },
+//  	  { 185, 220 },
+//  	  { 220, 260 }
+// ////	  { 260, 300 }
+// ////	  { 300, 350 }
+// };
 
 
 // MINBIAS
@@ -92,7 +92,7 @@ const float assoptmax = 3.0;
 //	  { 100, 120 }
 //};
 
-//// MC comparison
+// MC comparison
 const int nMultiplicityBins_Ana_HDR = 1;
 const int multiplicitybins_Ana[nMultiplicityBins_Ana_HDR][2] = 
 {

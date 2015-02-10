@@ -221,7 +221,7 @@ void EventData::ReadInMC( Tracks &tTracks)
 
   		float p = tTracks.pPt[iPar] * cosh(tTracks.pEta[iPar]);
 
-		int PID = McPID2AnaPID ( tTracks.pPId[iPar] );
+		int PID = McPID2AnaPID ( tTracks.pPId[iPar], tTracks.pEta[iPar]);
 		int ptBin_CH = ptbin(   0 , tTracks.pPt[iPar]);
 		int ptBin_ID = ptbin( PID , tTracks.pPt[iPar]);
 

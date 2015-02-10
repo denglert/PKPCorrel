@@ -16,12 +16,13 @@ flag=$1
 #workdir=MC_comparison_recolevel_2nw_fullEv_trkCorrOFF
 #workdir=MinBias_withTrackCorrection_2nw_eta_0.8
 #workdir=HighMult_withTrackCorrection_2nw_eta_0.8_gogo
-workdir=MC_vzhukova-EPOS_RECO_batch_comparison_recolevel_1nw_fullkEv_notrkCorr
+workdir=MC_vzhukova-EPOS_RECO_batch_comparison_recolevel_2nd_chariot_trkCorr
 dotrkCorr=no
+workdir=${workdir}_${dotrkCorr}
 trkCorrlabel=batchjob_TrackCorrection_full_mtrkdedx_added_minptfixed
 trkCorrFile=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/trkCorr/${trkCorrlabel}/trkCorrections_0.root
 nEvents=-1
-queue=1nw
+queue=2nd
 #inputlist="list_minbias"
 #inputlist="list_highmult"
 inputlist="list_MC_vzhukova-EPOS_RECO_batch_HiForest"
@@ -90,6 +91,7 @@ elif [ "$flag" == "full" ]; then
 	rm -rf $workdir
 	mkdir $workdir
 	cd $batchdir/$workdir
+	echo -e "trkCorrlabel: $trkCorrlabel\ntrkCorrFile: $trkCorrFile" > trkCorrInfo
 	echo "FULL DATASET SUBMISSION"
 	echo "WORKDIR: $workdir"
 	echo "Number of jobs: $njobs"

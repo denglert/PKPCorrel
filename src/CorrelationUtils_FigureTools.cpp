@@ -80,8 +80,9 @@ void CorrelationFramework::makeFigv2vspT_allparticles(int multBin, std::string t
 	double v2vspt_ptmin = 0.0;
 	double v2vspt_ptmax = 2.5;
 	double v2vspt_v2min = 0.0;
-//	double v2vspt_v2max = 0.16;
-	double v2vspt_v2max = 0.6;
+	double v2vspt_v2max = 0.16;
+	//double v2vspt_v2max = 0.6;
+	
 
 	cparv2.SetTitle("");
    cparv2.GetXaxis()->SetLimits(v2vspt_ptmin,v2vspt_ptmax);

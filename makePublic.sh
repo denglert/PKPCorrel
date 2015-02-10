@@ -60,12 +60,14 @@ cp -r ./results/$tag/v2/* $www_v2
 #######################
 delaytime=160
 
+typ=png
+
 ##### - Correl2D - #####
 ### CParticle ###
 # Correl2D signal component, nTrk dependence in the pt 0.60-1.00 window
 outputbase=correl2D_signal_cpar_pt_${charged_particle_ptbin}_nTrk_dep
 cd $www_correl2D
-files=$(ls | grep -v "self" | grep "signal_typ_0_pt_${charged_particle_ptbin}_nTrk_*")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep --include \*.${typ} "signal_typ_0_pt_${charged_particle_ptbin}_nTrk_*")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files
@@ -74,7 +76,7 @@ gzip ${outputbase}.tar
 # Correl2D backgr component, nTrk dependence in the pt 0.60-1.00 window
 outputbase=correl2D_backgr_cpar_pt_${charged_particle_ptbin}_nTrk_dep
 cd $www_correl2D
-files=$(ls | grep -v "self" | grep "backgr_typ_0_pt_${charged_particle_ptbin}_nTrk_*")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep --include \.*${typ} "backgr_typ_0_pt_${charged_particle_ptbin}_nTrk_*")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files
@@ -83,7 +85,7 @@ gzip ${outputbase}.tar
 # Correl2D correlation function, nTrk dependence in the pt 0.60-1.00 window
 outputbase=correl2D_functi_cpar_pt_${charged_particle_ptbin}_nTrk_dep
 cd $www_correl2D
-files=$(ls | grep -v "self" | grep "functi_typ_0_pt_${charged_particle_ptbin}_nTrk_*")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep --include \.*${typ} "functi_typ_0_pt_${charged_particle_ptbin}_nTrk_*")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files
@@ -92,7 +94,7 @@ gzip ${outputbase}.tar
 # Correl2D signal component, nTrk dependence in the pt 0.60-1.00 window
 outputbase=correl2D_signal_cpar_nTrk_${charged_particle_multbin}_pt_dep
 cd $www_correl2D
-files=$(ls | grep -v "self" | grep "signal_typ_0_pt_....-...._nTrk_${charged_particle_multbin}")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep --include \.*${typ} "signal_typ_0_pt_....-...._nTrk_${charged_particle_multbin}")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files
@@ -101,7 +103,7 @@ gzip ${outputbase}.tar
 # Correl2D backgr component, nTrk dependence in the pt 0.60-1.00 window
 outputbase=correl2D_backgr_cpar_nTrk_${charged_particle_multbin}_pt_dep
 cd $www_correl2D
-files=$(ls | grep -v "self" | grep "backgr_typ_0_pt_....-...._nTrk_${charged_particle_multbin}")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep "backgr_typ_0_pt_....-...._nTrk_${charged_particle_multbin}")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files
@@ -110,7 +112,7 @@ gzip ${outputbase}.tar
 # Correl2D correlation function, nTrk dependence in the pt 0.60-1.00 window
 outputbase=correl2D_functi_cpar_nTrk_${charged_particle_multbin}_pt_dep
 cd $www_correl2D
-files=$(ls | grep -v "self" | grep "functi_typ_0_pt_....-...._nTrk_${charged_particle_multbin}")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep "functi_typ_0_pt_....-...._nTrk_${charged_particle_multbin}")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files
@@ -121,7 +123,7 @@ gzip ${outputbase}.tar
 # Correl2D signal component, nTrk dependence in the pt ${pion_particle_ptbin} window
 outputbase=correl2D_signal_pion_pt_${pion_particle_ptbin}_nTrk_dep
 cd $www_correl2D
-files=$(ls | grep -v "self" | grep "signal_typ_1_pt_${pion_particle_ptbin}_nTrk_*")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep "signal_typ_1_pt_${pion_particle_ptbin}_nTrk_*")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files
@@ -130,7 +132,7 @@ gzip ${outputbase}.tar
 # Correl2D backgr component, nTrk dependence in the pt ${pion_particle_ptbin} window
 outputbase=correl2D_backgr_pion_pt_${pion_particle_ptbin}_nTrk_dep
 cd $www_correl2D
-files=$(ls | grep -v "self" | grep "backgr_typ_1_pt_${pion_particle_ptbin}_nTrk_*")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep "backgr_typ_1_pt_${pion_particle_ptbin}_nTrk_*")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files
@@ -139,7 +141,7 @@ gzip ${outputbase}.tar
 # Correl2D correlation function, nTrk dependence in the pt ${pion_particle_ptbin} window
 outputbase=correl2D_functi_pion_pt_${pion_particle_ptbin}_nTrk_dep
 cd $www_correl2D
-files=$(ls | grep -v "self" | grep "functi_typ_1_pt_${pion_particle_ptbin}_nTrk_*")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep "functi_typ_1_pt_${pion_particle_ptbin}_nTrk_*")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files
@@ -148,7 +150,7 @@ gzip ${outputbase}.tar
 # Correl2D signal component, nTrk dependence in the pt 0.60-0.80 window
 outputbase=correl2D_signal_pion_nTrk_${pion_particle_multbin}_pt_dep
 cd $www_correl2D
-files=$(ls | grep -v "self" | grep "signal_typ_1_pt_....-...._nTrk_${pion_particle_multbin}")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep "signal_typ_1_pt_....-...._nTrk_${pion_particle_multbin}")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files
@@ -157,7 +159,7 @@ gzip ${outputbase}.tar
 # Correl2D backgr component, nTrk dependence in the pt 0.60-0.80 window
 outputbase=correl2D_backgr_pion_nTrk_${pion_particle_multbin}_pt_dep
 cd $www_correl2D
-files=$(ls | grep -v "self" | grep "backgr_typ_1_pt_....-...._nTrk_${pion_particle_multbin}")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep "backgr_typ_1_pt_....-...._nTrk_${pion_particle_multbin}")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files
@@ -166,7 +168,7 @@ gzip ${outputbase}.tar
 # Correl2D correlation function, nTrk dependence in the pt 0.60-0.80 window
 outputbase=correl2D_functi_pion_nTrk_${pion_particle_multbin}_pt_dep
 cd $www_correl2D
-files=$(ls | grep -v "self" | grep "functi_typ_1_pt_....-...._nTrk_${pion_particle_multbin}")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep "functi_typ_1_pt_....-...._nTrk_${pion_particle_multbin}")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files
@@ -177,7 +179,7 @@ gzip ${outputbase}.tar
 # Correl2D signal component, nTrk dependence in the pt ${kaon_particle_ptbin} window
 outputbase=correl2D_signal_kaon_pt_${kaon_particle_ptbin}_nTrk_dep
 cd $www_correl2D
-files=$(ls | grep -v "self" | grep "signal_typ_2_pt_${kaon_particle_ptbin}_nTrk_*")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep "signal_typ_2_pt_${kaon_particle_ptbin}_nTrk_*")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files
@@ -186,7 +188,7 @@ gzip ${outputbase}.tar
 # Correl2D backgr component, nTrk dependence in the pt ${kaon_particle_ptbin} window
 outputbase=correl2D_backgr_kaon_pt_${kaon_particle_ptbin}_nTrk_dep
 cd $www_correl2D
-files=$(ls | grep -v "self" | grep "backgr_typ_2_pt_${kaon_particle_ptbin}_nTrk_*")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep "backgr_typ_2_pt_${kaon_particle_ptbin}_nTrk_*")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files
@@ -195,7 +197,7 @@ gzip ${outputbase}.tar
 # Correl2D correlation function, nTrk dependence in the pt ${kaon_particle_ptbin} window
 outputbase=correl2D_functi_kaon_pt_${kaon_particle_ptbin}_nTrk_dep
 cd $www_correl2D
-files=$(ls | grep -v "self" | grep "functi_typ_2_pt_${kaon_particle_ptbin}_nTrk_*")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep "functi_typ_2_pt_${kaon_particle_ptbin}_nTrk_*")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files
@@ -204,7 +206,7 @@ gzip ${outputbase}.tar
 # Correl2D signal component, nTrk dependence in the pt 0.60-0.80 window
 outputbase=correl2D_signal_kaon_nTrk_${kaon_particle_multbin}_pt_dep
 cd $www_correl2D
-files=$(ls | grep -v "self" | grep "signal_typ_2_pt_....-...._nTrk_${kaon_particle_multbin}")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep "signal_typ_2_pt_....-...._nTrk_${kaon_particle_multbin}")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files
@@ -213,7 +215,7 @@ gzip ${outputbase}.tar
 # Correl2D backgr component, nTrk dependence in the pt 0.60-0.80 window
 outputbase=correl2D_backgr_kaon_nTrk_${kaon_particle_multbin}_pt_dep
 cd $www_correl2D
-files=$(ls | grep -v "self" | grep "backgr_typ_2_pt_....-...._nTrk_${kaon_particle_multbin}")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep "backgr_typ_2_pt_....-...._nTrk_${kaon_particle_multbin}")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files
@@ -222,7 +224,7 @@ gzip ${outputbase}.tar
 # Correl2D correlation function, nTrk dependence in the pt 0.60-0.80 window
 outputbase=correl2D_functi_kaon_nTrk_${kaon_particle_multbin}_pt_dep
 cd $www_correl2D
-files=$(ls | grep -v "self" | grep "functi_typ_2_pt_....-...._nTrk_${kaon_particle_multbin}")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep "functi_typ_2_pt_....-...._nTrk_${kaon_particle_multbin}")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files
@@ -233,7 +235,7 @@ gzip ${outputbase}.tar
 # Correl2D signal component, nTrk dependence in the pt ${proton_particle_ptbin} window
 outputbase=correl2D_signal_prot_pt_${proton_particle_ptbin}_nTrk_dep
 cd $www_correl2D
-files=$(ls | grep -v "self" | grep "signal_typ_3_pt_${proton_particle_ptbin}_nTrk_*")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep "signal_typ_3_pt_${proton_particle_ptbin}_nTrk_*")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files
@@ -242,7 +244,7 @@ gzip ${outputbase}.tar
 # Correl2D backgr component, nTrk dependence in the pt ${proton_particle_ptbin} window
 outputbase=correl2D_backgr_prot_pt_${proton_particle_ptbin}_nTrk_dep
 cd $www_correl2D
-files=$(ls | grep -v "self" | grep "backgr_typ_3_pt_${proton_particle_ptbin}_nTrk_*")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep "backgr_typ_3_pt_${proton_particle_ptbin}_nTrk_*")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files
@@ -251,7 +253,7 @@ gzip ${outputbase}.tar
 # Correl2D correlation function, nTrk dependence in the pt ${proton_particle_ptbin} window
 outputbase=correl2D_functi_prot_pt_${proton_particle_ptbin}_nTrk_dep
 cd $www_correl2D
-files=$(ls | grep -v "self" | grep "functi_typ_3_pt_${proton_particle_ptbin}_nTrk_*")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep "functi_typ_3_pt_${proton_particle_ptbin}_nTrk_*")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files
@@ -260,7 +262,7 @@ gzip ${outputbase}.tar
 # Correl2D signal component, nTrk dependence in the pt 0.60-0.80 window
 outputbase=correl2D_signal_prot_nTrk_${proton_particle_multbin}_pt_dep
 cd $www_correl2D
-files=$(ls | grep -v "self" | grep "signal_typ_3_pt_....-...._nTrk_${proton_particle_multbin}")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep "signal_typ_3_pt_....-...._nTrk_${proton_particle_multbin}")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files
@@ -269,7 +271,7 @@ gzip ${outputbase}.tar
 # Correl2D backgr component, nTrk dependence in the pt 0.60-0.80 window
 outputbase=correl2D_backgr_prot_nTrk_${proton_particle_multbin}_pt_dep
 cd $www_correl2D
-files=$(ls | grep -v "self" | grep "backgr_typ_3_pt_....-...._nTrk_${proton_particle_multbin}")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep "backgr_typ_3_pt_....-...._nTrk_${proton_particle_multbin}")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files
@@ -278,7 +280,7 @@ gzip ${outputbase}.tar
 # Correl2D correlation function, nTrk dependence in the pt 0.60-0.80 window
 outputbase=correl2D_functi_prot_nTrk_${proton_particle_multbin}_pt_dep
 cd $www_correl2D
-files=$(ls | grep -v "self" | grep "functi_typ_3_pt_....-...._nTrk_${proton_particle_multbin}")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep "functi_typ_3_pt_....-...._nTrk_${proton_particle_multbin}")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files
@@ -288,7 +290,7 @@ gzip ${outputbase}.tar
 ### CPar ###
 outputbase=correl1D_cpar_pt_${charged_particle_ptbin}_nTrk_dep
 cd $www_correl1D
-files=$(ls | grep -v "self" | grep "typ_0_pt_${charged_particle_ptbin}_nTrk_")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep "typ_0_pt_${charged_particle_ptbin}_nTrk_")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files
@@ -296,7 +298,7 @@ gzip ${outputbase}.tar
 
 outputbase=correl1D_cpar_nTrk_${charged_particle_multbin}_pt_dep
 cd $www_correl1D
-files=$(ls | grep -v "self" | grep "typ_0_pt_....-...._nTrk_${charged_particle_multbin}")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep "typ_0_pt_....-...._nTrk_${charged_particle_multbin}")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files
@@ -305,7 +307,7 @@ gzip ${outputbase}.tar
 ### Pion ###
 outputbase=correl1D_pion_pt_${pion_particle_ptbin}_nTrk_dep
 cd $www_correl1D
-files=$(ls | grep -v "self" | grep "typ_1_pt_${pion_particle_ptbin}_nTrk_")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep "typ_1_pt_${pion_particle_ptbin}_nTrk_")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files
@@ -313,7 +315,7 @@ gzip ${outputbase}.tar
 
 outputbase=correl1D_pion_nTrk_${pion_particle_multbin}_pt_dep
 cd $www_correl1D
-files=$(ls | grep -v "self" | grep "typ_1_pt_....-...._nTrk_${pion_particle_multbin}")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep "typ_1_pt_....-...._nTrk_${pion_particle_multbin}")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files
@@ -322,7 +324,7 @@ gzip ${outputbase}.tar
 ### Kaon ###
 outputbase=correl1D_kaon_pt_${kaon_particle_ptbin}_nTrk_dep
 cd $www_correl1D
-files=$(ls | grep -v "self" | grep "typ_2_pt_${kaon_particle_ptbin}_nTrk_")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep "typ_2_pt_${kaon_particle_ptbin}_nTrk_")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files
@@ -330,7 +332,7 @@ gzip ${outputbase}.tar
 
 outputbase=correl1D_kaon_nTrk_${kaon_particle_multbin}_pt_dep
 cd $www_correl1D
-files=$(ls | grep -v "self" | grep "typ_2_pt_....-...._nTrk_${kaon_particle_multbin}")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep "typ_2_pt_....-...._nTrk_${kaon_particle_multbin}")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files
@@ -339,7 +341,7 @@ gzip ${outputbase}.tar
 ### Prot ###
 outputbase=correl1D_prot_pt_${proton_particle_ptbin}_nTrk_dep
 cd $www_correl1D
-files=$(ls | grep -v "self" | grep "typ_3_pt_${proton_particle_ptbin}_nTrk_")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep "typ_3_pt_${proton_particle_ptbin}_nTrk_")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files
@@ -347,7 +349,7 @@ gzip ${outputbase}.tar
 
 outputbase=correl1D_prot_nTrk_${proton_particle_multbin}_pt_dep
 cd $www_correl1D
-files=$(ls | grep -v "self" | grep "typ_3_pt_....-...._nTrk_${proton_particle_multbin}")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep "typ_3_pt_....-...._nTrk_${proton_particle_multbin}")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files
@@ -357,7 +359,7 @@ gzip ${outputbase}.tar
 ##### - v2 vs pt - #####
 outputbase=v2vspt_all_nTrk_dep
 cd $www_v2
-files=$(ls | grep -v "self" | grep "v2vspt_all_nTrk_...-...\.png")
+files=$(find . -name "*.${typ}" | grep -v "self" | grep "v2vspt_all_nTrk_...-...\.png")
 echo $files
 convert -delay $delaytime -loop 0 $files ${outputbase}.gif
 tar -cvf ${outputbase}.tar $files

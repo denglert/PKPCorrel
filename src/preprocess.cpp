@@ -20,7 +20,7 @@ int main( int argc, const char *argv[] )
 
   if(argc != 6)
   {
-    std::cerr << "Usage: preprocess <.root file to be preprocessed> <tag> <nEvents>" << std::endl;
+    std::cerr << "Usage: preprocess <.root file to be preprocessed> <dotrkCorr> <tag> <trkCorrFileName> <tag> <nEvents>" << std::endl;
 	 exit(1);
   }
 
@@ -29,6 +29,7 @@ int main( int argc, const char *argv[] )
  TString trkCorrFilename = argv[3];
  std::string tag		    = argv[4];
  int nEvMax 	  		    = atoi( argv[5] );
+
 
  // Binning
  int nCorrTyp			  = nCorrTyp_; 
@@ -41,6 +42,7 @@ int main( int argc, const char *argv[] )
  int nMultiplicityBins_EvM = nMultiplicityBins_EvM_HDR;
  int nZvtxBins 		      = nZvtxBins_; 
 
+ // Log
  LogFile *log = new LogFile("log");
  log->repeat = 1000;
  log->label = "DATA";
@@ -74,7 +76,7 @@ int main( int argc, const char *argv[] )
  int hiNtracks; EvtAna->SetBranchAddress("hiNtracks", &hiNtracks);
  float vz; EvtAna->SetBranchAddress("vz", &vz);
 
- // Event Selection
+ // Event Selection (SkimAnalysis)
  bool isOLD = false;
  EvtSelection EvSel;
  EvSel.setupSkimTree_pPb( f, isOLD);
@@ -106,6 +108,7 @@ int main( int argc, const char *argv[] )
 
  // Number of tracks distribution
  TH1D *nTrkDistr_signal = new TH1D("nTrkDistr_signal","Track distribution;Multiplicity", 350, 0, 350);
+
 
  // Correlation Framework
  CorrelationFramework CFW(nCorrTyp, nPtBins, nMultiplicityBins_Ana, nMultiplicityBins_EvM);
@@ -143,9 +146,9 @@ int main( int argc, const char *argv[] )
  ///////////////////////////////////////////
  
  log->wr(Form("trackTree entries: %d", trackTree->GetEntries()));
- log->wr(Form("SkimAna entries: %d", EvSel.GetEntries()));
+ log->wr(Form("EventSelection (SkimAna) entries: %d", EvSel.GetEntries()));
  log->wr(Form("nEvMax: %d", nEvMax));
- 
+
  std::cout << "Preloading events in memory..." << std::endl;
  for(int multBin = 0; multBin < nMultiplicityBins_EvM; multBin++)
  for(int zvtxBin = 0; zvtxBin < nZvtxBins_; zvtxBin++)
@@ -162,7 +165,7 @@ int main( int argc, const char *argv[] )
 		// Get current event info
 		EvtAna->GetEntry(iEv);
 
-		// EventSelection
+		// Event Selection //
 
 		if ( EvSel.isGoodEv_pPb( iEv ) )
 		if (     zvtxbin(vz, nZvtxBins_)    == zvtxBin )
@@ -223,6 +226,9 @@ int main( int argc, const char *argv[] )
    std::cout << Form("multBin: %3d, zvtxBin: %3d, found: %2d/10", multBin, zvtxBin, EventCache[multBin][zvtxBin].size()) << std::endl;
  }
 
+ log->wr(Form("trackTree entries: %d", trackTree->GetEntries()));
+ log->wr(Form("EventSelection (SkimAna) entries: %d", EvSel.GetEntries()));
+ log->wr(Form("nEvMax: %d", nEvMax));
 
  ///////////////////////////
  //                       //

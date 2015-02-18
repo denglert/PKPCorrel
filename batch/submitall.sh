@@ -1,11 +1,15 @@
 #!/bin/sh
 
+echo "Running submitall.sh"
+
 # Flag = test or full
 flag=$1
 
 ####################################################
 ### Batch submission parameters for PreProcessor ###
 ####################################################
+
+
 
 #########################
 ### --- MAIN AREA --- ###
@@ -15,17 +19,54 @@ flag=$1
 
 #workdir=MC_comparison_recolevel_2nw_fullEv_trkCorrOFF
 #workdir=MinBias_withTrackCorrection_2nw_eta_0.8
-#workdir=HighMult_withTrackCorrection_2nw_eta_0.8_gogo
-workdir=MC_vzhukova-EPOS_RECO_batch_comparison_recolevel_2nd_chariot_trkCorr
+#workdir=HighMult_PID_pi_def_K_3.2_p_3.4_trkCorr
+#jworkdir=HighMult_PID_pi_def_K_3.4_p_3.6_trkCorr_debug
+binary=preprocess
+#workdir=MC_vzhukova-EPOS_RECO_batch_recolevel_PIDconfig_default_trkCorr
+workdir=PIDscan_MinBias_config_strict_1
 dotrkCorr=no
 workdir=${workdir}_${dotrkCorr}
 trkCorrlabel=batchjob_TrackCorrection_full_mtrkdedx_added_minptfixed
 trkCorrFile=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/trkCorr/${trkCorrlabel}/trkCorrections_0.root
+PIDconfig=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/PIDUtils/config/config_strict_1
 nEvents=-1
-queue=2nd
-#inputlist="list_minbias"
+queue=1nw
+inputlist="list_minbias"
 #inputlist="list_highmult"
-inputlist="list_MC_vzhukova-EPOS_RECO_batch_HiForest"
+#inputlist="list_MC_vzhukova-EPOS_RECO_batch_HiForest"
+
+##########################################################
+# script environment
+
+projectdir=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/
+sourcedir=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/src
+batchdir=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/batch
+tdir=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/preprocessed/
+trkFilebase=trkCorr
+##########################################################
+
+# Forcing recompile
+echo "Forcing recompile."
+cd $projectdir
+make touch
+make build_preproc
+
+cd ./bin
+
+current_time=$(date "+%Y_%m_%d_%H_%M_%S")
+echo "Submission Time : $current_time"
+ 
+binary_stamped=$binary.$workdir.$current_time
+echo "Workdir & time stamping the binary: " "$binary_stamped"
+ 
+cp $binary $binary_stamped
+echo "Binary should be stamped now."
+
+relbinary=../../bin/${binary_stamped}
+
+echo -e "Relative stamped binary name: $relbinary"
+
+cd $batchdir
 
 ####################
 ### --- TEST --- ###
@@ -38,15 +79,6 @@ testtrkCorrlabel=batchjob_TrackCorrection_full_mtrkdedx_added_minptfixed
 testtrkCorrFile=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/trkCorr/${trkCorrlabel}/trkCorrections_0.root
 testnEvents=10
 testqueue=test
-
-
-##########################################################
-# script environment
-
-sourcedir=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/src
-batchdir=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/batch
-tdir=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/preprocessed/
-trkFilebase=trkCorr
 
 #########################################################
 
@@ -79,7 +111,7 @@ if [ "$flag" == "test" ]; then
 		cp $testtrkCorrFile ${testtrkCorrFileit}
 		source=$(awk "NR == $i" $inputlist)
 		echo $source 
-		bsub -J PreProcess_PKP_test_$i -q $testqueue tasks.sh $testworkdir $source $testdotrkCorr $testtrkCorrFileit $i $testnEvents 
+		bsub -J PreProcess_PKP_test_$i -q $testqueue tasks.sh $relbinary $testworkdir $source $testdotrkCorr $testtrkCorrFileit $PIDconfig $i $testnEvents 
 	done
 elif [ "$flag" == "full" ]; then
 	# Remove previous workdir and create new one
@@ -102,7 +134,7 @@ elif [ "$flag" == "full" ]; then
 		cp $trkCorrFile ${trkCorrFileit}
 		source=$(awk "NR == $i" $inputlist)
 		echo $source
-		bsub -J ${workdir}_$i -q $queue tasks.sh $workdir $source $dotrkCorr $trkCorrFileit $i $nEvents
+		bsub -J ${workdir}_$i -q $queue tasks.sh $relbinary $workdir $source $dotrkCorr $trkCorrFileit $PIDconfig $i $nEvents
 	done
 fi 
 

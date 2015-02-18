@@ -26,57 +26,76 @@ const int nPart = 4;
 const double zVtxDistrMin = -13;
 const double zVtxDistrMax =  13;
 
-const int npt[4]      = {20,    10,   5,  5};
-const double ptMin[4] = {0.1, 0.15, 0.15, 0.15};
-const double ptMax[4] = {3.0, 1.00, 1.00, 1.8 };
+const int npt[4]      = { 10,     6,    6,   12 };
+const double ptMin[4] = { 0.3, 0.20, 0.20, 0.20 };
+const double ptMax[4] = { 3.0, 0.80, 0.80, 1.40 };
 
 // const int npt[4]      = {1,    1,   1,  1};
 // const double ptMin[4] = {0.3, 0.15, 0.15, 0.15};
 // const double ptMax[4] = {0.5, 0.40, 0.40, 0.4 };
 
-
 const double ptGlobalMin = 0.1;
 
-const int neta = 48;
-const double etaMin = -2.3;
-const double etaMax =  2.3;
+//const int neta[4]      = { 48 , 16 , 16  , 16 };
+const int neta[4]      = { 24 ,   8,   8 ,  8 };
+const double etaMin[4] = {-2.4,-0.8,-0.8 ,-0.8};
+const double etaMax[4] = { 2.4, 0.8, 0.8 , 0.8};
 
-const int nphi = 70;
+
+//const int nphi = 70;
+const int nphi = 35;
 const double phiMin = -TMath::Pi();
 const double phiMax =  TMath::Pi();
 
 
-TH3D** Setup_TH3D_nCorrTyp(const char histoname[], const char histolabel[], const int nXBins[], const double xmin[], const double xmax[], int nYBins, double ymin, double ymax, int nZBins, double zmin, double zmax )
+TH3D** Setup_TH3D_nCorrTyp(const char histoname[], const char histolabel[], const int nXBins[], const double xmin[], const double xmax[], const int nYBins[], const double ymin[], const double ymax[], int nZBins, double zmin, double zmax )
 {
 	TH3D **histos = new TH3D*[nPart];
 
 	for( int i = 0; i < nPart; i++)
 	{
-		 histos[i] = new TH3D( Form("%s typ %d", histoname, i), histolabel, nXBins[i], xmin[i], xmax[i], nYBins, ymin, ymax, nZBins, zmin, zmax);
+		 histos[i] = new TH3D( Form("%s typ %d", histoname, i), histolabel, nXBins[i], xmin[i], xmax[i], nYBins[i], ymin[i], ymax[i], nZBins, zmin, zmax);
 	}
 
 	return histos;
 };
 
-TH2D** Setup_TH2D_nCorrTyp(const char histoname[], const char histolabel[], const int nXBins[], const double xmin[], const double xmax[], int nYBins, double ymin, double ymax, int nZBins, double zmin, double zmax )
+TH2D** Setup_TH2D_nCorrTyp(const char histoname[], const char histolabel[], const int nXBins[], const double xmin[], const double xmax[], const int nYBins[], const double ymin[], const double ymax[])
 {
 	TH2D **histos = new TH2D*[nPart];
 
 	for( int i = 0; i < nPart; i++)
 	{
-		 histos[i] = new TH3D( Form("%s typ %d", histoname, i), histolabel, nXBins[i], xmin[i], xmax[i], nYBins, ymin, ymax, nZBins, zmin, zmax);
+		 histos[i] = new TH2D( Form("%s typ %d", histoname, i), histolabel, nXBins[i], xmin[i], xmax[i], nYBins[i], ymin[i], ymax[i]);
 	}
 
 	return histos;
 };
 
+TH1D** Setup_TH1D_nCorrTyp(const char histoname[], const char histolabel[], const int nXBins[], const double xmin[], const double xmax[])
+{
+	TH1D **histos = new TH1D*[nPart];
+
+	for( int i = 0; i < nPart; i++)
+	{
+		 histos[i] = new TH1D( Form("%s typ %d", histoname, i), histolabel, nXBins[i], xmin[i], xmax[i]);
+	}
+
+	return histos;
+};
+
+bool isInsidePt(int PID, double pt)
+{
+	if (PID == 0) {};
+}
+
 
 int main( int argc, const char *argv[] )
 {
 
-  if(argc != 7)
+  if(argc != 8)
   {
-    std::cerr << "Usage: TrackCorrection <MC sample> <DATA sample> <sample type> <tag> <nEventsDATA> <nEventsMC>" << std::endl;
+    std::cerr << "Usage: TrackCorrection <MC sample> <DATA sample> <sample type> <tag> <nEventsDATA> <nEventsMC> <PIDconfig>" << std::endl;
 	 exit(1);
   }
 
@@ -86,6 +105,10 @@ int main( int argc, const char *argv[] )
  std::string tag		        = argv[4];
  int nEvMaxDATA 	  		     = atoi( argv[5] );
  int nEvMaxMC 	  		        = atoi( argv[6] );
+ std::string PIDconfig		  = argv[7];
+ 
+ PIDUtil *pidutil = new PIDUtil;
+ pidutil->ReadInConfig(PIDconfig);
 
  sampleType sType = str2enumSampleTyp(str_sampleType);
  
@@ -238,8 +261,8 @@ int main( int argc, const char *argv[] )
  ///////////////
 
  TTree *trackTree = (TTree*)fmc->Get("ppTrack/trackTree");
- Tracks tTracks;
- setupTrackTree(trackTree, tTracks, true);
+ Tracks_c tTracks;
+ setupTrackTree_c(trackTree, tTracks, true);
 
  //////////////////////////////
  //                          //
@@ -247,16 +270,29 @@ int main( int argc, const char *argv[] )
  //                          //
  //////////////////////////////
  
-  TH3D **hfake      = Setup_TH3D_nCorrTyp("hfake",      ";p_{T};#eta;#phi", npt,ptMin,ptMax,neta,etaMin,etaMax,nphi,phiMin,phiMax);
-  TH3D **hreco      = Setup_TH3D_nCorrTyp("hreco",      ";p_{T};#eta;#phi", npt,ptMin,ptMax,neta,etaMin,etaMax,nphi,phiMin,phiMax);
-  TH3D **hsecondary = Setup_TH3D_nCorrTyp("hsecondary", ";p_{T};#eta;#phi", npt,ptMin,ptMax,neta,etaMin,etaMax,nphi,phiMin,phiMax);
-  TH3D **hreal      = Setup_TH3D_nCorrTyp("hreal",      ";p_{T};#eta;#phi", npt,ptMin,ptMax,neta,etaMin,etaMax,nphi,phiMin,phiMax);
-  TH3D **hgen       = Setup_TH3D_nCorrTyp("hgen",       ";p_{T};#eta;#phi", npt,ptMin,ptMax,neta,etaMin,etaMax,nphi,phiMin,phiMax);
-  TH3D **hmatched   = Setup_TH3D_nCorrTyp("hmatched",   ";p_{T};#eta;#phi", npt,ptMin,ptMax,neta,etaMin,etaMax,nphi,phiMin,phiMax);
-  TH3D **hmultrec   = Setup_TH3D_nCorrTyp("hmultrec",   ";p_{T};#eta;#phi", npt,ptMin,ptMax,neta,etaMin,etaMax,nphi,phiMin,phiMax);
-  TH3D *heff[nPart];
-  TH3D *hmultrecrate[nPart];
-  TH3D **hcorr   = Setup_TH3D_nCorrTyp("hcorr",   ";p_{T};#eta;#phi", npt,ptMin,ptMax,neta,etaMin,etaMax,nphi,phiMin,phiMax);
+  TH3D **hmatched3D   = Setup_TH3D_nCorrTyp("hmatched3D",   ";p_{T};#eta;#phi", npt,ptMin,ptMax,neta,etaMin,etaMax,nphi,phiMin,phiMax);
+  TH3D **hgen3D       = Setup_TH3D_nCorrTyp("hgen3D",       ";p_{T};#eta;#phi", npt,ptMin,ptMax,neta,etaMin,etaMax,nphi,phiMin,phiMax);
+  TH3D *heff3D[nPart];
+
+  TH2D **hmatched2D   = Setup_TH2D_nCorrTyp("hmatched2D",   ";p_{T};#eta", npt,ptMin,ptMax,neta,etaMin,etaMax);
+  TH2D **hgen2D       = Setup_TH2D_nCorrTyp("hgen2D",       ";p_{T};#eta", npt,ptMin,ptMax,neta,etaMin,etaMax);
+  TH2D **hfake2D      = Setup_TH2D_nCorrTyp("hfake2D",      ";p_{T};#eta", npt,ptMin,ptMax,neta,etaMin,etaMax);
+  TH2D **hreco2D      = Setup_TH2D_nCorrTyp("hreco2D",      ";p_{T};#eta", npt,ptMin,ptMax,neta,etaMin,etaMax);
+  TH2D **hsecondary2D = Setup_TH2D_nCorrTyp("hsecondary2D", ";p_{T};#eta", npt,ptMin,ptMax,neta,etaMin,etaMax);
+  TH2D **hreal2D      = Setup_TH2D_nCorrTyp("hreal2D",      ";p_{T};#eta", npt,ptMin,ptMax,neta,etaMin,etaMax);
+  TH2D **hmultrec2D   = Setup_TH2D_nCorrTyp("hmultrec2D",   ";p_{T};#eta", npt,ptMin,ptMax,neta,etaMin,etaMax);
+  TH2D *hmultrecrate2D[nPart];
+
+  TH1D **hmatched1D   = Setup_TH1D_nCorrTyp("hmatched1D",   ";#eta", neta,etaMin,etaMax);
+  TH1D **hgen1D       = Setup_TH1D_nCorrTyp("hgen1D",       ";#eta", neta,etaMin,etaMax);
+  TH1D **hfake1D      = Setup_TH1D_nCorrTyp("hfake1D",      ";#eta", neta,etaMin,etaMax);
+  TH1D **hreco1D      = Setup_TH1D_nCorrTyp("hreco1D",      ";#eta", neta,etaMin,etaMax);
+  TH1D **hsecondary1D = Setup_TH1D_nCorrTyp("hsecondary1D", ";#eta", neta,etaMin,etaMax);
+  TH1D **hreal1D      = Setup_TH1D_nCorrTyp("hreal1D",      ";#eta", neta,etaMin,etaMax);
+  TH1D **hmultrec1D   = Setup_TH1D_nCorrTyp("hmultrec1D",   ";#eta", neta,etaMin,etaMax);
+  TH1D *hmultrecrate1D[nPart];
+
+  TH3D **hcorr3D      = Setup_TH3D_nCorrTyp("hcorr3D",      ";p_{T};#eta;#phi", npt,ptMin,ptMax,neta,etaMin,etaMax,nphi,phiMin,phiMax);
 
 
  ///////////////////////////////////////
@@ -300,37 +336,61 @@ int main( int argc, const char *argv[] )
 		{
 
 			// *** Track selection *** //
-			if ( !TrackSelection(tTracks, iTrk ) ) continue;
+			if ( !TrackSelection_c(tTracks, iTrk ) ) continue;
 
 			double pt  = tTracks.trkPt [iTrk];
 			double eta = tTracks.trkEta[iTrk]; 
 			double phi = tTracks.trkPhi[iTrk];
 			float p    = pt * cosh(eta);
-			int PID    = GetPID(p, tTracks.dedx[iTrk], tTracks.trkEta[iTrk]);
+			int PID    = pidutil->GetID(p, tTracks.dedx[iTrk], tTracks.trkEta[iTrk]);
 			bool isPID = (PID != 99);
 			
+			bool isInsideChrPt = ( ptbin(  0, pt) != -1 );
+			bool isInsidePIDPt = ( ptbin(PID, pt) != -1 );
+
 			// Fake tracks
 			if( tTracks.trkFake[iTrk] )
 			{ 
-				           hfake[ 0 ]->Fill(pt,eta,phi, wzvtx);
-				if (isPID) hfake[PID]->Fill(pt,eta,phi, wzvtx);
+
+				           hfake2D[ 0 ]->Fill(pt,eta, wzvtx);
+							  if (isInsideChrPt)
+							  { hfake1D[ 0 ]->Fill( eta, wzvtx);}
+				if (isPID) {hfake2D[PID]->Fill(pt,eta, wzvtx);
+						  		if (isInsidePIDPt)
+								{ hfake1D[PID]->Fill(eta, wzvtx);}};
 			}
 			else 
 			// Real track
 			{ 
-			             hreal[ 0 ]->Fill(pt,eta,phi, wzvtx);
-			  if (isPID) hreal[PID]->Fill(pt,eta,phi, wzvtx);
+			             hreal2D[ 0 ]->Fill(pt,eta, wzvtx);
+							 if (isInsideChrPt)
+							 {hreal1D[ 0 ]->Fill(   eta, wzvtx);}
+
+			  if (isPID) {hreal2D[PID]->Fill(pt,eta, wzvtx);
+
+						  	  if (isInsidePIDPt)
+							  {hreal1D[PID]->Fill(   eta, wzvtx);}}
 			  // Real secondary track
 			  if( tTracks.trkStatus[iTrk] < 0 )
 			  {
-			               hsecondary[ 0 ]->Fill(pt,eta,phi,wzvtx);
-			    if (isPID) hsecondary[PID]->Fill(pt,eta,phi,wzvtx);
+			               hsecondary2D[ 0 ]->Fill(pt,eta,wzvtx);
+
+							   if (isInsideChrPt)
+								{hsecondary1D[ 0 ]->Fill(   eta,wzvtx);}
+			    if (isPID) { hsecondary2D[PID]->Fill(pt,eta,wzvtx);
+
+						  	  		if (isInsidePIDPt)
+									{hsecondary1D[PID]->Fill(   eta,wzvtx);}}
 			  };
 		   }
 		
 			// Reconstructed tracks
-		              hreco[ 0 ]->Fill(pt,eta,phi,wzvtx);
-			if (isPID) hreco[PID]->Fill(pt,eta,phi,wzvtx);
+		               hreco2D[ 0 ]->Fill(pt,eta,wzvtx);
+							if (isInsideChrPt)
+		               {hreco1D[ 0 ]->Fill(   eta,wzvtx);}
+			if (isPID) {hreco2D[PID]->Fill(pt,eta,wzvtx);
+						  	if (isInsidePIDPt)
+							{hreco1D[PID]->Fill(   eta,wzvtx);}}
 		}
 		
 		// === Particle loop === //
@@ -340,33 +400,56 @@ int main( int argc, const char *argv[] )
 			double pt  = tTracks.pPt [iPart];
 			double eta = tTracks.pEta[iPart];
 			double phi = tTracks.pPhi[iPart];
-		
-			// No eta cut
-			int PID = McPID2AnaPID( tTracks.pPId[iPart] , 2.0);
+
+			int PID = McPID2AnaPID( tTracks.pPId[iPart] , eta);
 			bool isPID = (PID != 99);
-		
+
+		   bool isInsideChrPt = ( ptbin(  0, pt) != -1 );
+			bool isInsidePIDPt = ( ptbin(PID, pt) != -1 );
+
 			// particle selection
 			if( fabs(eta) > 2.4 ) continue;
 			if( pt < ptGlobalMin      ) continue;
 		
-								hgen[ 0 ]->Fill( pt,eta,phi,wzvtx );
-			if ( isPID ) { hgen[PID]->Fill( pt,eta,phi,wzvtx ); }
+								hgen3D[ 0 ]->Fill( pt,eta,phi,wzvtx );
+								hgen2D[ 0 ]->Fill( pt,eta,    wzvtx );
+
+						  	  	if (isInsideChrPt)
+								{hgen1D[ 0 ]->Fill(    eta,    wzvtx );}
+			if ( isPID ) { hgen3D[PID]->Fill( pt,eta,phi,wzvtx ); 
+								hgen2D[PID]->Fill( pt,eta    ,wzvtx );
+
+						  	  	if (isInsidePIDPt)
+								{hgen1D[PID]->Fill(    eta,    wzvtx );}};
 
 			// matched track selection
-			if( !( mTrackSelection( tTracks, iPart) )) continue;
+			if( !( mTrackSelection_c( tTracks, iPart) )) continue;
 
 			double mpt  = tTracks.mtrkPt [iPart];
 			double meta = tTracks.pEta[iPart]; 
 			float  mp   = mpt * cosh(meta);
-			int    mPID = GetPID(mp, tTracks.mtrkdedx[iPart], eta);
+			int    mPID = pidutil->GetID(mp, tTracks.mtrkdedx[iPart], eta);
 			bool   misPID = (mPID != 99);
 		
-				hmatched[ 0 ]->Fill(pt,eta,phi,wzvtx); 
-				hmultrec[ 0 ]->Fill(pt,eta,phi,wzvtx*tTracks.pNRec[iPart]);
+				hmatched3D[ 0 ]->Fill(pt,eta,phi,wzvtx); 
+				hmatched2D[ 0 ]->Fill(pt,eta,    wzvtx); 
+				hmultrec2D[ 0 ]->Fill(pt,eta,wzvtx*tTracks.pNRec[iPart]);
+				if (isInsideChrPt)
+				{		  
+				hmultrec1D[ 0 ]->Fill(   eta,wzvtx*tTracks.pNRec[iPart]);
+				hmatched1D[ 0 ]->Fill(   eta,    wzvtx);
+				}
 			if ( misPID )
 			{ 
-				hmatched[mPID]->Fill(pt,eta,phi,wzvtx); 
-				hmultrec[mPID]->Fill(pt,eta,phi,wzvtx*tTracks.pNRec[iPart]);
+				hmatched3D[mPID]->Fill(pt,eta,phi,wzvtx); 
+				hmatched2D[mPID]->Fill(pt,eta,    wzvtx); 
+				hmultrec2D[mPID]->Fill(pt,eta,wzvtx*tTracks.pNRec[iPart]);
+				if (isInsidePIDPt)
+				{
+				hmatched1D[mPID]->Fill(   eta,    wzvtx); 
+				hmultrec1D[mPID]->Fill(   eta,wzvtx*tTracks.pNRec[iPart]);
+				}
+
 			}
 		
 		   }
@@ -375,12 +458,18 @@ int main( int argc, const char *argv[] )
 
   for( int iPar = 0; iPar < nPart; iPar++)
   {
-   	hfake     [iPar] -> Divide( hreco   [iPar] );
-   	hsecondary[iPar] -> Divide( hreal   [iPar] );
-   	heff      [iPar]  = (TH3D*)hmatched [iPar]->Clone(Form("heff part %d", iPar));
-   	heff      [iPar] -> Divide( hgen    [iPar] );
-   	hmultrecrate [iPar] = (TH3D*)hmultrec [iPar]->Clone(Form("hmultrecrate part %d", iPar));
-   	hmultrecrate [iPar] -> Divide( hmatched[iPar] );
+   	hfake2D     [iPar] -> Divide( hreco2D   [iPar] );
+   	hfake1D     [iPar] -> Divide( hreco1D   [iPar] );
+   	hsecondary2D[iPar] -> Divide( hreal2D   [iPar] );
+   	hsecondary1D[iPar] -> Divide( hreal1D   [iPar] );
+   	heff3D      [iPar]  = (TH3D*)hmatched3D [iPar]->Clone(Form("heff3D part %d", iPar));
+   	heff3D      [iPar] -> Divide( hgen3D    [iPar] );
+
+   	hmultrecrate2D [iPar] = (TH2D*)hmultrec2D [iPar]->Clone(Form("hmultrecrate2D part %d", iPar));
+   	hmultrecrate1D [iPar] = (TH1D*)hmultrec1D [iPar]->Clone(Form("hmultrecrate1D part %d", iPar));
+
+   	hmultrecrate2D [iPar] -> Divide( hmatched2D[iPar] );
+   	hmultrecrate1D [iPar] -> Divide( hmatched1D[iPar] );
   }
 
   // Filling track correction table
@@ -389,20 +478,24 @@ int main( int argc, const char *argv[] )
   {
 	ptbw[i] = (ptMax[i]-ptMin[i])/npt[i];
   }
-  const double etabw = (etaMax-etaMin)/neta;
+
+  double etabw[4]; 
+  for(int i = 0; i < nPart; i++)
+  { etabw[i] = (etaMax[i]-etaMin[i])/neta[i];}
+
   const double phibw = (phiMax-phiMin)/nphi;
 
   for(int i = 0; i < nPart; i++)
   for(int x = 1; x < npt[i]  +1; x++)
-  for(int y = 1; y < neta +1; y++)
+  for(int y = 1; y < neta[i] +1; y++)
   for(int z = 1; z < nphi +1; z++)
   {
 	  double pt  = ptMin[i]+x*ptbw[i]; 
-	  double eta = etaMin+y*etabw; 
+	  double eta = etaMin[i]+y*etabw[i]; 
 	  double phi = phiMin+z*phibw; 
 
-     double value = (1.0-hfake[i]->GetBinContent(x,y,z))*(1.0-hsecondary[i]->GetBinContent(x,y,z)) / ((heff[i]->GetBinContent(x,y,z)) * (hmultrec[i]->GetBinContent(x,y,z)));
-	  hcorr[i]->SetBinContent(x,y,z,value);
+     double value = (1.0-hfake2D[i]->GetBinContent(x,y))*(1.0-hsecondary2D[i]->GetBinContent(x,y)) / ((heff3D[i]->GetBinContent(x,y,z)) * (hmultrecrate2D[i]->GetBinContent(x,y)));
+	  hcorr3D[i]->SetBinContent(x,y,z,value);
  	  log.wr(Form("%d %.3f %.2f %.2f : %.4f", i, pt, eta, phi, value));
   }
 
@@ -419,6 +512,7 @@ int main( int argc, const char *argv[] )
   //hfake->wr();
   //hmultrec->wr();
   //hsecondary->wr();
+  //
   
   log.Close();
   

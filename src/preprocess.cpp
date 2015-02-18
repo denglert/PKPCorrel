@@ -18,18 +18,18 @@
 int main( int argc, const char *argv[] )
 { 
 
-  if(argc != 6)
+  if(argc != 7)
   {
-    std::cerr << "Usage: preprocess <.root file to be preprocessed> <dotrkCorr> <tag> <trkCorrFileName> <tag> <nEvents>" << std::endl;
+    std::cerr << "Usage: preprocess <.root file to be preprocessed> <dotrkCorr> <tag> <trkCorrFileName> <PIDconfig>  <tag> <nEvents>" << std::endl;
 	 exit(1);
   }
 
  TString inpFilename     = argv[1];
  TString dotrkCorr_str 	 = argv[2];
  TString trkCorrFilename = argv[3];
- std::string tag		    = argv[4];
- int nEvMax 	  		    = atoi( argv[5] );
-
+ std::string PIDconfig   = argv[4];
+ std::string tag		    = argv[5];
+ int nEvMax 	  		    = atoi( argv[6] );
 
  // Binning
  int nCorrTyp			  = nCorrTyp_; 
@@ -41,6 +41,9 @@ int main( int argc, const char *argv[] )
  int nMultiplicityBins_Ana = nMultiplicityBins_Ana_HDR;
  int nMultiplicityBins_EvM = nMultiplicityBins_EvM_HDR;
  int nZvtxBins 		      = nZvtxBins_; 
+
+ PIDUtil *pidutil = new PIDUtil();
+ pidutil->ReadInConfig( PIDconfig );
 
  // Log
  LogFile *log = new LogFile("log");
@@ -54,6 +57,7 @@ int main( int argc, const char *argv[] )
  else if( dotrkCorr_str == "no" ) { dotrkCorr = false; }
  else {std::cerr << "dotrkCorr not defined." << std::endl; exit(-1);}
 
+
  //////////////////////////////////////
  //                                  //
  // ****** Opening input file ****** //
@@ -65,8 +69,8 @@ int main( int argc, const char *argv[] )
  if ( f->IsZombie() ) {std::cerr << "Error opening file: " << inpFilename << std::endl; exit(-1);}
 
  // trackTree
- //TTree *trackTree = (TTree*)f->Get("pptracks/trackTree");
- TTree *trackTree = (TTree*)f->Get("ppTrack/trackTree");
+ TTree *trackTree = (TTree*)f->Get("pptracks/trackTree");
+ //TTree *trackTree = (TTree*)f->Get("ppTrack/trackTree");
  Tracks tTracks;
  bool doMC = false;
  setupTrackTree(trackTree, tTracks, doMC);
@@ -77,7 +81,7 @@ int main( int argc, const char *argv[] )
  float vz; EvtAna->SetBranchAddress("vz", &vz);
 
  // Event Selection (SkimAnalysis)
- bool isOLD = false;
+ bool isOLD = true;
  EvtSelection EvSel;
  EvSel.setupSkimTree_pPb( f, isOLD);
 
@@ -103,6 +107,8 @@ int main( int argc, const char *argv[] )
  std::deque< EventData > **EventCache;
  Setup_EventCache(EventCache, nMultiplicityBins_EvM, nZvtxBins);
 
+ std::deque< EventData > *** EventCache_ptr = &EventCache;
+
  // dEdxvsp map
  TH2D *dEdxvsp  = new TH2D ("dEdxVsP",";p(GeV/c);dE/dx", npBins, pMin, pMax, ndEdxBins, dEdxMin, dEdxMax);
 
@@ -126,7 +132,7 @@ int main( int argc, const char *argv[] )
  else {std::cout << "trkCorr File successfully opened." << std::endl;}
 
 
- CFW.trkCorr = Read_trkEff(f_trkCorr, "hcorr typ");
+ CFW.trkCorr = Read_TH3D_1Darray(f_trkCorr, "hcorr typ", 4);
 
  for (int i = 0; i < nCorrTyp; i++)
  { CFW.trkCorr[i]->SetDirectory(0); }
@@ -198,7 +204,7 @@ int main( int argc, const char *argv[] )
 
 					
 			ev->EventID = iEv;
-			EventCache[multBin][zvtxBin].push_back( (*ev) );
+			(*EventCache_ptr)[multBin][zvtxBin].push_back( (*ev) );
 			count++;
 
 			ev->Clear(nCorrTyp, nPtBins);
@@ -275,10 +281,10 @@ int main( int argc, const char *argv[] )
 	trackTree->GetEntry(iEvA);
 
 	// Read in event
-	ev->ReadInDATA(tTracks, dEdxvsp);
+	ev->ReadInDATA(tTracks, dEdxvsp, pidutil);
 
 	CFW.SignalCorrelation(ev);
-	CFW.MixedCorrelation(ev, EventCache);
+	CFW.MixedCorrelation(ev, EventCache_ptr);
 	CFW.AddCurrentEventCorrelation(ev);
 
  }

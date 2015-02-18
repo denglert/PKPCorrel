@@ -137,7 +137,26 @@ bool TrackSelection( const Tracks &tTracks, int iTrk )
 }
 
 // TrackSelection()
-bool mTrackSelection( const Tracks &tTracks, int iTrk )
+bool TrackSelection_c( const Tracks_c &tTracks, int iTrk )
+{
+	// *** Track selection *** //
+	if ( tTracks.highPurity[iTrk] == false ) {return false;}
+	if ( 2.4 < abs(tTracks.trkEta[iTrk]) ) {return false;}
+
+	float z_sep_significance  = tTracks.trkDz1 [iTrk] / tTracks.trkDzError1  [iTrk];
+	if ( 3   < abs(z_sep_significance)   ) {return false;}
+
+	float impact_significance = tTracks.trkDxy1[iTrk] / tTracks.trkDxyError1 [iTrk];
+	if ( 3   < abs(impact_significance)  ) {return false;}
+
+	float pt_rel_uncertainty  = tTracks.trkPtError[iTrk] / tTracks.trkPt     [iTrk];
+	if ( 0.1 < abs(pt_rel_uncertainty)   ) {return false;}
+
+	return true;
+}
+
+// mTrackSelection_c()
+bool mTrackSelection_c( const Tracks_c &tTracks, int iTrk )
 {
 	// *** Track selection *** //
 	if ( tTracks.mtrkQual[iTrk] == false ) {return false;}
@@ -156,8 +175,9 @@ bool mTrackSelection( const Tracks &tTracks, int iTrk )
 	return true;
 }
 
+
 // ReadInDATA
-void EventData::ReadInDATA( Tracks &tTracks, TH2D *dEdxvsP)
+void EventData::ReadInDATA( Tracks &tTracks, TH2D *dEdxvsP, PIDUtil *pidutil)
 {
 	int nTrk = tTracks.nTrk;
 
@@ -170,7 +190,7 @@ void EventData::ReadInDATA( Tracks &tTracks, TH2D *dEdxvsP)
 		// *** Track selection *** //
 		if ( !TrackSelection(tTracks, iTrk ) ) continue;
 
-		int PID   = GetPID(p, tTracks.dedx[iTrk], tTracks.trkEta[iTrk]);
+		int PID = pidutil->GetID(p, tTracks.dedx[iTrk], tTracks.trkEta[iTrk]);
 
 		int ptBin_CH = ptbin(   0 , tTracks.trkPt[iTrk]);
 		int ptBin_ID = ptbin( PID , tTracks.trkPt[iTrk]);
@@ -301,19 +321,35 @@ void Setup_nEvents_Processed(TH1D *&nEvents_Processed_signal_total, TH1D *&nEven
 ///////////////////////////////
 // *** Read In functions *** //
 ///////////////////////////////
-//
-TH3D **Read_trkEff(TFile *f, const char histoname[])
-{
-	TH3D **trkEff = new TH3D*[nCorrTyp_];
-	
-	for(int TypBin = 0; TypBin < nCorrTyp_; TypBin++)
-	{
-		trkEff[TypBin] = (TH3D*)f->Get(
-		Form("%s %d", histoname, TypBin)
-   	);
-	}
 
-	return trkEff;
+TH3D **Read_TH3D_1Darray(TFile *f, const char histoname[], const int nBins)
+{
+	TH3D **h3Darr = new TH3D*[nBins];
+	
+	for ( int Bin = 0; Bin < nBins; Bin++)
+	{ h3Darr[Bin] = (TH3D*)f->Get( Form("%s %d", histoname, Bin) ); }
+
+	return h3Darr;
+}
+
+TH2D **Read_TH2D_1Darray(TFile *f, const char histoname[], const int nBins)
+{
+	TH2D **h2Darr = new TH2D*[nBins];
+	
+	for ( int Bin = 0; Bin < nBins; Bin++)
+	{ h2Darr[Bin] = (TH2D*)f->Get( Form("%s %d", histoname, Bin) ); }
+
+	return h2Darr;
+}
+
+TH1D **Read_TH1D_1Darray(TFile *f, const char histoname[], const int nBins)
+{
+	TH1D **h1Darr = new TH1D*[nBins];
+	
+	for ( int Bin = 0; Bin < nBins; Bin++)
+	{ h1Darr[Bin] = (TH1D*)f->Get( Form("%s %d", histoname, Bin) ); }
+
+	return h1Darr;
 }
 
 void Read_nEvents_Processed(TFile *f, TH1D **&nEvents_Processed_signal, TH1D **&nEvents_Processed_backgr, int nMultiplicityBins )

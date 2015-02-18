@@ -6,6 +6,8 @@
 #include <TCanvas.h>
 #include <TStyle.h>
 #include <TLine.h>
+#include <fstream>
+#include <string>
 
 class dEdxMaps {
 public :
@@ -19,6 +21,46 @@ public :
 	// Functions
 	void Fill(int PID, double p, double dedx);
 	void PlotFigs(const char tag[]);
+};
+
+class PIDUtil {
+public :
+	
+   PIDUtil( );
+   ~PIDUtil();
+
+	// Functions
+	
+	float BBcurve(float *x, const float *par);
+	bool  isPion(float p, float dEdx);
+	bool  isKaon(float p, float dEdx);
+	bool  isProt(float p, float dEdx);
+
+	// Variables
+	float BB_Pion_low_par[3];
+	float BB_Pion_hig_par[3];
+	float BB_Pion_mindEdxcut;
+	float BB_Pion_minpcut; 
+	float BB_Pion_maxpcut;
+	                        
+	float BB_Kaon_low_par[3];
+	float BB_Kaon_hig_par[3];
+	float BB_Kaon_mindEdxcut;
+	float BB_Kaon_maxpcut;
+	                        
+	float BB_Prot_low_par[3];
+	float BB_Prot_hig_par[3];
+	float BB_Prot_mindEdxcut;
+	float BB_Prot_maxpcut;
+
+	std::string configfile;
+
+	int unIDcode;
+	double etaMax;
+	
+	void ReadInConfig( std::string PIDconfigfile_str );
+
+	int GetID(float p, float dEdx, float eta);
 };
 
 // Bethe-Bloch Curve function
@@ -61,8 +103,8 @@ int McPID2AnaPID ( int McPID, double eta);
 bool isPion(float p, float dEdx);
 bool isKaon(float p, float dEdx);
 bool isProt(float p, float dEdx);
-void makedEdxvspFiglinlin(TH2D* dEdxvsP, std::string figurename);
-void makedEdxvspFigloglog(TH2D* dEdxvsP, std::string figurename);
+void makedEdxvspFiglinlin(TH2D* dEdxvsP, std::string PIDconfig, std::string figurename);
+void makedEdxvspFigloglog(TH2D* dEdxvsP, std::string PIDconfig, std::string figurename);
 
 
 #endif

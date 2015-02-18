@@ -16,6 +16,54 @@ public :
    ~Tracks(){};
 
    // Declaration of leaf types
+   Int_t           nTrk;
+   Float_t 			 dedx[maxTracks];
+   Float_t         trkPt[maxTracks];   //[nTrk]
+   Float_t         trkPtError[maxTracks];   //[nTrk]
+   Float_t         trkEta[maxTracks];   //[nTrk]
+   Float_t         trkPhi[maxTracks];   //[nTrk]
+   Int_t           trkCharge[maxTracks];   //[nTrk]
+   Bool_t          highPurity[maxTracks];   //[nTrk]
+   Float_t         trkDxy1[maxTracks];   //[nTrk]
+   Float_t         trkDxyError1[maxTracks];   //[nTrk]
+   Float_t         trkDz1[maxTracks];   //[nTrk]
+   Float_t         trkDzError1[maxTracks];   //[nTrk]
+	Int_t           nParticle;
+   Int_t           pStatus[maxTracks];   //[nParticle]
+   Int_t           pPId[maxTracks];   //[nParticle]
+   Float_t         pEta[maxTracks];   //[nParticle]
+   Float_t         pPhi[maxTracks];   //[nParticle]
+   Float_t         pPt[maxTracks];   //[nParticle]
+
+   // List of branches
+   TBranch        *b_nTrk;   //!
+   TBranch        *b_dedx;   //!
+   TBranch        *b_trkPt;   //!
+   TBranch        *b_trkPtError;   //!
+   TBranch        *b_trkEta;   //!
+   TBranch        *b_trkPhi;   //!
+   TBranch        *b_trkCharge;   //!
+   TBranch        *b_highPurity;   //!
+   TBranch        *b_trkDxy1;   //!
+   TBranch        *b_trkDxyError1;   //!
+   TBranch        *b_trkDz1;   //!
+   TBranch        *b_trkDzError1;   //!
+   TBranch        *b_nParticle;   //!
+   TBranch        *b_pStatus;   //!
+   TBranch        *b_pPId;   //!
+   TBranch        *b_pEta;   //!
+   TBranch        *b_pPhi;   //!
+   TBranch        *b_pPt;   //!
+};
+
+
+// Tracks class for track correction calculation
+class Tracks_c {
+public :
+   Tracks_c(){};
+   ~Tracks_c(){};
+
+   // Declaration of leaf types
    Int_t           nEv;
    Int_t           nLumi;
    Int_t           nBX;
@@ -70,8 +118,6 @@ public :
    Float_t         mtrkPt[maxTracks];   //[nParticle]
    Float_t         mtrkPtError[maxTracks];   //[nParticle]
    Int_t           mtrkNHit[maxTracks];   //[nParticle]
-   Int_t           mtrkNlayer[maxTracks];   //[nParticle]
-   Int_t           mtrkNlayer3D[maxTracks];   //[nParticle]
    Int_t           mtrkQual[maxTracks];   //[nParticle]
    Float_t         mtrkChi2[maxTracks];   //[nParticle]
    Float_t         mtrkNdof[maxTracks];   //[nParticle]
@@ -83,11 +129,6 @@ public :
    Float_t         mtrkDzError2[maxTracks];   //[nParticle]
    Float_t         mtrkDxy2[maxTracks];   //[nParticle]
    Float_t         mtrkDxyError2[maxTracks];   //[nParticle]
-   Float_t         mtrkAlgo[maxTracks];   //[nParticle]
-   Int_t           mtrkPfType[maxTracks];   //[nParticle]
-   Float_t         mtrkPfCandPt[maxTracks];   //[nParticle]
-   Float_t         mtrkPfSumEcal[maxTracks];   //[nParticle]
-   Float_t         mtrkPfSumHcal[maxTracks];   //[nParticle]
 
 
    // List of branches
@@ -158,14 +199,12 @@ public :
    TBranch        *b_mtrkDzError2;   //!
    TBranch        *b_mtrkDxy2;   //!
    TBranch        *b_mtrkDxyError2;   //!
-   TBranch        *b_mtrkAlgo;   //!
-   TBranch        *b_mtrkPfType;   //!
-   TBranch        *b_mtrkPfCandPt;   //!
-   TBranch        *b_mtrkPfSumEcal;   //!
-   TBranch        *b_mtrkPfSumHcal;   //!
+
 
 };
 
+
 void setupTrackTree(TTree *t,Tracks &tTracks,bool doCheck);
+void setupTrackTree_c(TTree *t,Tracks_c &tTracks,bool doCheck);
 void setupParticleTree(TTree *t, Tracks &tTracks);
 #endif

@@ -155,6 +155,7 @@ void CorrelationFramework::Set_dEtacut()
 }
 
 
+
 ///////////////////////
 // - trackWeight
 double CorrelationFramework::trackWeight(int PID, float pt, float eta, float phi)
@@ -181,6 +182,7 @@ double CorrelationFramework::trackWeight(int PID, float pt, float eta, float phi
 // - SignalCorrelation( EventData *ev )
 void CorrelationFramework::SignalCorrelation(EventData *ev)
 {
+
 	int nTrkA = (*ev).tracks.size();
 	for (int iTrkA = 0; iTrkA < nTrkA; iTrkA++)
 	{
@@ -277,11 +279,11 @@ void CorrelationFramework::SignalCorrelation(EventData *ev)
 
 ///////////////////////////////////////////////////
 // - CorrelationFramework::MixedCorrelation( ... )
-void CorrelationFramework::MixedCorrelation( EventData *ev, std::deque< EventData > **&EventCache)
+void CorrelationFramework::MixedCorrelation( EventData *ev, std::deque< EventData > ***EventCache)
 {
 	int nTrkA = (*ev).tracks.size();
 
-	int nMixEvs = EventCache[ ev->GetMultiplicityBin_EvM() ][ ev->GetzVtxBin() ].size();
+	int nMixEvs = (*EventCache)[ ev->GetMultiplicityBin_EvM() ][ ev->GetzVtxBin() ].size();
 
 	int multBin = ev->GetMultiplicityBin_EvM();
 	int zvtxBin = ev->GetzVtxBin();
@@ -290,14 +292,14 @@ void CorrelationFramework::MixedCorrelation( EventData *ev, std::deque< EventDat
 	{ 
 
 		int EvA_ID = ev->EventID;
-		int EvB_ID = EventCache[multBin][zvtxBin][iEvB].EventID;
+		int EvB_ID = (*EventCache)[multBin][zvtxBin][iEvB].EventID;
 
 		if ( EvA_ID == EvB_ID  ) {std::cerr << "Warning! Trying to mix same events in making the background function" << std::endl;} 
 
 		nEvents_Processed_backgr_total->Fill(1.);
 		nEvents_Processed_backgr[ ev->GetMultiplicityBin_Ana(nMultiplicityBins_Ana) ]->Fill(1.);
 
-		int nTrkB = EventCache[multBin][zvtxBin][iEvB].tracks.size();
+		int nTrkB = (*EventCache)[multBin][zvtxBin][iEvB].tracks.size();
 
 		for (int iTrkA = 0; iTrkA < nTrkA; iTrkA++)
 		{
@@ -325,11 +327,11 @@ void CorrelationFramework::MixedCorrelation( EventData *ev, std::deque< EventDat
 
 		{
 
-		   double jpt  = EventCache[multBin][zvtxBin][iEvB].tracks[jTrkB].pt;
-		   double jeta = EventCache[multBin][zvtxBin][iEvB].tracks[jTrkB].eta;
-		   double jphi = EventCache[multBin][zvtxBin][iEvB].tracks[jTrkB].phi;
+		   double jpt  = (*EventCache)[multBin][zvtxBin][iEvB].tracks[jTrkB].pt;
+		   double jeta = (*EventCache)[multBin][zvtxBin][iEvB].tracks[jTrkB].eta;
+		   double jphi = (*EventCache)[multBin][zvtxBin][iEvB].tracks[jTrkB].phi;
 			
-			double ptassoc = EventCache[multBin][zvtxBin][iEvB].tracks[jTrkB].pt;
+			double ptassoc = (*EventCache)[multBin][zvtxBin][iEvB].tracks[jTrkB].pt;
 
 			bool IsAssociaInsideReferencePtRange =  ( ptref1 < jpt ) && ( jpt < ptref2 );
 
@@ -383,8 +385,8 @@ void CorrelationFramework::MixedCorrelation( EventData *ev, std::deque< EventDat
 		}
 	}
 
-	EventCache[ ev->GetMultiplicityBin_EvM() ][ ev->GetzVtxBin() ].pop_front();
-	EventCache[ ev->GetMultiplicityBin_EvM() ][ ev->GetzVtxBin() ].push_back( (*ev) );
+	(*EventCache)[ ev->GetMultiplicityBin_EvM() ][ ev->GetzVtxBin() ].pop_front();
+	(*EventCache)[ ev->GetMultiplicityBin_EvM() ][ ev->GetzVtxBin() ].push_back( (*ev) );
 
 }
 
@@ -1107,6 +1109,13 @@ Correl1DfitResultsData fit1DCorrelation_noplot(TH1D *correl_1D)
 ////////////////////////////////
 
 // Setup_EventCache
+//void Setup_EventCache( std::deque< EventData > **&EventCache, int nMultiplicityBins, int nZvtxBins)
+//{
+// EventCache = new std::deque< EventData >*[nMultiplicityBins];
+// for(int multBin=0; multBin < nMultiplicityBins; multBin++)
+// { EventCache[multBin] = new std::deque< EventData >[nZvtxBins]; }
+//}
+
 void Setup_EventCache( std::deque< EventData > **&EventCache, int nMultiplicityBins, int nZvtxBins)
 {
  EventCache = new std::deque< EventData >*[nMultiplicityBins];

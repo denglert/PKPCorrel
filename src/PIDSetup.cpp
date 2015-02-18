@@ -41,6 +41,7 @@ int main(int argc, const char *argv[])
  
  // Save dEdx value map
  std::string figurename = "dEdxtest.png";
- makedEdxvspFiglinlin(dEdxvsP, figurename);
+
+ makedEdxvspFigloglog(dEdxvsP, figurename);
 
 }

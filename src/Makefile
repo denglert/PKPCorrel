@@ -1,6 +1,6 @@
 CC = g++
-CFLAGS = `root-config --cflags`  
-LFLAGS = -O3 -Wl,--no-as-needed `root-config --libs`
+CFLAGS = -g `root-config --cflags`  
+LFLAGS = -g -O3 -Wl,--no-as-needed `root-config --libs`
 OBJS = CorrelationUtils.o CorrelationUtils_FigureTools.o PIDUtils.o AnalysisFW.o AnalysisBinning.o SetupCustomTrackTree.o PhyConst.o EvtSelection.o EvtAnalyzer.o
 CMN =  commonSetup.h
 
@@ -107,6 +107,13 @@ UtilityTest.o : UtilityTest.cpp
 
 MC_CrosscheckFig.o : MC_CrosscheckFig.cpp
 	$(CC) $(CFLAGS)-o $@ -c $<  AnalysisBinning.o
+
+# Compare_vns
+../bin/Compare_vns : Compare_vns.o $(CMN) AnalysisBinning.o
+	$(CC) $(LFLAGS) -o $@ $< AnalysisBinning.o
+
+Compare_vns.o : Compare_vns.cpp
+	$(CC) $(CFLAGS)-o $@ -c $< AnalysisBinning.o
 
 ###########################################
 ### *** Framework classes

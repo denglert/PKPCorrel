@@ -27,6 +27,7 @@ TLatex MakeLabel ( double posx, double posy, double textsize, const char text[] 
 }
 
 
+
 void plotEtaDistr ( TH1D *EtaDistr, const char figurebasename[], const char text[] )
 {
  TCanvas canvas_etadistr ("EtaDistr", ";Eta;Entries", 800, 600);
@@ -87,7 +88,7 @@ int main( int argc, const char *argv[] )
  else {std::cout << "trkCorr File successfully opened." << std::endl;}
 
 
- TH3D **trkEff = Read_trkEff(f_trkCorr, "hcorr typ");
+ TH3D **trkEff = Read_TH3D_1Darray(f_trkCorr, "hcorr typ", 4);
 
  for (int i = 0; i < nCorrTyp; i++)
  {
@@ -492,7 +493,7 @@ int main( int argc, const char *argv[] )
 	//makedEdxvspFigloglog( dEdxvsploglogall, dEdxvsplogFigallPNG);
 	makedEdxvspFigloglog( dEdxvsploglogall, dEdxvsplogFigallPDF);
 	//makedEdxvspFiglinlin( dEdxvsplinlinall, dEdxvsplinFigallPNG);
-	//makedEdxvspFiglinlin( dEdxvsplinlinall, dEdxvsplinFigallPDF);
+	makedEdxvspFiglinlin( dEdxvsplinlinall, dEdxvsplinFigallPDF);
 
  //////////////////////
  //                  //

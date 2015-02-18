@@ -47,7 +47,7 @@ class EventData
 
    int **nTriggerParticles;
    int nTriggerParticles_cpar_ref;
-
+	
 	float zVtx; 
 	int   nTrk;
 
@@ -63,7 +63,7 @@ class EventData
 	int GetMultiplicityBin_Ana(int nMultiplicityBins_Ana);
 	int GetMultiplicityBin_EvM();
 
-	void ReadInDATA(Tracks &tTracks, TH2D *dEdxvsP);
+	void ReadInDATA(Tracks &tTracks, TH2D *dEdxvsP, PIDUtil *pidutil);
 	void ReadInMC  (Tracks &tTracks);
 
 	void Clear(int nCorrTyp, int *nPtBins);
@@ -75,7 +75,8 @@ extern const int nMixEv;
 // Event & TrackSelection
 bool EventSelection( const int &pPAcollisionEventSelection, const int &pileUpBit );
 bool TrackSelection( const Tracks &tTracks, int iTrk );
-bool mTrackSelection( const Tracks &tTracks, int iTrk );
+bool TrackSelection_c( const Tracks_c &tTracks, int iTrk );
+bool mTrackSelection_c( const Tracks_c &tTracks, int iTrk );
 double trackWeight (TH3D **trackCorr, int PID, double pt, double eta, double phi, bool doTable);
 
 class AnalysisFW
@@ -106,8 +107,10 @@ void Setup_nEvents_Processed (TH1D *&nEvents_Processed_signal_total, TH1D *&nEve
 ///////////////////////
 // Read In function
 void Read_nEvents_Processed(TFile *f, TH1D **&nEvents_Processed_signal, TH1D **&nEvents_ProcessedBit_backgr, int nMultiplicityBins );
-TH3D **Read_trkEff(TFile *f, const char histoname[]);
 
+TH3D **Read_TH3D_1Darray(TFile *f, const char histoname[], const int nBins);
+TH2D **Read_TH2D_1Darray(TFile *f, const char histoname[], const int nBins);
+TH1D **Read_TH1D_1Darray(TFile *f, const char histoname[], const int nBins);
 ///////////////////////////////
 // AnalysisFW functions
 

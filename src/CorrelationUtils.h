@@ -136,7 +136,7 @@ class CorrelationFramework
 	double trackWeight(int PID, float pt, float eta, float phi);
 
 	void SignalCorrelation(EventData *ev);
-	void MixedCorrelation( EventData *ev, std::deque< EventData > **&EventCache);
+	void MixedCorrelation( EventData *ev, std::deque< EventData > ***EventCache);
 	void AddCurrentEventCorrelation( EventData* ev);
 	void ResetCurrentEventCorrelation();
 	void doAnalysis();

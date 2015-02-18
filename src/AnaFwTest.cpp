@@ -45,28 +45,29 @@
 // }
 //}
 //
-void charargtest( const char arg[] )
-{
-	std::cerr << arg << std::endl;
-};
-
-class AnaConfig {
-public :
-   AnaConfig(){};
-   ~AnaConfig(){};
-
-	// Variables
-
-	// Functions
-};
-
-AnaConfig::AnaConfig()
-{
-}
+//void charargtest( const char arg[] )
+//{
+//	std::cerr << arg << std::endl;
+//};
+//
+//class AnaConfig {
+//public :
+//   AnaConfig(){};
+//   ~AnaConfig(){};
+//
+//	// Variables
+//
+//	// Functions
+//};
+//
+//AnaConfig::AnaConfig()
+//{
+//}
 
 
 int main( int argc, const char *argv[] )
 { 
+
 //	std::cerr << "hello" << std::endl;
 //	std::deque<int> deku[3];
 //	deku[0].push_back(1);
@@ -258,8 +259,12 @@ int main( int argc, const char *argv[] )
 // output->Close();
 	
 
-	std::cout << "zvtxbin: " << zvtxbin(-12.5, nZvtxBins_) << std::endl;
-	std::cout << "zvtxbin: " << zvtxbin(-13.5, nZvtxBins_) << std::endl;
-	std::cout << "zvtxbin: " << zvtxbin(12.5, nZvtxBins_) << std::endl;
+//	std::cout << "zvtxbin: " << zvtxbin(-12.5, nZvtxBins_) << std::endl;
+//	std::cout << "zvtxbin: " << zvtxbin(-13.5, nZvtxBins_) << std::endl;
+//	std::cout << "zvtxbin: " << zvtxbin(12.5, nZvtxBins_) << std::endl;
+
+std::string configfile = "./PIDUtils/config/default";
+pidutil = new PIDUtil;
+pidutil->ReadInConfig( configfile );
 
 }

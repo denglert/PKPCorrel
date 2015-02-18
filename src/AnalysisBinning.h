@@ -9,7 +9,7 @@ extern const int nPtBinsMax_;
 // pT classes
 extern const int nPtBins_[];
 
-extern const float trigptbins[][7][2];
+extern const float trigptbins[][12][2];
 
 extern const float ptref1;
 extern const float ptref2;
@@ -69,3 +69,4 @@ extern int zvtxbin(double zvtx, int bins);
 
 
 std::string particletype (int ID);
+std::string filenameparticletype (int ID);

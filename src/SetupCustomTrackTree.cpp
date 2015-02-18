@@ -3,6 +3,35 @@
 void setupTrackTree(TTree *t, Tracks &tTracks, bool doMC)
 {
 
+   t->SetBranchAddress("nTrk", &tTracks.nTrk, &tTracks.b_nTrk);
+   t->SetBranchAddress("dedx", &tTracks.dedx, &tTracks.b_dedx);
+   t->SetBranchAddress("trkPt", tTracks.trkPt, &tTracks.b_trkPt);
+   t->SetBranchAddress("trkPtError", tTracks.trkPtError, &tTracks.b_trkPtError);
+   t->SetBranchAddress("trkEta", tTracks.trkEta, &tTracks.b_trkEta);
+   t->SetBranchAddress("trkPhi", tTracks.trkPhi, &tTracks.b_trkPhi);
+   t->SetBranchAddress("trkCharge", tTracks.trkCharge, &tTracks.b_trkCharge);
+   t->SetBranchAddress("highPurity", tTracks.highPurity, &tTracks.b_highPurity);
+   t->SetBranchAddress("trkDxy1", tTracks.trkDxy1, &tTracks.b_trkDxy1);
+   t->SetBranchAddress("trkDxyError1", tTracks.trkDxyError1, &tTracks.b_trkDxyError1);
+   t->SetBranchAddress("trkDz1", tTracks.trkDz1, &tTracks.b_trkDz1);
+   t->SetBranchAddress("trkDzError1", tTracks.trkDzError1, &tTracks.b_trkDzError1);
+
+	if (doMC)
+	{
+   t->SetBranchAddress("nParticle", &tTracks.nParticle, &tTracks.b_nParticle);
+   t->SetBranchAddress("pStatus", tTracks.pStatus, &tTracks.b_pStatus);
+   t->SetBranchAddress("pPId", tTracks.pPId, &tTracks.b_pPId);
+   t->SetBranchAddress("pEta", tTracks.pEta, &tTracks.b_pEta);
+   t->SetBranchAddress("pPhi", tTracks.pPhi, &tTracks.b_pPhi);
+   t->SetBranchAddress("pPt", tTracks.pPt, &tTracks.b_pPt);
+	}
+
+
+}
+
+void setupTrackTree_c(TTree *t, Tracks_c &tTracks, bool doMC)
+{
+
 // Set branch addresses and branch pointers
 //   t->SetBranchAddress("nEv", &tTracks.nEv, &tTracks.b_nEv);
 //   t->SetBranchAddress("nLumi", &tTracks.nLumi, &tTracks.b_nLumi);
@@ -60,8 +89,6 @@ void setupTrackTree(TTree *t, Tracks &tTracks, bool doMC)
    t->SetBranchAddress("mtrkPt", tTracks.mtrkPt, &tTracks.b_mtrkPt);
    t->SetBranchAddress("mtrkPtError", tTracks.mtrkPtError, &tTracks.b_mtrkPtError);
    t->SetBranchAddress("mtrkNHit", tTracks.mtrkNHit, &tTracks.b_mtrkNHit);
-   t->SetBranchAddress("mtrkNlayer", tTracks.mtrkNlayer, &tTracks.b_mtrkNlayer);
-   t->SetBranchAddress("mtrkNlayer3D", tTracks.mtrkNlayer3D, &tTracks.b_mtrkNlayer3D);
    t->SetBranchAddress("mtrkQual", tTracks.mtrkQual, &tTracks.b_mtrkQual);
    t->SetBranchAddress("mtrkChi2", tTracks.mtrkChi2, &tTracks.b_mtrkChi2);
    t->SetBranchAddress("mtrkNdof", tTracks.mtrkNdof, &tTracks.b_mtrkNdof);
@@ -73,13 +100,10 @@ void setupTrackTree(TTree *t, Tracks &tTracks, bool doMC)
    t->SetBranchAddress("mtrkDzError2", tTracks.mtrkDzError2, &tTracks.b_mtrkDzError2);
    t->SetBranchAddress("mtrkDxy2", tTracks.mtrkDxy2, &tTracks.b_mtrkDxy2);
    t->SetBranchAddress("mtrkDxyError2", tTracks.mtrkDxyError2, &tTracks.b_mtrkDxyError2);
-   t->SetBranchAddress("mtrkAlgo", tTracks.mtrkAlgo, &tTracks.b_mtrkAlgo);
 	}
-//   t->SetBranchAddress("mtrkPfType", tTracks.mtrkPfType, &tTracks.b_mtrkPfType);
-//   t->SetBranchAddress("mtrkPfCandPt", tTracks.mtrkPfCandPt, &tTracks.b_mtrkPfCandPt);
-//   t->SetBranchAddress("mtrkPfSumEcal", tTracks.mtrkPfSumEcal, &tTracks.b_mtrkPfSumEcal);
-//   t->SetBranchAddress("mtrkPfSumHcal", tTracks.mtrkPfSumHcal, &tTracks.b_mtrkPfSumHcal);
+
 }
+
 
 void setupParticleTree(TTree *t, Tracks &tTracks)
 {

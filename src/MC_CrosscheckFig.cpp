@@ -127,10 +127,10 @@ int main( int argc, const char *argv[] )
 	cpar_GENE->GetYaxis()->SetTitleSize(figuretextsize);
 
 
-	TF1 *cparv2_fit = new TF1 ("cparv2_fit", "[0]+[1]*x+[2]*x*x",0,3);
-	TF1 *pionv2_fit = new TF1 ("pionv2_fit", "[0]+[1]*x+[2]*x*x",0,0.9);
-	TF1 *kaonv2_fit = new TF1 ("kaonv2_fit", "[0]+[1]*x+[2]*x*x",0,0.9);
-	TF1 *protv2_fit = new TF1 ("protv2_fit", "[0]+[1]*x+[2]*x*x",0,1.5);
+	TF1 *cparv2_fit = new TF1 ("cparv2_fit", "[0]+[1]*x+[2]*x*x",0.2,3);
+	TF1 *pionv2_fit = new TF1 ("pionv2_fit", "[0]+[1]*x+[2]*x*x",0.2,0.9);
+	TF1 *kaonv2_fit = new TF1 ("kaonv2_fit", "[0]+[1]*x+[2]*x*x",0.2,0.9);
+	TF1 *protv2_fit = new TF1 ("protv2_fit", "[0]+[1]*x+[2]*x*x",0.2,1.5);
 
 	cparv2_fit->SetLineColor(kBlack);
 	pionv2_fit->SetLineColor(kRed);
@@ -335,9 +335,9 @@ int main( int argc, const char *argv[] )
 	kaon_GENE_norm.Draw("P");
 	prot_GENE_norm.Draw("P");
 
-	TLine *line_12  = new TLine(rv2vspt_ptmin,1.2,rv2vspt_ptmax,1.2); 
+	TLine *line_12  = new TLine(rv2vspt_ptmin,1.05,rv2vspt_ptmax,1.05); 
 	TLine *line_10  = new TLine(rv2vspt_ptmin,1.0,rv2vspt_ptmax,1.0); 
-	TLine *line_08  = new TLine(rv2vspt_ptmin,0.8,rv2vspt_ptmax,0.8); 
+	TLine *line_08  = new TLine(rv2vspt_ptmin,0.95,rv2vspt_ptmax,0.95); 
 
 	line_12->SetLineStyle(7);
 	line_10->SetLineStyle(7);

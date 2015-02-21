@@ -1,6 +1,6 @@
 CC = g++
-CFLAGS = -g `root-config --cflags`  
-LFLAGS = -g -O3 -Wl,--no-as-needed `root-config --libs`
+CFLAGS = `root-config --cflags`  
+LFLAGS = -O3 -Wl,--no-as-needed `root-config --libs`
 OBJS = CorrelationUtils.o CorrelationUtils_FigureTools.o PIDUtils.o AnalysisFW.o AnalysisBinning.o SetupCustomTrackTree.o PhyConst.o EvtSelection.o EvtAnalyzer.o
 CMN =  commonSetup.h
 
@@ -113,6 +113,13 @@ MC_CrosscheckFig.o : MC_CrosscheckFig.cpp
 	$(CC) $(LFLAGS) -o $@ $< AnalysisBinning.o
 
 Compare_vns.o : Compare_vns.cpp
+	$(CC) $(CFLAGS)-o $@ -c $< AnalysisBinning.o
+
+# Compare_vns_multi
+../bin/Compare_vns_multi : Compare_vns_multi.o $(CMN) AnalysisBinning.o
+	$(CC) $(LFLAGS) -o $@ $< AnalysisBinning.o
+
+Compare_vns_multi.o : Compare_vns_multi.cpp
 	$(CC) $(CFLAGS)-o $@ -c $< AnalysisBinning.o
 
 ###########################################

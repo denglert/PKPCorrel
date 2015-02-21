@@ -106,5 +106,4 @@ bool isProt(float p, float dEdx);
 void makedEdxvspFiglinlin(TH2D* dEdxvsP, std::string PIDconfig, std::string figurename);
 void makedEdxvspFigloglog(TH2D* dEdxvsP, std::string PIDconfig, std::string figurename);
 
-
 #endif

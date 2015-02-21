@@ -48,7 +48,7 @@ void plotEtaDistr ( TH1D *EtaDistr, const char figurebasename[], const char text
 int main( int argc, const char *argv[] )
 { 
 
-  if(argc != 6)
+  if(argc != 7)
   {
     std::cerr << "Usage: process <.root file to be preprocessed> <dotrkCorr> <trkCorrFilename> <tag> <nEvents>" << std::endl;
 	 exit(1);
@@ -57,8 +57,9 @@ int main( int argc, const char *argv[] )
  TString inpFilename     = argv[1];
  TString dotrkCorr_str 	 = argv[2];
  TString trkCorrFilename = argv[3];
- std::string tag		    = argv[4];
- int nEvMax 	  		    = atoi( argv[5] );
+ std::string PIDconfig   = argv[4];
+ std::string tag		    = argv[5];
+ int nEvMax 	  		    = atoi( argv[6] );
 
  // Binning
  int nCorrTyp			  = nCorrTyp_; 
@@ -70,6 +71,9 @@ int main( int argc, const char *argv[] )
  int nMultiplicityBins_Ana = nMultiplicityBins_Ana_HDR;
  int nMultiplicityBins_EvM = nMultiplicityBins_EvM_HDR;
  int nZvtxBins 		      = nZvtxBins_; 
+
+ PIDUtil *pidutil = new PIDUtil();
+ pidutil->ReadInConfig( PIDconfig );
 
  bool dotrkCorr;
       if( dotrkCorr_str == "yes") { dotrkCorr = true;}
@@ -93,7 +97,6 @@ int main( int argc, const char *argv[] )
  for (int i = 0; i < nCorrTyp; i++)
  {
   trkEff[i]->SetDirectory(0);
-
  }
 
  f_trkCorr->Close();
@@ -282,7 +285,7 @@ int main( int argc, const char *argv[] )
 		// *** Track selection *** //
 		if ( !TrackSelection(tTracks, iTrk ) ) continue;
 
-		int PID   = GetPID(p, tTracks.dedx[iTrk], tTracks.trkEta[iTrk]);
+		int PID   = pidutil->GetID(p, tTracks.dedx[iTrk], tTracks.trkEta[iTrk]);
 
 		int ptBin_ID = ptbin( PID , tTracks.trkPt[iTrk]);
 		int ptBin_CH = ptbin(   0 , tTracks.trkPt[iTrk]);
@@ -490,10 +493,10 @@ int main( int argc, const char *argv[] )
  	std::string dEdxvsplogFigallPNG = dEdxvsploglogallFigBase+".png";
  	std::string dEdxvsplogFigallPDF = dEdxvsploglogallFigBase+".pdf";
 
-	//makedEdxvspFigloglog( dEdxvsploglogall, dEdxvsplogFigallPNG);
-	makedEdxvspFigloglog( dEdxvsploglogall, dEdxvsplogFigallPDF);
-	//makedEdxvspFiglinlin( dEdxvsplinlinall, dEdxvsplinFigallPNG);
-	makedEdxvspFiglinlin( dEdxvsplinlinall, dEdxvsplinFigallPDF);
+	makedEdxvspFigloglog( dEdxvsploglogall, PIDconfig, dEdxvsplogFigallPNG);
+	makedEdxvspFigloglog( dEdxvsploglogall, PIDconfig ,dEdxvsplogFigallPDF);
+	makedEdxvspFiglinlin( dEdxvsplinlinall, PIDconfig, dEdxvsplinFigallPNG);
+	makedEdxvspFiglinlin( dEdxvsplinlinall, PIDconfig, dEdxvsplinFigallPDF);
 
  //////////////////////
  //                  //

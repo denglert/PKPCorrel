@@ -33,7 +33,6 @@ int main( int argc, const char *argv[] )
  int nMultiplicityBins_EvM = nMultiplicityBins_EvM_HDR; 
  int nZvtxBins 	 = nZvtxBins_; 
 
-
  prepareDIR(tag);
 
  //////////////////////////////////////

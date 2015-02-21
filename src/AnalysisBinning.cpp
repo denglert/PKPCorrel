@@ -17,60 +17,96 @@ const int nCorrTyp_ = 4;
 // *** Pt binning *** //
 ////////////////////////
 
-const int nPtBinsMax_      	=   12; 
-const int nPtBins_[nCorrTyp_] = { 12, 6, 6, 12 };
-//const int nPtBins_[nCorrTyp_] = { 6, 3, 4, 6 };
+//const int nPtBinsMax_      	=   12; 
+////const int nPtBins_[nCorrTyp_] = { 12, 6, 6, 12 };
+////const int nPtBins_[nCorrTyp_] = { 6, 3, 4, 6 };
+//
+//const float trigptbins[nCorrTyp_][nPtBinsMax_][2] = 
+//{
+//	 {{  0.20,  0.30 },
+//	  {  0.30,  0.40 },
+//	  {  0.40,  0.50 },
+//	  {  0.50,  0.60 },
+//	  {  0.60,  0.70 },
+//	  {  0.70,  0.80 },
+//	  {  0.80,  0.90 },
+//	  {  0.90,  1.00 },
+//	  {  1.00,  1.50 },
+//	  {  1.50,  2.00 },
+//	  {  2.00,  2.50 },
+//	  {  2.50,  3.00 }},
+//	 {{  0.20,  0.30 },
+//	  {  0.30,  0.40 },
+//	  {  0.40,  0.50 },
+//	  {  0.50,  0.60 },
+//	  {  0.60,  0.70 },
+//	  {  0.70,  0.80 },
+//	  { -1.00, -1.00 },
+//	  { -1.00, -1.00 },
+//	  { -1.00, -1.00 },
+//	  { -1.00, -1.00 },
+//	  { -1.00, -1.00 },
+//	  { -1.00, -1.00 }},
+//	 {{  0.20,  0.30 },
+//	  {  0.30,  0.40 },
+//	  {  0.40,  0.50 },
+//	  {  0.50,  0.60 },
+//	  {  0.60,  0.70 },
+//	  {  0.70,  0.80 },
+//	  { -1.00, -1.00 },
+//	  { -1.00, -1.00 },
+//	  { -1.00, -1.00 },
+//	  { -1.00, -1.00 },
+//	  { -1.00, -1.00 },
+//	  { -1.00, -1.00 }},
+//	 {{  0.20,  0.30 },
+//	  {  0.30,  0.40 },
+//	  {  0.40,  0.50 },
+//	  {  0.50,  0.60 },
+//	  {  0.60,  0.70 },
+//	  {  0.70,  0.80 },
+//	  {  0.80,  0.90 },
+//	  {  0.90,  1.00 },
+//	  {  1.00,  1.10 },
+//	  {  1.10,  1.20 },
+//	  {  1.20,  1.30 },
+//	  {  1.30,  1.40 }}
+//};
+
+// MC
+const int nPtBinsMax_      	= 12; 
+const int nPtBins_[nCorrTyp_] = { 6, 3, 3, 6 };
 
 const float trigptbins[nCorrTyp_][nPtBinsMax_][2] = 
 {
-	 {{  0.20,  0.30 },
-	  {  0.30,  0.40 },
-	  {  0.40,  0.50 },
-	  {  0.50,  0.60 },
-	  {  0.60,  0.70 },
-	  {  0.70,  0.80 },
-	  {  0.80,  0.90 },
-	  {  0.90,  1.00 },
+	 {{  0.30,  0.50 },
+	  {  0.50,  1.00 },
 	  {  1.00,  1.50 },
 	  {  1.50,  2.00 },
 	  {  2.00,  2.50 },
-	  {  2.50,  3.00 }},
-	 {{  0.20,  0.30 },
-	  {  0.30,  0.40 },
-	  {  0.40,  0.50 },
-	  {  0.50,  0.60 },
-	  {  0.60,  0.70 },
-	  {  0.70,  0.80 },
-	  { -1.00, -1.00 },
-	  { -1.00, -1.00 },
-	  { -1.00, -1.00 },
+	  {  2.50,  3.00 },
+	  { -1.00, -1.00 }},
+	 {{  0.20,  0.40 },
+	  {  0.40,  0.60 },
+	  {  0.60,  0.80 },
+	  {  0.80,  1.00 },
 	  { -1.00, -1.00 },
 	  { -1.00, -1.00 },
 	  { -1.00, -1.00 }},
-	 {{  0.20,  0.30 },
-	  {  0.30,  0.40 },
-	  {  0.40,  0.50 },
-	  {  0.50,  0.60 },
-	  {  0.60,  0.70 },
-	  {  0.70,  0.80 },
-	  { -1.00, -1.00 },
-	  { -1.00, -1.00 },
-	  { -1.00, -1.00 },
-	  { -1.00, -1.00 },
-	  { -1.00, -1.00 },
-	  { -1.00, -1.00 }},
-	 {{  0.20,  0.30 },
-	  {  0.30,  0.40 },
-	  {  0.40,  0.50 },
-	  {  0.50,  0.60 },
-	  {  0.60,  0.70 },
-	  {  0.70,  0.80 },
+	 {{  0.20,  0.40 },
+	  {  0.40,  0.60 },
+	  {  0.60,  0.80 },
 	  {  0.80,  0.90 },
-	  {  0.90,  1.00 },
-	  {  1.00,  1.10 },
-	  {  1.10,  1.20 },
-	  {  1.20,  1.30 },
-	  {  1.30,  1.40 }}
+	  { -1.00, -1.00 },
+	  { -1.00, -1.00 },
+	  { -1.00, -1.00 }},
+	 {{  0.20,  0.40 },
+	  {  0.40,  0.60 },
+	  {  0.60,  0.80 },
+	  {  0.80,  1.00 },
+	  {  1.00,  1.20 },
+	  {  1.20,  1.40 },
+	  {  1.40,  1.60 }}
 };
 
 const float ptref1 = 0.3;
@@ -113,23 +149,23 @@ const float assoptmax = 3.0;
 //};
 
 // MC comparison
-//const int nMultiplicityBins_Ana_HDR = 1;
-//const int multiplicitybins_Ana[nMultiplicityBins_Ana_HDR][2] = 
-//{
-//	  {   0,  120 }
-//};
-
-// HIGH-MULTIPLICITY
-const int nMultiplicityBins_Ana_HDR = 4;
+const int nMultiplicityBins_Ana_HDR = 1;
 const int multiplicitybins_Ana[nMultiplicityBins_Ana_HDR][2] = 
 {
-	  { 120, 150 },
-	  { 150, 185 },
-	  { 185, 220 },
-	  { 220, 260 }
-//	  { 260, 300 }
-////	  { 300, 350 }
+	  {   0,  120 }
 };
+
+// HIGH-MULTIPLICITY
+//const int nMultiplicityBins_Ana_HDR = 4;
+//const int multiplicitybins_Ana[nMultiplicityBins_Ana_HDR][2] = 
+//{
+//	  { 120, 150 },
+//	  { 150, 185 },
+//	  { 185, 220 },
+//	  { 220, 260 }
+////	  { 260, 300 }
+//////	  { 300, 350 }
+//};
 
 //// Event Mix multiplicity binning
 
@@ -155,30 +191,30 @@ const int multiplicitybins_Ana[nMultiplicityBins_Ana_HDR][2] =
 
 
 // HIGH-MULTIPLICITY
-const int nMultiplicityBins_EvM_HDR = 4;
-const int multiplicitybins_EvM[nMultiplicityBins_EvM_HDR][2] = 
-{
-	  { 120, 150 },
-	  { 150, 185 },
-	  { 185, 220 },
-	  { 220, 260 }
-//	  { 260, 300 }
-////	  { 300, 350 }
-};
-
-//MINBIAS
-//const int nMultiplicityBins_EvM_HDR = 8;
+//const int nMultiplicityBins_EvM_HDR = 4;
 //const int multiplicitybins_EvM[nMultiplicityBins_EvM_HDR][2] = 
 //{
-//	  {   0,  20 },
-//	  {  20,  30 },
-//	  {  30,  40 },
-//	  {  40,  50 },
-//	  {  50,  60 },
-//	  {  60,  80 },
-//	  {  80, 100 },
-//	  { 100, 120 }
+//	  { 120, 150 },
+//	  { 150, 185 },
+//	  { 185, 220 },
+//	  { 220, 260 }
+//	  { 260, 300 }
+////	  { 300, 350 }
 //};
+
+//MINBIAS
+const int nMultiplicityBins_EvM_HDR = 8;
+const int multiplicitybins_EvM[nMultiplicityBins_EvM_HDR][2] = 
+{
+	  {   0,  20 },
+	  {  20,  30 },
+	  {  30,  40 },
+	  {  40,  50 },
+	  {  50,  60 },
+	  {  60,  80 },
+	  {  80, 100 },
+	  { 100, 120 }
+};
 
 
 //////////////////////////
@@ -383,14 +419,14 @@ std::string particletype (int ID)
    }
 }
 
-std::string filenameparticletype (int ID)
+std::string particletypelabel (int ID)
 {
 
 	std::string out;
 
 	switch (ID)
    { 
-		case 0: out = "char"; return out;
+		case 0: out = "cpar"; return out;
 		case 1: out = "pion"; return out;
 		case 2: out = "kaon"; return out;
 		case 3: out = "prot"; return out;

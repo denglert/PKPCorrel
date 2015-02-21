@@ -8,6 +8,7 @@
 ##################
 # Command: preproc
 
+
 # Parameters
 label=testpreproc
 dotrkCorr=no
@@ -15,8 +16,8 @@ trkCorrlabel=TrackCorrection_full_pT_typdep_coarsebins
 trkCorrFile=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/trkCorr/$(trkCorrlabel)/trkCorrections_0.root
 PIDconfig=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/PIDUtils/config/config_default
 #inputfile=root://eoscms//eos/cms/store/group/phys_heavyions/denglert/pPb2013_HighMultiplicityForest_merged/HIRun2013-28Sep2013-v1_pPb_run_210498-210658/pPb2013_HM_28Sep2013_v1_HiForest_pPb_run_210498-210658_1.root
-inputfile=root://eoscms//eos/cms/store/group/phys_heavyions/denglert/pPb2013_HighMultiplicityForest_merged/HIRun2013-PromptReco-v1_Pbp_run_211313-211631/pPb2013_HM_PromptReco-v1_HiForest_Pbp_run_211313-211631_16.root
-#inputfile=root://eoscms//eos/cms/store/group/phys_heavyions/denglert/pPb2013_minBiasForest_merged/HiForest_pPb2013_PromptReco_run_211313-211631_12.root
+#inputfile=root://eoscms//eos/cms/store/group/phys_heavyions/denglert/pPb2013_HighMultiplicityForest_merged/HIRun2013-PromptReco-v1_Pbp_run_211313-211631/pPb2013_HM_PromptReco-v1_HiForest_Pbp_run_211313-211631_16.root
+inputfile=root://eoscms//eos/cms/store/group/phys_heavyions/denglert/pPb2013_minBiasForest_merged/HiForest_pPb2013_PromptReco_run_211313-211631_12.root
 #inputfile=root://eoscms.cern.ch//eos/cms/store/group/phys_heavyions/denglert/pPb_MC_vzhukova-EPOS_RECO_batch_HiForest_trketafix/pPb_MC_HiForest_allbatch1.root
 nEvents=-1
 jobid=0
@@ -41,6 +42,9 @@ tag_preproc_gen=$(label_preproc_gen)_nEv_$(nEvents_preproc_gen)
 # * PROCESS BATCHJOB * #
 ########################
 # Command: procbatchjob
+#Compare_vns_inputfile2=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/MC_vzhukova-EPOS_RECO_batch_comparison_recolevel_2nd_chariot_proton_mindEdx_3.4_trkCorr_no/dump.root
+
+#Compare_vns_inputfile1=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/MC_vzhukova-EPOS_RECO_batch_comparison_genelevel_2nd_beta/dump.root
 
 # Parameters
 #batchjobtag=full_searchingforbkgrbug_temp
@@ -63,11 +67,32 @@ tag_preproc_gen=$(label_preproc_gen)_nEv_$(nEvents_preproc_gen)
 #batchjobtag=test_nEv_200000
 #batchjobtag=MC_vzhukova-EPOS_RECO_batch_comparison_genelevel_2nd_beta
 #batchjobtag=MC_vzhukova-EPOS_RECO_batch_comparison_recolevel_2nd_chariot_proton_mindEdx_3.4_trkCorr_no
-batchjobtag=PIDscan_MinBias_config_default_trkCorr_no_temp/
-#filetoprocess=correl_ana.root
+#batchjobtag=PIDscan_MinBias_config_default_trkCorr_no_temp/
+#batchjobtag=PIDscan_HighMultiplicity_config_strict_2_trkCorr_no_temp
+#batchjobtag=MC_vzhukova-EPOS_RECO_batch_comparison_genelevel_2nd_beta
+
+#batchjobtag=MC_vzhukova-EPOS_RECO_batch_comparison_recolevel_2nd_chariot_proton_mindEdx_3.4_trkCorr_no
+#batchjobtag=MC_vzhukova-EPOS_RECO_batch_comparison_genelevel_2nd_beta
+batchjobtag=MC_vzhukova-EPOS_RECO_batch_comparison_recolevel_2nd_chariot_proton_mindEdx_3.4_trkCorr_no
+
+# PIDscan HighMulti
+#batchjobtag=PIDscan_MinBias_config_looser_2_trkCorr_no/
+#batchjobtag=PIDscan_MinBias_config_looser_1_trkCorr_no/
+#batchjobtag=PIDscan_MinBias_config_default_trkCorr_no/
+#batchjobtag=PIDscan_MinBias_config_strict_1_trkCorr_no/
+#batchjobtag=PIDscan_MinBias_config_strict_2_trkCorr_no/
+
+# PIDscan MinBias 
+#batchjobtag=PIDscan_MinBias_config_looser_2_trkCorr_no/
+#batchjobtag=PIDscan_MinBias_config_looser_1_trkCorr_no/
+#batchjobtag=PIDscan_MinBias_config_default_trkCorr_no/
+#batchjobtag=PIDscan_MinBias_config_strict_1_trkCorr_no/
+#batchjobtag=PIDscan_MinBias_config_strict_2_trkCorr_no/
+
 #filetoprocess=correl_FULL.root
-#filetoprocess=correl_analysis_1.root
-filetoprocess=correl_tempmerge.root
+filetoprocess=correl_analysis_1.root
+#filetoprocess=correl_tempmerge.root
+#filetoprocess=correl_full.root
 #filetoprocess=correl_MinBiasHighMulti.root
 #filetoprocess=correl_selection20.root
 
@@ -143,7 +168,7 @@ testtrkCorrFile=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6
 # commands: EtaPhiDistr
 
 #EtaPhiDistr_label=EtaPhiDistr_pPb_MinBias_HIJING_MC_${EtaPhiDistr_dotrkCorr}trkCorr
-EtaPhiDistr_label=EtaPhiDistr_pPb_MinBias_DATA_${EtaPhiDistr_dotrkCorr}trkCorr
+EtaPhiDistr_label=EtaPhiDistr_pPb_MinBias_DATA_PIDconfig_strict_2_${EtaPhiDistr_dotrkCorr}_trkCorr
 
 # DATA
 #EtaPhiDistr_inputfile=root://eoscms.cern.ch//store/group/phys_heavyions/denglert/pPb2013_HighMultiplicityForest_merged/HIRun2013-28Sep2013-v1_pPb_run_210498-210658/pPb2013_HM_28Sep2013_v1_HiForest_pPb_run_210498-210658_0.root
@@ -156,6 +181,7 @@ EtaPhiDistr_inputfile=root://eoscms//eos/cms/store/group/phys_heavyions/denglert
 EtaPhiDistr_dotrkCorr=no
 EtaPhiDistr_trkCorrlabel=batchjob_TrackCorrection_full_mtrkdedx_added_minptfixed
 EtaPhiDistr_trkCorr=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/trkCorr/$(EtaPhiDistr_trkCorrlabel)/trkCorrections_0.root
+EtaPhiDistr_PIDconfig=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/PIDUtils/config/config_strict_2
 EtaPhiDistr_nEvents=100000
 EtaPhiDistr_jobid=0
 EtaPhiDistr_tag=$(EtaPhiDistr_label)_nEv_$(EtaPhiDistr_nEvents)
@@ -198,7 +224,6 @@ MC_CrosscheckFig_label=MC_gene_reco_level_CrossCheck_EPOS_trkCorr_no
 MC_CrosscheckFig_inputfileRECO=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/MC_vzhukova-EPOS_RECO_batch_comparison_recolevel_2nd_chariot_trkCorr_no/dump.root
 #MC_CrosscheckFig_inputfileGENE=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/MC_vzhukova-EPOS_RECO_batch_comparison_genelevel_2nd_full_updated/dump.root
 MC_CrosscheckFig_inputfileGENE=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/MC_vzhukova-EPOS_RECO_batch_comparison_genelevel_2nd_beta/dump.root
-#MC_CrosscheckFig_inputfileRECO=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/MC_vzhukova-EPOS_RECO_batch_comparison_recolevel_2nd_fullkEv_withtrkCorr/dump.root
 #MC_CrosscheckFig_inputfileGENE=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/MC_vzhukova-EPOS_RECO_batch_comparison_genelevel_2nd_fullkEv_etafixed/dump.root
 
 #########################
@@ -208,11 +233,17 @@ MC_CrosscheckFig_inputfileGENE=/afs/cern.ch/work/d/denglert/public/projects/PKPC
 
 Compare_vns_label=MC_gene_reco_level_CrossCheck_EPOS_trkCorr_no_offset_protmindEdx3.4
 Compare_vns_label1=gen
-Compare_vns_label2=reco_mindEdx3.4
+Compare_vns_label2=reco
 Compare_vns_inputfile1=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/MC_vzhukova-EPOS_RECO_batch_comparison_genelevel_2nd_beta/dump.root
 Compare_vns_inputfile2=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/MC_vzhukova-EPOS_RECO_batch_comparison_recolevel_2nd_chariot_proton_mindEdx_3.4_trkCorr_no/dump.root
 #Compare_vns_inputfile2=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/MC_vzhukova-EPOS_RECO_batch_comparison_recolevel_2nd_chariot_trkCorr_no/dump.root
 
+#########################
+#### - Compare_vns - ####
+#########################
+# commands: Compare_vns
+
+Compare_vns_multi_workdir=MultiComparsion
 
 #####################
 ### - PIDSetup - ####
@@ -327,8 +358,9 @@ EtaPhiDistr : build_EtaPhiDistr
 	@echo 
 	@echo Testfile: $(EtaPhiDistr_inputfile)
 	@echo Number of events: $(EtaPhiDistr_nEvents)
+	@echo PIDconfig: $(EtaPhiDistr_PIDconfig)
 	@echo
-	cd ./results/$(EtaPhiDistr_tag); ../../bin/EtaPhiDistr $(EtaPhiDistr_inputfile) $(EtaPhiDistr_dotrkCorr) $(EtaPhiDistr_trkCorr) $(EtaPhiDistr_jobid) $(EtaPhiDistr_nEvents);
+	cd ./results/$(EtaPhiDistr_tag); ../../bin/EtaPhiDistr $(EtaPhiDistr_inputfile) $(EtaPhiDistr_dotrkCorr) $(EtaPhiDistr_trkCorr) $(EtaPhiDistr_PIDconfig) $(EtaPhiDistr_jobid) $(EtaPhiDistr_nEvents);
 
 ######################################################
 ### TrackCorrection
@@ -403,6 +435,17 @@ Compare_vns : build_Compare_vns
 
 build_Compare_vns : 
 	@cd src; make ../bin/Compare_vns
+
+### Compare_vns_multi
+Compare_vns_multi : build_Compare_vns_multi
+	@rm -rf ./results/$(Compare_vns_multi_workdir); mkdir ./results/$(Compare_vns_multi_workdir); 
+	@echo -e "\nCompare_vns_multi"
+	@echo
+	@echo WORKDIR: $(Compare_vns_multi_workdir)
+	cd ./results/$(Compare_vns_multi_workdir); ../../bin/Compare_vns_multi
+
+build_Compare_vns_multi : 
+	@cd src; make ../bin/Compare_vns_multi
 
 ######################################################
 # Build

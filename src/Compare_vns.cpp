@@ -480,8 +480,8 @@ int main( int argc, const char *argv[] )
 	kaon_1_norm.Draw("P");
 	prot_1_norm.Draw("P");
 
-   double up = 1.06;
-   double lo = 0.94;
+   double up = 1.05;
+   double lo = 0.95;
 
 	TLine *line_up  = new TLine(rv2vspt_ptmin,up,rv2vspt_ptmax,up); 
 	TLine *line_mi  = new TLine(rv2vspt_ptmin,1.00,rv2vspt_ptmax,1.00); 
@@ -544,8 +544,8 @@ int main( int argc, const char *argv[] )
 	kaon_reldiffgraph.Draw("P");
 	prot_reldiffgraph.Draw("P");
 
-   double reldiff_min = -0.06;
-   double reldiff_max =  0.06;
+   double reldiff_min = -0.05;
+   double reldiff_max =  0.05;
 
 	TLine *line_upp  = new TLine(reldiffvspt_ptmin,reldiff_min,reldiffvspt_ptmax,reldiff_min); 
 	TLine *line_mid  = new TLine(reldiffvspt_ptmin,0,reldiffvspt_ptmax,0);

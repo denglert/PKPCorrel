@@ -69,4 +69,4 @@ extern int zvtxbin(double zvtx, int bins);
 
 
 std::string particletype (int ID);
-std::string filenameparticletype (int ID);
+std::string particletypelabel (int ID);

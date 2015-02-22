@@ -14,6 +14,7 @@ label=testpreproc
 dotrkCorr=no
 trkCorrlabel=TrackCorrection_full_pT_typdep_coarsebins
 trkCorrFile=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/trkCorr/$(trkCorrlabel)/trkCorrections_0.root
+Anaconfig=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/AnalysisFW/setup/MinBias
 PIDconfig=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/PIDUtils/config/config_default
 #inputfile=root://eoscms//eos/cms/store/group/phys_heavyions/denglert/pPb2013_HighMultiplicityForest_merged/HIRun2013-28Sep2013-v1_pPb_run_210498-210658/pPb2013_HM_28Sep2013_v1_HiForest_pPb_run_210498-210658_1.root
 #inputfile=root://eoscms//eos/cms/store/group/phys_heavyions/denglert/pPb2013_HighMultiplicityForest_merged/HIRun2013-PromptReco-v1_Pbp_run_211313-211631/pPb2013_HM_PromptReco-v1_HiForest_Pbp_run_211313-211631_16.root
@@ -280,7 +281,7 @@ preproc : build_preproc
 	@echo PIDconfig: $(PIDconfig)
 	@echo Number of events: $(nEvents)
 	@echo
-	cd ./preprocessed/$(tag); ../../bin/preprocess $(inputfile) $(dotrkCorr) $(trkCorrFile) $(PIDconfig) $(jobid) $(nEvents);
+	cd ./preprocessed/$(tag); ../../bin/preprocess $(inputfile) $(dotrkCorr) $(trkCorrFile) $(Anaconfig) $(PIDconfig) $(jobid) $(nEvents);
 
 
 preproc_gen : build_preproc_gen

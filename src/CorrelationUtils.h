@@ -74,6 +74,9 @@ class CorrelationFramework
 	// Project tag
 	std::string tag;
 
+	// AnalysisBinning
+	AnalysisBinning *AnaBin;
+
 	// Output dump
 	TFile *Corr_Results;
 	
@@ -176,6 +179,11 @@ class CorrelationFramework
 
 	std::vector< double > Get_self_v2vec ( int TypBin, int multBin);
 	std::vector< double > Get_self_v2_StatErrorvec ( int TypBin, int multBin);
+
+	// Setup functions
+	void Setup_TH2D_nCorrnPt(TH2D ***&correl2D, const char histoname[], const char tag[]);
+	void Setup_TH2D_nCorrnPtnMult( TH2D ****&correl2D, const char histoname[], const char tag[]);
+	void Setup_TH2D_nMult( TH2D **&correl2D, const char histoname[], const char tag[], double pt1, double pt2);
 
 	private:
 	detacut dEtacut;

@@ -263,8 +263,25 @@ int main( int argc, const char *argv[] )
 //	std::cout << "zvtxbin: " << zvtxbin(-13.5, nZvtxBins_) << std::endl;
 //	std::cout << "zvtxbin: " << zvtxbin(12.5, nZvtxBins_) << std::endl;
 
-std::string configfile = "./PIDUtils/config/default";
-pidutil = new PIDUtil;
-pidutil->ReadInConfig( configfile );
+//std::string configfile = "./PIDUtils/config/default";
+//pidutil = new PIDUtil;
+//pidutil->ReadInConfig( configfile );
+
+std::string setupfile = "./AnalysisFW/setup/MinBias";
+AnalysisBinning *AnaBin = new AnalysisBinning;
+AnaBin->ReadInBins( setupfile );
+AnaBin->DisplayBins();
+
+std::cout << "GetMultBin_Ana(70):  " << AnaBin->GetMultBin_Ana(70)  << std::endl;
+std::cout << "GetMultBin_Ana(130): " << AnaBin->GetMultBin_Ana(130) << std::endl;
+std::cout << "GetPtBin(2, 0.39): "   << AnaBin->GetPtBin(2, 0.39)  << std::endl;
+std::cout << "GetPtBin(2, 0.41): "   << AnaBin->GetPtBin(2, 0.41)  << std::endl;
+std::cout << "GetZvtxBin(-12.9): "   << AnaBin->GetZvtxBin(-12.9)  << std::endl;
+std::cout << "GetZvtxBin(12.9): "    << AnaBin->GetZvtxBin(12.9)  << std::endl;
+
+std::cout << "GetnMultBins_Ana(): "    << AnaBin->GetnMultBins_Ana()  << std::endl;
+std::cout << "GetnMultBins_Mix(): "    << AnaBin->GetnMultBins_Mix()  << std::endl;
+
+
 
 }

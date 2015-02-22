@@ -18,7 +18,7 @@
 int main( int argc, const char *argv[] )
 { 
 
-  if(argc != 7)
+  if(argc != 8)
   {
     std::cerr << "Usage: preprocess <.root file to be preprocessed> <dotrkCorr> <tag> <trkCorrFileName> <PIDconfig>  <tag> <nEvents>" << std::endl;
 	 exit(1);
@@ -27,20 +27,25 @@ int main( int argc, const char *argv[] )
  TString inpFilename     = argv[1];
  TString dotrkCorr_str 	 = argv[2];
  TString trkCorrFilename = argv[3];
- std::string PIDconfig   = argv[4];
- std::string tag		    = argv[5];
- int nEvMax 	  		    = atoi( argv[6] );
+ std::string AnaFW       = argv[4];
+ std::string PIDconfig   = argv[5];
+ std::string tag		    = argv[6];
+ int nEvMax 	  		    = atoi( argv[7] );
 
  // Binning
- int nCorrTyp			  = nCorrTyp_; 
- int *nPtBins = new int[nCorrTyp_];
+ AnalysisBinning *AnaBin = new AnalysisBinning;
+ AnaBin->ReadInBins( AnaFW );
+ AnaBin->DisplayBins();
+
+ int nCorrTyp = AnaBin->GetnCorrTypBins(); 
+ int *nPtBins = new int[nCorrTyp];
 
  for(int TypBin = 0; TypBin < nCorrTyp; TypBin++)
- { nPtBins[TypBin] = nPtBins_[TypBin]; }
+ { nPtBins[TypBin] = AnaBin->GetnPtBins(TypBin); }
 
- int nMultiplicityBins_Ana = nMultiplicityBins_Ana_HDR;
- int nMultiplicityBins_EvM = nMultiplicityBins_EvM_HDR;
- int nZvtxBins 		      = nZvtxBins_; 
+int nMultiplicityBins_Ana = AnaBin->GetnMultBins_Ana();
+int nMultiplicityBins_EvM = AnaBin->GetnMultBins_Mix();
+int nZvtxBins 		        = AnaBin->GetnZvtxBins(); 
 
  PIDUtil *pidutil = new PIDUtil();
  pidutil->ReadInConfig( PIDconfig );
@@ -118,6 +123,7 @@ int main( int argc, const char *argv[] )
 
  // Correlation Framework
  CorrelationFramework CFW(nCorrTyp, nPtBins, nMultiplicityBins_Ana, nMultiplicityBins_EvM);
+ CFW.AnaBin = AnaBin;
  std::cout << "Correlation Analysis Framework loaded." << std::endl;
 
  CFW.DoSelfCorrelation = false;

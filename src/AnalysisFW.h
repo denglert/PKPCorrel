@@ -39,6 +39,52 @@ class LogFile
 	void Close();
 };
 
+/////////////////////
+class AnalysisBinning
+{
+	//
+	public:
+	int GetnCorrTypBins( );
+	int GetMultBin_Ana( int mult );
+	int GetMultBin_Mix( int mult );
+	int GetZvtxBin( float zvtx );
+	int   GetPtBin( int TypBin, float   pt );
+
+	int GetnMultBins_Ana( );
+	int GetnMultBins_Mix( );
+	int GetnZvtxBins( );
+	int GetnPtBins( int TypBin );
+
+	float GetPtRefMin( );
+	float GetPtRefMax( );
+
+	int GetMult_Ana( int multBin, int i);
+	int GetZvtx_Ana( int ZvtxBin, int i);
+	float GetPt (int TypBin, int PtBin, int i);
+	
+	void ReadInBins( std::string filename );
+	void DisplayBins();
+
+	//
+	private:
+	int nCorrTyp;
+
+	int *nPtBins;
+	float ***trigPtBins;
+	float PtRefMin, PtRefMax;
+
+	int  nMultiplicityBins_Ana;
+	int **MultiplicityBins_Ana;
+
+	int  nMultiplicityBins_Mix;
+	int **MultiplicityBins_Mix;
+	
+	int  nZvtxBins;
+	float **ZvtxBins;
+
+};
+
+////////////////
 class EventData
 {
 	public:

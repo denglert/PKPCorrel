@@ -79,9 +79,14 @@ void CorrelationFramework::SetupForPreprocess()
 {
 	log = new LogFile("correl_log");
 
+	// Debuggg 
+	std::cerr << "In Preprocess " << std::endl;
 	// current event
-	Setup_TH2Ds_nCorrnPt( correl2D_currev_signal, nCorrTyp, nPtBins, "correl2D_currev", "signal" );
-	Setup_TH2Ds_nCorrnPt( correl2D_currev_backgr, nCorrTyp, nPtBins, "correl2D_currev", "backgr" );
+	Setup_TH2D_nCorrnPt( correl2D_currev_signal, "correl2D_currev", "signal" );
+	Setup_TH2D_nCorrnPt( correl2D_currev_backgr, "correl2D_currev", "backgr" );
+
+	// Debuggg 
+	std::cerr << "After Setup_TH2D_nCorrnPt( correl2D_cu" << std::endl;
 
 
 	if ( DoSelfCorrelation )
@@ -92,20 +97,22 @@ void CorrelationFramework::SetupForPreprocess()
 		Setup_TH2Ds_nCorrnPtnMult ( correl2D_self_backgr, nCorrTyp, nPtBins, nMultiplicityBins_Ana, "correl2D_self", "backgr" );
 	}
 
-	Setup_correl2D_currev_cpar_ref( correl2D_currev_cpar_ref_signal, "signal", ptref1, ptref2);
-	Setup_correl2D_currev_cpar_ref( correl2D_currev_cpar_ref_backgr, "backgr", ptref1, ptref2);
+	double pt1 = AnaBin->GetPtRefMin();
+	double pt2 = AnaBin->GetPtRefMax();
+
+	Setup_correl2D_currev_cpar_ref( correl2D_currev_cpar_ref_signal, "signal", pt1, pt2);
+	Setup_correl2D_currev_cpar_ref( correl2D_currev_cpar_ref_backgr, "backgr", pt1, pt2);
 
 	// all event
-	Setup_TH2Ds_nCorrnPtnMult ( correl2D_signal, nCorrTyp, nPtBins, nMultiplicityBins_Ana, "correl2D", "signal" );
-	Setup_TH2Ds_nCorrnPtnMult ( correl2D_backgr, nCorrTyp, nPtBins, nMultiplicityBins_Ana, "correl2D", "backgr" );
+	Setup_TH2D_nCorrnPtnMult ( correl2D_signal, "correl2D", "signal" );
+	Setup_TH2D_nCorrnPtnMult ( correl2D_backgr, "correl2D", "backgr" );
 
 
-	Setup_TH2Ds_nMult( correl2D_cpar_ref_signal, nMultiplicityBins_Ana, "correl2D_cpar_ref", "signal", ptref1, ptref2 ); 
-	Setup_TH2Ds_nMult( correl2D_cpar_ref_backgr, nMultiplicityBins_Ana, "correl2D_cpar_ref", "backgr", ptref1, ptref2 ); 
-
+	Setup_TH2D_nMult( correl2D_cpar_ref_signal, "correl2D_cpar_ref", "signal", pt1, pt2 ); 
+	Setup_TH2D_nMult( correl2D_cpar_ref_backgr, "correl2D_cpar_ref", "backgr", pt1, pt2 ); 
 
 	// event counter
-	Setup_nEvents_Processed( nEvents_Processed_signal_total, nEvents_Processed_backgr_total,  nEvents_Processed_signal, nEvents_Processed_backgr, nMultiplicityBins_Ana );
+	Setup_nEvents_Processed( nEvents_Processed_signal_total, nEvents_Processed_backgr_total,  nEvents_Processed_signal, nEvents_Processed_backgr, AnaBin->GetnMultBins_Ana() );
 }
 
 /////////////////////////////////
@@ -787,6 +794,92 @@ void CorrelationFramework::display_v2s()
 
 }
 
+// Correlation FrameWork Setup functions
+void CorrelationFramework::Setup_TH2D_nCorrnPt(TH2D ***&correl2D, const char histoname[], const char tag[])
+{
+
+	int nCorrTyp = AnaBin->GetnCorrTypBins();
+	int nMultiplicityBins = AnaBin->GetnMultBins_Ana();
+	int *nPtBins = new int[nCorrTyp];
+
+	for( int TypBin=0; TypBin < nCorrTyp; TypBin++)
+	{ nPtBins[TypBin] = AnaBin->GetnPtBins(TypBin); };
+	correl2D = new TH2D**[nCorrTyp];
+	
+	for( int TypBin=0; TypBin < nCorrTyp; TypBin++)
+	{
+		correl2D[TypBin] = new TH2D*[nPtBins[TypBin]];
+		
+		for( int ptBin=0 ;  ptBin < nPtBins[TypBin] ; ptBin++)
+		{
+		  double pt1 = AnaBin->GetPt(TypBin, ptBin, 0);
+		  double pt2 = AnaBin->GetPt(TypBin, ptBin, 1);
+
+		  correl2D[TypBin][ptBin] = new TH2D( Form("%s_%s_typ_%1d_pt_%.2f-%.2f", histoname, tag, TypBin, pt1, pt2),
+		  														"2D Correlation function;#Delta #eta; #Delta #Phi",
+		                                            ndEtaBins,dEtaMin,dEtaMax,ndPhiBins,dPhiMin,dPhiMax);}
+	}
+
+}
+
+
+void CorrelationFramework::Setup_TH2D_nCorrnPtnMult( TH2D ****&correl2D, const char histoname[], const char tag[])
+{
+	int nCorrTyp = AnaBin->GetnCorrTypBins();
+	int nMultiplicityBins = AnaBin->GetnMultBins_Ana();
+	int *nPtBins = new int[nCorrTyp];
+
+	for( int TypBin=0; TypBin < nCorrTyp; TypBin++)
+	{ nPtBins[TypBin] = AnaBin->GetnPtBins(TypBin); };
+
+	correl2D = new TH2D***[nCorrTyp];
+	
+	for( int TypBin=0; TypBin < nCorrTyp; TypBin++)
+	{
+		correl2D[TypBin] = new TH2D**[nPtBins[TypBin]];
+
+		for( int ptBin=0 ;  ptBin < nPtBins[TypBin] ; ptBin++)
+		{
+			correl2D[TypBin][ptBin] = new TH2D*[nMultiplicityBins];
+
+			for(int multBin=0; multBin < nMultiplicityBins; multBin++)
+			{
+			  double pt1 = AnaBin->GetPt(TypBin, ptBin, 0);
+			  double pt2 = AnaBin->GetPt(TypBin, ptBin, 1);
+
+   		  int mult1 = AnaBin->GetMult_Ana(multBin, 0);
+   		  int mult2 = AnaBin->GetMult_Ana(multBin, 1);
+
+				correl2D[TypBin][ptBin][multBin] = new TH2D(
+				Form("%s_%s_typ_%1d_pt_%.2f-%.2f_nTrk_%03d-%03d", histoname, tag, TypBin, pt1, pt2, mult1, mult2),
+				"2D Correlation function;#Delta #eta; #Delta #Phi",ndEtaBins,dEtaMin,dEtaMax,ndPhiBins,dPhiMin,dPhiMax);
+
+			}
+		}
+	}
+
+}
+
+
+void CorrelationFramework::Setup_TH2D_nMult( TH2D **&correl2D, const char histoname[], const char tag[], double pt1, double pt2)
+{
+	int nMultiplicityBins = AnaBin->GetnMultBins_Ana();
+
+	correl2D = new TH2D*[nMultiplicityBins];
+	
+	for(int multBin=0; multBin < nMultiplicityBins; multBin++)
+	{
+
+
+    	int mult1 = AnaBin->GetMult_Ana(multBin, 0);
+    	int mult2 = AnaBin->GetMult_Ana(multBin, 1);
+
+		correl2D[multBin] = new TH2D(
+		Form("%s_%s_pt_%.2f-%.2f_nTrk_%03d-%03d", histoname, tag, pt1, pt2, mult1, mult2),
+		"2D Correlation function;#Delta #eta; #Delta #Phi",ndEtaBins,dEtaMin,dEtaMax,ndPhiBins,dPhiMin,dPhiMax);
+
+	}
+}
 
 ////////////////////////////////////////////
 //                                        //
@@ -1127,6 +1220,8 @@ void Setup_EventCache( std::deque< EventData > **&EventCache, int nMultiplicityB
 // Setp_TH2Ds_nCorrnPt
 void Setup_TH2Ds_nCorrnPt( TH2D ***&correl2D, int nCorrTyp, int *nPtBins, const char histoname[], const char tag[])
 {
+
+
 	correl2D = new TH2D**[nCorrTyp];
 	
 	for( int TypBin=0; TypBin < nCorrTyp; TypBin++)

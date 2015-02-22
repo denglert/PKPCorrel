@@ -13,9 +13,182 @@ const int nMixEv = 10;
 const double normalizationRegionMassMin = 1.0400;
 const double normalizationRegionMassMax = 1.0495;
 
+///////////////////////////////////
+// *** AnalysisBinning class *** //
+///////////////////////////////////
+int AnalysisBinning::GetnCorrTypBins( ){return nCorrTyp;};
+int AnalysisBinning::GetnMultBins_Ana( ){return nMultiplicityBins_Ana;};
+int AnalysisBinning::GetnMultBins_Mix( ){return nMultiplicityBins_Mix;};
+int AnalysisBinning::GetnZvtxBins( ){return nZvtxBins;};
+int AnalysisBinning::GetnPtBins( int TypBin ){return nPtBins[TypBin];};
+float AnalysisBinning::GetPtRefMin( ){return PtRefMin;};
+float AnalysisBinning::GetPtRefMax( ){return PtRefMax;};
+
+int AnalysisBinning::GetMultBin_Ana( int nTrk )
+{
+	for(int multBin = 0; multBin < nMultiplicityBins_Ana; multBin++)
+	{ if ( (MultiplicityBins_Ana[multBin][0] <= nTrk) && (nTrk < MultiplicityBins_Ana[multBin][1] ) ) {return multBin;}; }
+}
+
+int AnalysisBinning::GetMultBin_Mix( int nTrk )
+{
+	for(int multBin = 0; multBin < nMultiplicityBins_Mix; multBin++)
+	{ if ( (MultiplicityBins_Mix[multBin][0] <= nTrk) && (nTrk < MultiplicityBins_Mix[multBin][1] ) ) {return multBin;}; }
+}
+
+int AnalysisBinning::GetZvtxBin( float zvtx )
+{
+	for(int zvtxBin = 0; zvtxBin < nZvtxBins_; zvtxBin++)
+	{ if ( (ZvtxBins[zvtxBin][0] <= zvtx) && (zvtx <= ZvtxBins[zvtxBin][1] ) ) {return zvtxBin;}; }
+}
+
+int AnalysisBinning::GetPtBin( int TypBin, float pt )
+{
+	// if TypBin = 99 (unknown)
+	if (TypBin == 99)
+	{
+		for(int ptBin = 0; ptBin < nPtBins_[0]; ptBin++)
+		{ if ( (trigPtBins[0][ptBin][0] <= pt) && (pt <= trigPtBins[0][ptBin][1] ) ) {return ptBin;}; }
+	}
+	// if TypBin = 1,2,3
+	else
+	{
+		for(int ptBin = 0; ptBin < nPtBins_[TypBin]; ptBin++)
+		{ if ( (trigPtBins[TypBin][ptBin][0] <= pt) && (pt <= trigPtBins[TypBin][ptBin][1] ) ) {return ptBin;}; }
+	}
+}
+
+int AnalysisBinning::GetMult_Ana( int multBin, int i)
+{ return MultiplicityBins_Ana[multBin][i];}
+
+int AnalysisBinning::GetZvtx_Ana( int ZvtxBin, int i)
+{ return ZvtxBins[ZvtxBin][i];}
+
+float AnalysisBinning::GetPt (int TypBin, int PtBin, int i)
+{ return trigPtBins[TypBin][PtBin][i]; }
+
+void AnalysisBinning::ReadInBins( std::string filename )
+{
+	std::cout << "Reading in file: " << filename.c_str() << std::endl;
+   std::fstream config( filename.c_str(), std::ios_base::in);
+
+	std::string dummyLine;
+
+	// ReadIn
+	std::getline(config, dummyLine);
+
+	config >> nCorrTyp;
+	config >> dummyLine; std::getline(config, dummyLine);
+
+	nPtBins = new int[nCorrTyp];
+	for( int CorrTyp = 0; CorrTyp < nCorrTyp; CorrTyp++)
+	{ config >> nPtBins[CorrTyp];}
+
+	config >> dummyLine; std::getline(config, dummyLine);
+
+	trigPtBins = new float**[nCorrTyp];
+	for( int CorrTyp = 0; CorrTyp < nCorrTyp; CorrTyp++)
+	{
+		trigPtBins[CorrTyp] = new float*[nPtBins[CorrTyp]];
+		for( int ptBin = 0; ptBin < nPtBins[CorrTyp]; ptBin++)
+		trigPtBins[CorrTyp][ptBin] = new float[2];
+	}
+
+	for( int CorrTyp = 0; CorrTyp < nCorrTyp; CorrTyp++)
+	{
+		for( int ptBin = 0; ptBin < nPtBins[CorrTyp]; ptBin++)
+		{ config >> trigPtBins[CorrTyp][ptBin][0] >> trigPtBins[CorrTyp][ptBin][1];}
+		std::getline(config, dummyLine);
+	}
+
+	config >> dummyLine; std::getline(config, dummyLine);
+   config >>  PtRefMin >> PtRefMax;
+
+	config >> dummyLine; std::getline(config, dummyLine);
+   config >> nMultiplicityBins_Ana;
+
+	MultiplicityBins_Ana = new int*[nMultiplicityBins_Ana];
+	for( int multBin = 0; multBin < nMultiplicityBins_Ana; multBin++)
+	{ MultiplicityBins_Ana[multBin] = new int[2]; }
+
+	config >> dummyLine; std::getline(config, dummyLine);
+	for( int multBin = 0; multBin < nMultiplicityBins_Ana; multBin++)
+	{ config >> MultiplicityBins_Ana[multBin][0] >> MultiplicityBins_Ana[multBin][1];}
+
+	config >> dummyLine; std::getline(config, dummyLine);
+   config >> nMultiplicityBins_Mix;
+
+	MultiplicityBins_Mix = new int*[nMultiplicityBins_Mix];
+	for( int multBin = 0; multBin < nMultiplicityBins_Mix; multBin++)
+	{ MultiplicityBins_Mix[multBin] = new int[2]; }
+
+	config >> dummyLine; std::getline(config, dummyLine);
+	for( int multBin = 0; multBin < nMultiplicityBins_Mix; multBin++)
+	{ config >> MultiplicityBins_Mix[multBin][0] >> MultiplicityBins_Mix[multBin][1];}
+
+	config >> dummyLine; std::getline(config, dummyLine);
+   config >> nZvtxBins;
+
+	ZvtxBins = new float*[nZvtxBins];
+	for( int zvtxBin = 0; zvtxBin < nZvtxBins; zvtxBin++)
+	{ ZvtxBins[zvtxBin] = new float[2]; }
+
+	config >> dummyLine; std::getline(config, dummyLine);
+	for( int zvtxBin = 0; zvtxBin < nZvtxBins; zvtxBin++)
+	{ config >> ZvtxBins[zvtxBin][0] >> ZvtxBins[zvtxBin][1];}
+
+}
+
+
+void AnalysisBinning::DisplayBins( )
+{
+	std::cout << "nCorrTyp: " << nCorrTyp << std::endl;
+	std::cout << std::endl;
+
+
+	std::cout << "nPtBins:";
+	for( int CorrTyp = 0; CorrTyp < nCorrTyp; CorrTyp++)
+	{ std::cout << " "  << nPtBins[CorrTyp];}
+	std::cout << std::endl;
+
+	std::cout << std::endl;
+
+	std::cout << "trigPtBins:" << std::endl;
+	for( int CorrTyp = 0; CorrTyp < nCorrTyp; CorrTyp++)
+	{
+		for( int ptBin = 0; ptBin < nPtBins[CorrTyp]; ptBin++)
+		{ std::cout << Form("%.1f %.1f", trigPtBins[CorrTyp][ptBin][0], trigPtBins[CorrTyp][ptBin][1]) << std::endl; }
+
+		std::cout << std::endl;
+	}
+
+	std::cout << "PtRefMin/Max: " << PtRefMin << " " << PtRefMax << std::endl; 
+
+	std::cout << std::endl;
+
+	std::cout << "nMultiplicityBins_Ana: " << nMultiplicityBins_Ana << std::endl; 
+	for( int multBin = 0; multBin < nMultiplicityBins_Ana; multBin++)
+	{ std::cout << Form("%3d %3d", MultiplicityBins_Ana[multBin][0], MultiplicityBins_Ana[multBin][1]) << std::endl;}
+
+	std::cout << std::endl;
+
+	std::cout << "nMultiplicityBins_Mix: " << nMultiplicityBins_Mix << std::endl; 
+	for( int multBin = 0; multBin < nMultiplicityBins_Mix; multBin++)
+	{ std::cout << Form("%3d %3d", MultiplicityBins_Mix[multBin][0], MultiplicityBins_Mix[multBin][1]) << std::endl;}
+
+
+	std::cout << std::endl;
+
+	std::cout << "nZvtxBins: " << nZvtxBins << std::endl; 
+	for( int zvtxBin = 0; zvtxBin < nZvtxBins; zvtxBin++)
+	{ std::cout << Form("%5.1f %5.1f", ZvtxBins[zvtxBin][0], ZvtxBins[zvtxBin][1]) << std::endl; }
+}
+
+
 /////////////////////////////
 // *** EventData class *** //
 /////////////////////////////
+
 void EventData::AddTrack(const track& p) { tracks.push_back(p); }
 int  EventData::GetnTracks () { return tracks.size(); }
 
@@ -25,29 +198,6 @@ void EventData::SetnTrk(int nTrk_) { nTrk  = nTrk_; }
 int EventData::GetzVtxBin()         { return zvtxbin(zVtx, nZvtxBins_); }
 int EventData::GetMultiplicityBin_Ana( int nMultiplicityBins_Ana) { int bin = multiplicitybin_Ana(nTrk, nMultiplicityBins_Ana); return bin;}
 int EventData::GetMultiplicityBin_EvM() { return multiplicitybin_EvM(nTrk); }
-
-LogFile::LogFile(const char filename[])
-{ ofs.open( filename ); }
-
-void LogFile::wr( const char str[])
-{
-	      ofs << str << std::endl;
-	std::cout << str << std::endl;
-}
-
-void LogFile::EventCounter( int iEv)
-{
-  if ( (iEv % repeat) == 0 )
-  { 
-	 std::cout << Form("%s Event: %d", label.c_str(), iEv ) << std::endl; 
-    ofs       << Form("%s Event: %d", label.c_str(), iEv ) << std::endl;
-  }
-}
-
-void LogFile::Close()
-{
-	ofs.close();
-}
 
 void EventData::Clear(int nCorrTyp, int *nPtBins)
 {
@@ -63,7 +213,6 @@ void EventData::Clear(int nCorrTyp, int *nPtBins)
 
 	nTriggerParticles_cpar_ref = 0;
 }
-
 
 // Setup_nTriggerParticles
 void EventData::Setup_nTriggerParticles(int nCorrTyp, int *nPtBins)
@@ -83,98 +232,6 @@ void EventData::Setup_nTriggerParticles(int nCorrTyp, int *nPtBins)
 	nTriggerParticles_cpar_ref = 0;
 
 }
-
-
-// EventSelection()
-bool EventSelection( const int &pPAcollisionEventSelection, const int &pileUpBit )
-{
-
-	if ( pPAcollisionEventSelection != 1 ) {return false;}
-	if ( pileUpBit != 1 ) {return false;}
-
-	return true;
-}
-
-double trackWeight (TH3D **trackCorr, int PID, double pt, double eta, double phi, bool doTable)
-{		
-	if( doTable )
-	{ 
-
-		if( (PID == 0))
-		{ 
-			double value = trackCorr[0]->GetBinContent(trackCorr[0]->FindBin(pt,eta,phi));
-			if (value == 0) {return 1;}
-			else {return value;}
-		}
-		else if( (PID != 99) )
-		 {
-			double value = trackCorr[PID]->GetBinContent(trackCorr[PID]->FindBin(pt,eta,phi));
-			if (value == 0) {return 1;}
-		 	else {return value;}
-		 }
-	}	
-	else
-	{return 1;}
-}
-
-// TrackSelection()
-bool TrackSelection( const Tracks &tTracks, int iTrk )
-{
-	// *** Track selection *** //
-	if ( tTracks.highPurity[iTrk] == false ) {return false;}
-	if ( 2.4 < abs(tTracks.trkEta[iTrk]) ) {return false;}
-
-	float z_sep_significance  = tTracks.trkDz1 [iTrk] / tTracks.trkDzError1  [iTrk];
-	if ( 3   < abs(z_sep_significance)   ) {return false;}
-
-	float impact_significance = tTracks.trkDxy1[iTrk] / tTracks.trkDxyError1 [iTrk];
-	if ( 3   < abs(impact_significance)  ) {return false;}
-
-	float pt_rel_uncertainty  = tTracks.trkPtError[iTrk] / tTracks.trkPt     [iTrk];
-	if ( 0.1 < abs(pt_rel_uncertainty)   ) {return false;}
-
-	return true;
-}
-
-// TrackSelection()
-bool TrackSelection_c( const Tracks_c &tTracks, int iTrk )
-{
-	// *** Track selection *** //
-	if ( tTracks.highPurity[iTrk] == false ) {return false;}
-	if ( 2.4 < abs(tTracks.trkEta[iTrk]) ) {return false;}
-
-	float z_sep_significance  = tTracks.trkDz1 [iTrk] / tTracks.trkDzError1  [iTrk];
-	if ( 3   < abs(z_sep_significance)   ) {return false;}
-
-	float impact_significance = tTracks.trkDxy1[iTrk] / tTracks.trkDxyError1 [iTrk];
-	if ( 3   < abs(impact_significance)  ) {return false;}
-
-	float pt_rel_uncertainty  = tTracks.trkPtError[iTrk] / tTracks.trkPt     [iTrk];
-	if ( 0.1 < abs(pt_rel_uncertainty)   ) {return false;}
-
-	return true;
-}
-
-// mTrackSelection_c()
-bool mTrackSelection_c( const Tracks_c &tTracks, int iTrk )
-{
-	// *** Track selection *** //
-	if ( tTracks.mtrkQual[iTrk] == false ) {return false;}
-	
-	if ( 2.4 < abs(tTracks.pEta[iTrk]) ) {return false;}
-
-	float z_sep_significance  = tTracks.mtrkDz1 [iTrk] / tTracks.mtrkDzError1  [iTrk];
-	if ( 3   < abs(z_sep_significance)   ) {return false;}
-
-	float impact_significance = tTracks.mtrkDxy1[iTrk] / tTracks.mtrkDxyError1 [iTrk];
-	if ( 3   < abs(impact_significance)  ) {return false;}
-
-	float pt_rel_uncertainty  = tTracks.mtrkPtError[iTrk] / tTracks.mtrkPt     [iTrk];
-	if ( 0.1 < abs(pt_rel_uncertainty)   ) {return false;}
-
-	return true;
-}
-
 
 // ReadInDATA
 void EventData::ReadInDATA( Tracks &tTracks, TH2D *dEdxvsP, PIDUtil *pidutil)
@@ -277,6 +334,131 @@ void EventData::ReadInMC( Tracks &tTracks)
 	}
 
 }
+
+
+///////////////////////////
+// *** LogFile class *** //
+///////////////////////////
+
+LogFile::LogFile(const char filename[])
+{ ofs.open( filename ); }
+
+void LogFile::wr( const char str[])
+{
+	      ofs << str << std::endl;
+	std::cout << str << std::endl;
+}
+
+void LogFile::EventCounter( int iEv)
+{
+  if ( (iEv % repeat) == 0 )
+  { 
+	 std::cout << Form("%s Event: %d", label.c_str(), iEv ) << std::endl; 
+    ofs       << Form("%s Event: %d", label.c_str(), iEv ) << std::endl;
+  }
+}
+
+void LogFile::Close()
+{
+	ofs.close();
+}
+
+
+//////////////////////////////
+// *** Custom functions *** //
+//////////////////////////////
+
+// EventSelection()
+bool EventSelection( const int &pPAcollisionEventSelection, const int &pileUpBit )
+{
+
+	if ( pPAcollisionEventSelection != 1 ) {return false;}
+	if ( pileUpBit != 1 ) {return false;}
+
+	return true;
+}
+
+double trackWeight (TH3D **trackCorr, int PID, double pt, double eta, double phi, bool doTable)
+{		
+	if( doTable )
+	{ 
+
+		if( (PID == 0))
+		{ 
+			double value = trackCorr[0]->GetBinContent(trackCorr[0]->FindBin(pt,eta,phi));
+			if (value == 0) {return 1;}
+			else {return value;}
+		}
+		else if( (PID != 99) )
+		 {
+			double value = trackCorr[PID]->GetBinContent(trackCorr[PID]->FindBin(pt,eta,phi));
+			if (value == 0) {return 1;}
+		 	else {return value;}
+		 }
+	}	
+	else
+	{return 1;}
+}
+
+// TrackSelection()
+bool TrackSelection( const Tracks &tTracks, int iTrk )
+{
+	// *** Track selection *** //
+	if ( tTracks.highPurity[iTrk] == false ) {return false;}
+	if ( 2.4 < abs(tTracks.trkEta[iTrk]) ) {return false;}
+
+	float z_sep_significance  = tTracks.trkDz1 [iTrk] / tTracks.trkDzError1  [iTrk];
+	if ( 3   < abs(z_sep_significance)   ) {return false;}
+
+	float impact_significance = tTracks.trkDxy1[iTrk] / tTracks.trkDxyError1 [iTrk];
+	if ( 3   < abs(impact_significance)  ) {return false;}
+
+	float pt_rel_uncertainty  = tTracks.trkPtError[iTrk] / tTracks.trkPt     [iTrk];
+	if ( 0.1 < abs(pt_rel_uncertainty)   ) {return false;}
+
+	return true;
+}
+
+// TrackSelection()
+bool TrackSelection_c( const Tracks_c &tTracks, int iTrk )
+{
+	// *** Track selection *** //
+	if ( tTracks.highPurity[iTrk] == false ) {return false;}
+	if ( 2.4 < abs(tTracks.trkEta[iTrk]) ) {return false;}
+
+	float z_sep_significance  = tTracks.trkDz1 [iTrk] / tTracks.trkDzError1  [iTrk];
+	if ( 3   < abs(z_sep_significance)   ) {return false;}
+
+	float impact_significance = tTracks.trkDxy1[iTrk] / tTracks.trkDxyError1 [iTrk];
+	if ( 3   < abs(impact_significance)  ) {return false;}
+
+	float pt_rel_uncertainty  = tTracks.trkPtError[iTrk] / tTracks.trkPt     [iTrk];
+	if ( 0.1 < abs(pt_rel_uncertainty)   ) {return false;}
+
+	return true;
+}
+
+// mTrackSelection_c()
+bool mTrackSelection_c( const Tracks_c &tTracks, int iTrk )
+{
+	// *** Track selection *** //
+	if ( tTracks.mtrkQual[iTrk] == false ) {return false;}
+	
+	if ( 2.4 < abs(tTracks.pEta[iTrk]) ) {return false;}
+
+	float z_sep_significance  = tTracks.mtrkDz1 [iTrk] / tTracks.mtrkDzError1  [iTrk];
+	if ( 3   < abs(z_sep_significance)   ) {return false;}
+
+	float impact_significance = tTracks.mtrkDxy1[iTrk] / tTracks.mtrkDxyError1 [iTrk];
+	if ( 3   < abs(impact_significance)  ) {return false;}
+
+	float pt_rel_uncertainty  = tTracks.mtrkPtError[iTrk] / tTracks.mtrkPt     [iTrk];
+	if ( 0.1 < abs(pt_rel_uncertainty)   ) {return false;}
+
+	return true;
+}
+
+
 
 ////////////////////////////
 // *** Setup function *** //

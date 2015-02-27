@@ -71,6 +71,21 @@ EtaPhiDistr.o : EtaPhiDistr.cpp
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 ####################################################################################
+### MC_Contamination_Matrix
+../bin/MC_Contamination_Matrix : MC_Contamination_Matrix.o $(CMN) $(OBJS)
+	$(CC) $(LFLAGS) -o $@ $< $(OBJS) 
+
+MC_Contamination_Matrix.o : MC_Contamination_Matrix.cpp
+	$(CC) $(CFLAGS) -o $@ -c $<
+
+# MC_Contamination_Matrix_viewer
+../bin/MC_Contamination_Matrix_viewer : MC_Contamination_Matrix_viewer.o $(CMN) $(OBJS)
+	$(CC) $(LFLAGS) -o $@ $< $(OBJS) 
+
+MC_Contamination_Matrix_viewer.o : MC_Contamination_Matrix_viewer.cpp
+	$(CC) $(CFLAGS)-o $@ -c $<  
+
+####################################################################################
 ### TrackCorrection
 ../bin/TrackCorrection : TrackCorrection.o $(CMN) PIDUtils.o AnalysisFW.o AnalysisBinning.o PhyConst.o SetupCustomTrackTree.o EvtSelection.o EvtAnalyzer.o
 	$(CC) $(LFLAGS) -o $@ $< PIDUtils.o AnalysisBinning.o PhyConst.o AnalysisFW.o SetupCustomTrackTree.o EvtSelection.o EvtAnalyzer.o

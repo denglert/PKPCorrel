@@ -111,7 +111,7 @@ int main( int argc, const char *argv[] )
  // DATA - pptracks
  // MC   - ppTrack
  TTree *trackTree = (TTree*)f->Get("pptracks/trackTree");
- //TTree *trackTree = (TTree*)f->Get("ppTrack/trackTree");
+ // TTree *trackTree = (TTree*)f->Get("ppTrack/trackTree");
  Tracks tTracks;
  bool isMC = false;
  setupTrackTree(trackTree, tTracks, isMC);
@@ -126,8 +126,8 @@ int main( int argc, const char *argv[] )
  TTree *SkimAna= (TTree*)f->Get("skimanalysis/HltTree");
  // DATA  -pPAcollisionEventSelection
  // MC   - pPAcollisionEventSelectionPA
-// int pPAcollisionEventSelection; SkimAna->SetBranchAddress("pPAcollisionEventSelectionPA", &pPAcollisionEventSelection);
- int pPAcollisionEventSelection; SkimAna->SetBranchAddress("pPAcollisionEventSelection", &pPAcollisionEventSelection);
+ // int pPAcollisionEventSelection; SkimAna->SetBranchAddress("pPAcollisionEventSelectionPA", &pPAcollisionEventSelection);
+int pPAcollisionEventSelection; SkimAna->SetBranchAddress("pPAcollisionEventSelection", &pPAcollisionEventSelection);
  int pileUpBit;                  SkimAna->SetBranchAddress("pVertexFilterCutGplus", &pileUpBit);
 
  ////////////////////////////////

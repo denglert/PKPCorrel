@@ -1,0 +1,314 @@
+#include <string>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <TFile.h>
+#include <TTree.h>
+#include <TH1D.h>
+#include <TH2D.h>
+#include <TH3D.h>
+#include <TNtuple.h>
+#include <iostream>
+#include <deque>
+#include <TLorentzVector.h>
+//#include "AnalysisFW.h"
+//#include "../HiForestAnalysis/hiForest.h"
+#include "AnalysisBinning.h"
+#include "PIDUtils.h"
+#include "AnalysisFW.h"
+#include "SetupCustomTrackTree.h"
+#include "dataType.h"
+#include "EvtSelection.h"
+#include "EvtAnalyzer.h"
+
+// zvtx distribution parameters
+const int nZvtxDistrBins  =  13;
+const int nPart = 4;
+const double zVtxDistrMin = -13;
+const double zVtxDistrMax =  13;
+
+const int    npt   = 16;
+const double ptMin = 0.2;
+const double ptMax = 1.8;
+const double ptbw  = 0.1;
+
+int ptbin_cm (double pt)
+{
+   if ( (pt < ptMin) || (ptMax < pt))
+	{return -1;}
+	else
+	{return floor( (pt-ptMin)/ptbw );}
+}
+
+
+int main( int argc, const char *argv[] )
+{
+
+  if(argc != 7)
+  {
+    std::cerr << "Usage: MC_PID_Contamination_matrix <MC sample> <DATA sample> <tag> <nEventsDATA> <nEventsMC> <PIDconfig>" << std::endl;
+	 exit(1);
+  }
+
+ std::string inpFilenameDATA = argv[1];
+ std::string inpFilenameMC   = argv[2];
+ std::string tag		        = argv[3];
+ int nEvMaxDATA 	  		     = atoi( argv[4] );
+ int nEvMaxMC 	  		        = atoi( argv[5] );
+ std::string PIDconfig		  = argv[6];
+ 
+ PIDUtil *pidutil = new PIDUtil;
+ pidutil->ReadInConfig(PIDconfig);
+
+ // Binning
+ int nCorrTyp = nCorrTyp_; 
+ int *nPtBins = new int[nCorrTyp_];
+
+ for(int TypBin = 0; TypBin < nCorrTyp; TypBin++)
+ { nPtBins[TypBin] = nPtBins_[TypBin]; }
+
+ int nMultiplicityBins_Ana = nMultiplicityBins_Ana_HDR;
+ int nMultiplicityBins_EvM = nMultiplicityBins_EvM_HDR;
+ int nZvtxBins 		      = nZvtxBins_; 
+
+ LogFile log("log");
+ log.repeat = 1000;
+
+ ///////////////////////////
+ // Global initialization //
+ ///////////////////////////
+
+ TH1D *zvtxDistrMC   = new TH1D("zvtxDistrMC  ",";zvtx;nEvents", nZvtxDistrBins, zVtxDistrMin, zVtxDistrMax);
+ TH1D *zvtxDistrDATA = new TH1D("zvtxDistrDATA",";zvtx;nEvents", nZvtxDistrBins, zVtxDistrMin, zVtxDistrMax);
+ TH1D *ratiozvtx;
+
+/////////////////////////////////////
+//                                 //
+// ====== zvtx distribution ====== //
+//                                 //
+/////////////////////////////////////
+
+ ////////////////////////
+ // === DATA z-vtx === //
+ ////////////////////////
+
+ ///////////////
+ // Open file //
+ ///////////////
+ 
+ TFile *fdt = TFile::Open(inpFilenameDATA.c_str());
+ if ( fdt->IsZombie() ) {std::cerr << "Error opening file: " << inpFilenameDATA << std::endl; exit(-1);}
+
+ //////////////////
+ // Initializing //
+ //////////////////
+ 
+ EvtAnalyzer EvAnaDATA;
+ EvAnaDATA.setupEvtAnaTree( fdt );
+
+ EvtSelection EvSelDATA;
+ EvSelDATA.setupSkimTree_pPb( fdt, true);
+
+ ////////////////
+ // Event loop //
+ ////////////////
+ 
+ log.wr( "Starting to process DATA for zvtx distribution." );
+
+ if (nEvMaxDATA == -1)
+ { nEvMaxDATA = EvSelDATA.SkimAna->GetEntries(); }
+
+ log.wr( Form("nEvMaxDATA: %d", nEvMaxDATA) );
+
+ for (int iEv = 0; iEv < nEvMaxDATA; iEv++)
+ {
+
+	// EventCounter
+	log.EventCounter(iEv);
+
+	// EventSelection
+	if ( !EvSelDATA.isGoodEv_pPb( iEv ) ) continue;
+	
+	EvAnaDATA.GetEntry( iEv );
+   zvtxDistrDATA->Fill( EvAnaDATA.getvz() );
+
+ } 
+
+
+ log.wr( "DATA processed." );
+ log.wr( "zVtx distribution." );
+ fdt->Close();
+ delete fdt;
+
+ //////////////////////
+ // === MC z-vtx === //
+ //////////////////////
+ 
+  ///////////////
+ // Open file //
+ ///////////////
+ 
+ TFile *fmc = TFile::Open(inpFilenameMC.c_str());
+ if ( fmc->IsZombie() ) {std::cerr << "Error opening file: " << inpFilenameMC << std::endl; exit(-1);}
+
+ //////////////////
+ // Initializing //
+ //////////////////
+ 
+ EvtAnalyzer EvAnaMC;
+ EvAnaMC.setupEvtAnaTree( fmc );
+
+ EvtSelection EvSelMC;
+ EvSelMC.setupSkimTree_pPb( fmc, false);
+
+ 
+ ////////////////
+ // Event loop //
+ ////////////////
+ 
+ log.wr( "Starting to process MC for zvtx distribution." );
+ 
+ if (nEvMaxMC == -1)
+ { nEvMaxMC = EvSelMC.SkimAna->GetEntries(); }
+
+ log.wr( Form("nEvMaxMC: %d", nEvMaxMC) );
+
+
+ for (int iEv = 0; iEv < nEvMaxMC; iEv++)
+ {
+
+	// Event counter info
+	log.EventCounter(iEv);
+
+	// EventSelection
+	if ( !EvSelMC.isGoodEv_pPb( iEv ) ) continue;
+	
+	EvAnaMC.GetEntry( iEv );
+   zvtxDistrMC->Fill( EvAnaMC.getvz() );
+
+ }
+
+ ////////////////////
+ // Setting output //
+ ////////////////////
+
+ TFile *output = new TFile(Form("./PID_Contamination_matrix_%s.root", tag.c_str() ),"RECREATE");
+ output->cd();
+
+ ratiozvtx = (TH1D*)zvtxDistrDATA->Clone("zvtxratio");
+ ratiozvtx->Divide( zvtxDistrMC );
+
+ ///////////////
+ // Open file //
+ ///////////////
+
+ TTree *trackTree = (TTree*)fmc->Get("ppTrack/trackTree");
+ Tracks_c tTracks;
+ setupTrackTree_c(trackTree, tTracks, true);
+
+ //////////////////////////////
+ //                          //
+ // ***** Initializing ***** //
+ //                          //
+ //////////////////////////////
+ 
+ TH2D *matrix[npt];
+ for( int ptBin = 0; ptBin < npt; ptBin++ )
+ {
+   double pt1 = (ptMin + (ptBin  ) * ptbw);
+	double pt2 = (ptMin + (ptBin+1) * ptbw);
+	matrix[ptBin] = new TH2D(Form("contmatrix_pt_%.2f-%.2f", pt1, pt2),";RECO;MC", 4, 0.0, 4.0, 4, 0.0, 4.0);
+ }
+
+ ///////////////////////////////////////
+ //                                   //
+ // ***** Calculate corrections ***** //
+ //                                   //
+ ///////////////////////////////////////
+ 
+ log.wr( "Starting to process MC to calclulate contamination matrix..." );
+
+  // Event loop 
+  if ( nEvMaxMC == -1 )
+  { nEvMaxMC = trackTree->GetEntries(); }
+
+  log.wr( Form("nEvMaxMC: %d", nEvMaxMC));
+
+  for (int iEvA = 0; iEvA < nEvMaxMC; iEvA++)
+  {
+
+		// EventCounter
+		log.EventCounter(iEvA);
+		
+		// Event Selection
+		if ( !EvSelMC.isGoodEv_pPb( iEvA ) ) continue;
+		
+		// Event zvtx
+		EvAnaMC.GetEntry( iEvA );
+		float vz = EvAnaMC.getvz();
+		int vzB = ratiozvtx->FindBin(vz) ;
+		int wzvtx = ratiozvtx->GetBinContent(vzB);
+
+		if ( (vzB == -1) || ((nZvtxDistrBins) == vzB)) continue;
+	
+		// Tracks & particles
+		trackTree->GetEntry(iEvA);
+
+		
+		int nTrk = tTracks.nTrk;
+		
+		// === Particle loop === //
+		for(int iPart = 0; iPart < tTracks.nParticle; iPart++)
+		{
+
+			// matched track selection
+			// particle selection
+			if( !( mTrackSelection_c( tTracks, iPart) )) continue;
+
+			double mpt  = tTracks.mtrkPt [iPart];
+			double eta = tTracks.pEta[iPart]; 
+			float  mp   = mpt * cosh( eta);
+			double pt  = tTracks.pPt [iPart];
+
+			int ptBin_RECO = ptbin_cm( mpt );
+			int ptBin_GEN  = ptbin_cm(  pt );
+
+//			std::cerr << "pt: " << pt << std::endl;
+
+			if ( ptBin_GEN == -1 ) continue;
+
+			double PID_RECO = pidutil->GetID_cm(mp, tTracks.mtrkdedx[iPart], eta);
+			double PID_GEN  =   McPID2AnaPID_cm( tTracks.pPId[iPart]       , eta);
+
+//			// Debuggg 
+//			std::cerr << "afterptbinpass pt: " << pt << std::endl;
+//			std::cerr << "PID_GEN: " << PID_GEN << std::endl;
+//			std::cerr << "PID_RECO: " << PID_RECO << std::endl;
+
+			matrix[ptBin_GEN]->Fill(PID_RECO, PID_GEN);
+		
+		 }
+		
+  }
+
+ //////////////////////
+ //                  //
+ // **** OUTPUT **** //
+ //                  //
+ //////////////////////
+  
+  output->cd();
+  output->Write();
+  
+  //heff->wr();
+  //hfake->wr();
+  //hmultrec->wr();
+  //hsecondary->wr();
+  //
+  
+  log.Close();
+  
+  output->Close();
+  delete output;
+
+  printf("Done.\n");
+}

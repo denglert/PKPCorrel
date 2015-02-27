@@ -41,6 +41,7 @@ const double dEdxmaxlin = 20;
 PIDUtil::PIDUtil(  )
 {
 	unIDcode = 99;
+	unIDcode_cm = 3.5;
 	etaMax = 0.8;
 };
 
@@ -123,6 +124,15 @@ int PIDUtil::GetID(float p, float dEdx, float eta)
 	if ( isKaon(p, dEdx) == true) {return 2;}
 	if ( isProt(p, dEdx) == true) {return 3;}
 	return unIDcode;
+}
+
+double PIDUtil::GetID_cm(float p, float dEdx, float eta)
+{
+	if ( etaMax < fabs(eta) ) return unIDcode_cm;
+	if ( isPion(p, dEdx) == true) {return 0.5;}
+	if ( isKaon(p, dEdx) == true) {return 1.5;}
+	if ( isProt(p, dEdx) == true) {return 2.5;}
+	return unIDcode_cm;
 }
 
 float PIDUtil::BBcurve(float *x, const float *par)
@@ -218,6 +228,15 @@ int McPID2AnaPID ( int McPID, double eta)
 	if (( McPID == 321)  || (McPID == -321) ) { return 2; }
 	if (( McPID == 2212) || (McPID == -2212)) { return 3; }
 	return 99;
+};
+
+double McPID2AnaPID_cm ( int McPID, double eta)
+{
+	if ( 0.8 < fabs(eta) ) {return 3.5;}
+	if (( McPID == 211)  || (McPID == -211) ) { return 0.5; }
+	if (( McPID == 321)  || (McPID == -321) ) { return 1.5; }
+	if (( McPID == 2212) || (McPID == -2212)) { return 2.5; }
+	return 3.5;
 };
 
 void makedEdxvspFiglinlin(TH2D* dEdxvsP, std::string PIDconfig, std::string figurename)

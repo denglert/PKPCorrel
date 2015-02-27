@@ -21,7 +21,7 @@ flag=$1
 #workdir=MC_comparison_recolevel_2nw_fullEv_trkCorrOFF
 #workdir=MinBias_withTrackCorrection_2nw_eta_0.8
 #workdir=HighMult_PID_pi_def_K_3.2_p_3.4_trkCorr
-workdir=PIDscan_trueHighMultiplicity_${PIDconfigfile##*/}
+workdir=PIDscan_MinBias_dEdxminsweep_full_${PIDconfigfile##*/}
 #workdir=MinBias_PID_pi_a1_2.0_K_mdEdx_3.4_p_mdEdx_3.6_trkCorr
 #workdir=MC_vzhukova-EPOS_RECO_batch_comparison_recolevel_2nd_chariot_proton_mindEdx_3.4_trkCorr
 binary=preprocess
@@ -32,8 +32,8 @@ trkCorrFile=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMS
 PIDconfig=${PIDconfigfile}
 nEvents=-1
 queue=1nw
-#inputlist="list_minbias"
-inputlist="list_highmult"
+inputlist="list_minbias"
+#inputlist="list_highmult"
 #inputlist="list_MC_vzhukova-EPOS_RECO_batch_HiForest"
 
 ##########################################################
@@ -138,6 +138,6 @@ echo -e "WORKDIR: $workdir\n"
 echo "Checking job status with 'bjobs -u denglert'."
 
 
-done < pidscan
+done < list_dEdxminsweep
 
 bjobs -u denglert

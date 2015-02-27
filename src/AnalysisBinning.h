@@ -9,7 +9,7 @@ extern const int nPtBinsMax_;
 // pT classes
 extern const int nPtBins_[];
 
-extern const float trigptbins[][12][2];
+extern const float trigptbins[][16][2];
 
 extern const float ptref1;
 extern const float ptref2;

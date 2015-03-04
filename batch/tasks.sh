@@ -11,11 +11,12 @@ binary=$1
 workdir=$tdir$2
 # preprocessor parameters:
 file=$3
-dotrkCorr=$4
-trkCorrFile=$5
-PIDconfig=$6
-jobid=$7
-nEvents=$8
+isMC=$4
+dotrkCorr=$5
+trkCorrFile=$6
+PIDconfig=$7
+jobid=$8
+nEvents=$9
 
 # workdir is tdir/arg2
 cd $workdir
@@ -25,5 +26,4 @@ cd $workdir
 ### preprocessor usage:
 ### preprocessor <inputfile> <jobid> <nEvents> 
 ### Run preprocessor
-$binary $file $dotrkCorr $trkCorrFile $PIDconfig $jobid $nEvents
-#../../bin/preprocess $file $dotrkCorr $trkCorrFile $PIDconfig $jobid $nEvents
+$binary $file $isMC $dotrkCorr $trkCorrFile $PIDconfig $jobid $nEvents

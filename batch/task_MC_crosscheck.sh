@@ -15,8 +15,6 @@ nEvents=$4
 
 # workdir is tdir/arg2
 cd $workdir
-eval `scramv1 runtime -sh`
-#cmsenv       ## doesn't work
 
 ### preprocessor usage:
 ### preprocessor <inputfile> <jobid> <nEvents> 

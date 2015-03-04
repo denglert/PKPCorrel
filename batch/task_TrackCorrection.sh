@@ -14,7 +14,6 @@ PIDconfig=$10
 
 # workdir is tdir/arg2
 cd $environment
-eval `scramv1 runtime -sh`
 
 # Task
 rm -rf $workdir; mkdir $workdir;

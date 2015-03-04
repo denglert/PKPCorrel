@@ -54,12 +54,15 @@ void setupTrackTree_c(TTree *t, Tracks_c &tTracks, bool doMC)
 //   t->SetBranchAddress("xVtxErr", tTracks.xVtxErr, &tTracks.b_xVtxErr);
 //   t->SetBranchAddress("yVtxErr", tTracks.yVtxErr, &tTracks.b_yVtxErr);
 //   t->SetBranchAddress("zVtxErr", tTracks.zVtxErr, &tTracks.b_zVtxErr);
+//
+
    t->SetBranchAddress("nTrk", &tTracks.nTrk, &tTracks.b_nTrk);
    t->SetBranchAddress("dedx", &tTracks.dedx, &tTracks.b_dedx);
    t->SetBranchAddress("trkPt", tTracks.trkPt, &tTracks.b_trkPt);
    t->SetBranchAddress("trkPtError", tTracks.trkPtError, &tTracks.b_trkPtError);
 //   t->SetBranchAddress("trkNHit", tTracks.trkNHit, &tTracks.b_trkNHit);
 //   t->SetBranchAddress("trkNlayer", tTracks.trkNlayer, &tTracks.b_trkNlayer);
+
    t->SetBranchAddress("trkEta", tTracks.trkEta, &tTracks.b_trkEta);
    t->SetBranchAddress("trkPhi", tTracks.trkPhi, &tTracks.b_trkPhi);
    t->SetBranchAddress("trkCharge", tTracks.trkCharge, &tTracks.b_trkCharge);
@@ -81,10 +84,7 @@ void setupTrackTree_c(TTree *t, Tracks_c &tTracks, bool doMC)
    t->SetBranchAddress("pEta", tTracks.pEta, &tTracks.b_pEta);
    t->SetBranchAddress("pPhi", tTracks.pPhi, &tTracks.b_pPhi);
    t->SetBranchAddress("pPt", tTracks.pPt, &tTracks.b_pPt);
-   t->SetBranchAddress("pAcc", tTracks.pAcc, &tTracks.b_pAcc);
-   t->SetBranchAddress("pAccPair", tTracks.pAccPair, &tTracks.b_pAccPair);
    t->SetBranchAddress("pNRec", tTracks.pNRec, &tTracks.b_pNRec);
-   t->SetBranchAddress("pNHit", tTracks.pNHit, &tTracks.b_pNHit);
    t->SetBranchAddress("mtrkdedx", tTracks.mtrkdedx, &tTracks.b_mtrkdedx);
    t->SetBranchAddress("mtrkPt", tTracks.mtrkPt, &tTracks.b_mtrkPt);
    t->SetBranchAddress("mtrkPtError", tTracks.mtrkPtError, &tTracks.b_mtrkPtError);

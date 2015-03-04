@@ -9,6 +9,28 @@
 #include <fstream>
 #include <string>
 
+const int nPIDBins = 4;
+
+const int npBins 		= 300;
+const double pMin 	= 0;
+const double pMax 	= 3;
+const int ndEdxBins 	= 300;
+const double dEdxMin = -2;
+const double dEdxMax = 30;
+
+const int npBinslog    = 100;
+const int ndEdxBinslog = 100;
+
+const double pminlog    = 0.15;
+const double pmaxlog    = 2.0;
+const double dEdxminlog = 0.2;
+const double dEdxmaxlog = 50;
+ 
+const double pminlin    = 0.1;
+const double pmaxlin    = 2.0;
+const double dEdxminlin = 0.1;
+const double dEdxmaxlin = 20;
+
 class dEdxMaps {
 public :
    dEdxMaps(const char tag[]);

@@ -7,7 +7,7 @@
 
 class EvtAnalyzer {
 public :
-   EvtAnalyzer(){};
+   EvtAnalyzer();
    ~EvtAnalyzer(){};
 
 	// TTree
@@ -17,14 +17,23 @@ public :
    Int_t    hiNtracks;
    Float_t    vz;
 
+	float vz_min;
+	float vz_max;
+	int Ntrk_min;
+	int Ntrk_max;
+
 	// Branches
    TBranch *b_hiNtracks;  
    TBranch *b_vz;  
 
+	// Functions
 	void setupEvtAnaTree( TFile *f );
 	void GetEntry( int iEv );
 	int gethiNtracks();
 	double getvz();
+	bool isInside_vz();
+	bool isEvPass();
+
 };
 
 #endif

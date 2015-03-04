@@ -67,9 +67,8 @@ int main( int argc, const char *argv[] )
  float vz; EvtAna->SetBranchAddress("vz", &vz);
 
  // Event Selection (SkimAnalysis)
- bool isOLD = false;
  EvtSelection EvSel;
- EvSel.setupSkimTree_pPb( f, isOLD);
+ EvSel.setupSkimTree_pPb( f, isMC);
 
  ////////////////////////////////
  //                            //
@@ -92,6 +91,7 @@ int main( int argc, const char *argv[] )
  // EventCache
  std::deque< EventData > **EventCache;
  Setup_EventCache(EventCache, nMultiplicityBins_EvM, nZvtxBins);
+ std::deque< EventData > *** EventCache_ptr = &EventCache;
 
  // dEdxvsp map
  TH2D *dEdxvsp  = new TH2D ("dEdxVsP",";p(GeV/c);dE/dx", npBins, pMin, pMax, ndEdxBins, dEdxMin, dEdxMax);
@@ -259,7 +259,7 @@ int main( int argc, const char *argv[] )
 	ev->ReadInMC(tTracks);
 
 	CFW.SignalCorrelation(ev);
-	CFW.MixedCorrelation(ev, EventCache);
+	CFW.MixedCorrelation(ev, EventCache_ptr);
 	CFW.AddCurrentEventCorrelation(ev);
 
  }

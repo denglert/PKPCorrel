@@ -14,24 +14,25 @@
 #include "PIDUtils.h"
 #include "SetupCustomTrackTree.h"
 #include "TLatex.h"
+#include "GraphTools.h"
 
-double figuretextsize = 0.043; 
 
-const int    npt   = 16;
+const int    npt   = 14;
 const double ptMin = 0.2;
-const double ptMax = 1.8;
+const double ptMax = 1.6;
 const double ptbw  = 0.1;
 
 int main( int argc, const char *argv[] )
 { 
 
- if(argc != 2)
+ if(argc != 3)
  {
-   std::cerr << "Usage: MC_Contamination_viewer <trkCorr.root file to be displayed>" << std::endl;
+   std::cerr << "Usage: MC_Contamination_viewer <trkCorr.root file to be displayed> <PIDConfig>" << std::endl;
    exit(1);
  }
 
  TString inpFilename     = argv[1];
+ std::string PIDconfig	 = argv[2];
 
  // Open file
  TFile *f = TFile::Open(inpFilename);
@@ -43,13 +44,23 @@ int main( int argc, const char *argv[] )
  // Read In histograms //
  ///////////////////////
  
+ TH2D *dEdxvsPMapsLin[npt];
+ TH2D *dEdxvsPMapsLog[npt];
+
  TH2D *matrix[npt];
+
+ TH2D *ptres = (TH2D*)f->Get("ptres");
 
  for( int ptBin = 0; ptBin < npt; ptBin++ )
  {
    double pt1 = (ptMin + (ptBin  ) * ptbw);
 	double pt2 = (ptMin + (ptBin+1) * ptbw);
+
 	matrix[ptBin] = (TH2D*)f->Get(Form("contmatrix_pt_%.2f-%.2f", pt1, pt2));
+
+
+	dEdxvsPMapsLin[ptBin] = (TH2D*)f->Get(Form("dEdxvsPMapsLin_pt_%.2f-%.2f", pt1, pt2) );
+	dEdxvsPMapsLog[ptBin] = (TH2D*)f->Get(Form("dEdxvsPMapsLog_pt_%.2f-%.2f", pt1, pt2) );
 
 	 // Renormalizing
 	 for(int i = 1; i < 4; i++)
@@ -64,12 +75,15 @@ int main( int argc, const char *argv[] )
 	 	for(int j = 1; j < 4; j++)
 	 	{
 		double percent = 100*matrix[ptBin]->GetBinContent(i,j)/entries;
+
 		matrix[ptBin]->SetBinContent(i,j, percent);
 
 	 	}
 	  }
  }
  
+
+
  
  //
 
@@ -105,6 +119,21 @@ int main( int argc, const char *argv[] )
 
 	canvas_matrix.SaveAs(outPDF.c_str());
 	canvas_matrix.SaveAs(outPNG.c_str());
+
+ 	std::string dEdxvsplinFigBase = Form( "dEdxvspLin_typ_%.2f-%.2f", pt1, pt2 	);
+ 	std::string dEdxvsplogFigBase = Form( "dEdxvspLog_typ_%.2f-%.2f", pt1, pt2 	);
+
+ 	std::string dEdxvsplinFigPNG = dEdxvsplinFigBase+".png";
+ 	std::string dEdxvsplinFigPDF = dEdxvsplinFigBase+".pdf";
+ 	std::string dEdxvsplogFigPNG = dEdxvsplogFigBase+".png";
+ 	std::string dEdxvsplogFigPDF = dEdxvsplogFigBase+".pdf";
+
+	makedEdxvspFigloglog( dEdxvsPMapsLog[ptBin], PIDconfig, dEdxvsplogFigPNG);
+	makedEdxvspFigloglog( dEdxvsPMapsLog[ptBin], PIDconfig ,dEdxvsplogFigPDF);
+	makedEdxvspFiglinlin( dEdxvsPMapsLin[ptBin], PIDconfig, dEdxvsplinFigPNG);
+	makedEdxvspFiglinlin( dEdxvsPMapsLin[ptBin], PIDconfig, dEdxvsplinFigPDF);
  }
+
+ plotTH2D(ptres, ";p_{T,gen} [GeV/c];p_{T,reco} [GeV/c]", "ptgenreco", "COLZ");
  
 }

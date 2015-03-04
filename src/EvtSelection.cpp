@@ -1,13 +1,12 @@
 #include "EvtSelection.h"
-
-void EvtSelection::setupSkimTree_pPb( TFile *f, bool isOLD )
+void EvtSelection::setupSkimTree_pPb( TFile *f, bool isMC )
 {
 	  SkimAna = (TTree*)f->Get("skimanalysis/HltTree");
 
-	  if ( isOLD )
-	  { SkimAna->SetBranchAddress("pPAcollisionEventSelection", &pPAcollisionEventSelectionPA, &b_pPAcollisionEventSelectionPA); }
+	  if ( isMC )
+	  { SkimAna->SetBranchAddress("pPAcollisionEventSelectionPA", &pPAcollisionEventSelectionPA, &b_pPAcollisionEventSelectionPA); }
 	  else
-	  { SkimAna->SetBranchAddress("pPAcollisionEventSelectionPA", &pPAcollisionEventSelectionPA, &b_pPAcollisionEventSelectionPA); 
+	  { SkimAna->SetBranchAddress("pPAcollisionEventSelection", &pPAcollisionEventSelectionPA, &b_pPAcollisionEventSelectionPA); 
 	  }
      SkimAna->SetBranchAddress("pVertexFilterCutGplus", &pVertexFilterCutGplus, &b_pVertexFilterCutGplus);
 

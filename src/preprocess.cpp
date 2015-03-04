@@ -18,18 +18,19 @@
 int main( int argc, const char *argv[] )
 { 
 
-  if(argc != 7)
+  if(argc != 8)
   {
     std::cerr << "Usage: preprocess <.root file to be preprocessed> <dotrkCorr> <tag> <trkCorrFileName> <PIDconfig>  <tag> <nEvents>" << std::endl;
 	 exit(1);
   }
 
  TString inpFilename     = argv[1];
- TString dotrkCorr_str 	 = argv[2];
- TString trkCorrFilename = argv[3];
- std::string PIDconfig   = argv[4];
- std::string tag		    = argv[5];
- int nEvMax 	  		    = atoi( argv[6] );
+ std::string isMC        = argv[2];
+ TString dotrkCorr_str 	 = argv[3];
+ TString trkCorrFilename = argv[4];
+ std::string PIDconfig   = argv[5];
+ std::string tag		    = argv[6];
+ int nEvMax 	  		    = atoi( argv[7] );
 
  // Binning
  int nCorrTyp			  = nCorrTyp_; 
@@ -68,11 +69,23 @@ int main( int argc, const char *argv[] )
  TFile *f = TFile::Open(inpFilename);
  if ( f->IsZombie() ) {std::cerr << "Error opening file: " << inpFilename << std::endl; exit(-1);}
 
+ TTree *trackTree;
+
  // trackTree
- TTree *trackTree = (TTree*)f->Get("pptracks/trackTree");
- //TTree *trackTree = (TTree*)f->Get("ppTrack/trackTree");
+ if ( isMC == "no" )
+ { trackTree = (TTree*)f->Get("pptracks/trackTree"); }
+ else if ( isMC == "yes" )
+ { trackTree = (TTree*)f->Get("ppTrack/trackTree");  }
+
+
  Tracks tTracks;
- bool doMC = false;
+
+ bool doMC;
+ if (isMC == "no")
+ { doMC = false; }
+ else if ( isMC == "yes")
+ { doMC = true;  }
+ 
  setupTrackTree(trackTree, tTracks, doMC);
 
  // hiEvtAnalyzer
@@ -81,9 +94,8 @@ int main( int argc, const char *argv[] )
  float vz; EvtAna->SetBranchAddress("vz", &vz);
 
  // Event Selection (SkimAnalysis)
- bool isOLD = true;
  EvtSelection EvSel;
- EvSel.setupSkimTree_pPb( f, isOLD);
+ EvSel.setupSkimTree_pPb( f, doMC);
 
  ////////////////////////////////
  //                            //
@@ -132,7 +144,7 @@ int main( int argc, const char *argv[] )
  else {std::cout << "trkCorr File successfully opened." << std::endl;}
 
 
- CFW.trkCorr = Read_TH3D_1Darray(f_trkCorr, "hcorr typ", 4);
+ CFW.trkCorr = Read_TH3D_1Darray(f_trkCorr, "hcorr3D typ", 4);
 
  for (int i = 0; i < nCorrTyp; i++)
  { CFW.trkCorr[i]->SetDirectory(0); }

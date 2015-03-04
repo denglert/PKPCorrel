@@ -20,20 +20,21 @@ flag=$1
 #workdir=MC_comparison_recolevel_2nw_fullEv_trkCorrOFF
 #workdir=MinBias_withTrackCorrection_2nw_eta_0.8
 #workdir=HighMult_PID_pi_def_K_3.2_p_3.4_trkCorr
-#jworkdir=HighMult_PID_pi_def_K_3.4_p_3.6_trkCorr_debug
+#workdir=HighMult_PID_pi_def_K_3.4_p_3.6_trkCorr_debug
 binary=preprocess
-#workdir=MC_vzhukova-EPOS_RECO_batch_recolevel_PIDconfig_default_trkCorr
-workdir=PIDscan_MinBias_config_strict_1
+workdir=MC_vzhukova-EPOS_RECO_batch_recolevel_PIDconfig_default_trkCorr
+#workdir=PIDscan_MinBias_config_strict_1
+isMC=yes
 dotrkCorr=no
 workdir=${workdir}_${dotrkCorr}
-trkCorrlabel=batchjob_TrackCorrection_full_mtrkdedx_added_minptfixed
+trkCorrlabel=trkCorr_HIJING_raven_v1
 trkCorrFile=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/trkCorr/${trkCorrlabel}/trkCorrections_0.root
-PIDconfig=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/PIDUtils/config/config_strict_1
+PIDconfig=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/PIDUtils/config/config_default
 nEvents=-1
 queue=1nw
-inputlist="list_minbias"
+#inputlist="list_minbias"
 #inputlist="list_highmult"
-#inputlist="list_MC_vzhukova-EPOS_RECO_batch_HiForest"
+inputlist="list_MC_vzhukova-EPOS_RECO_batch_HiForest"
 
 ##########################################################
 # script environment
@@ -134,7 +135,7 @@ elif [ "$flag" == "full" ]; then
 		cp $trkCorrFile ${trkCorrFileit}
 		source=$(awk "NR == $i" $inputlist)
 		echo $source
-		bsub -J ${workdir}_$i -q $queue tasks.sh $relbinary $workdir $source $dotrkCorr $trkCorrFileit $PIDconfig $i $nEvents
+		bsub -J ${workdir}_$i -q $queue tasks.sh $relbinary $workdir $source $isMC $dotrkCorr $trkCorrFileit $PIDconfig $i $nEvents
 	done
 fi 
 

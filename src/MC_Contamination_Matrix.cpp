@@ -26,9 +26,9 @@ const int nPart = 4;
 const double zVtxDistrMin = -13;
 const double zVtxDistrMax =  13;
 
-const int    npt   = 16;
+const int    npt   = 14;
 const double ptMin = 0.2;
-const double ptMax = 1.8;
+const double ptMax = 1.6;
 const double ptbw  = 0.1;
 
 int ptbin_cm (double pt)
@@ -58,6 +58,12 @@ int main( int argc, const char *argv[] )
  
  PIDUtil *pidutil = new PIDUtil;
  pidutil->ReadInConfig(PIDconfig);
+
+ // pT Binning self-check
+ std::cout << "ptbin_cm( 0.19): " << ptbin_cm(0.19) << std::endl;
+ std::cout << "ptbin_cm( 0.21): " << ptbin_cm(0.21) << std::endl;
+ std::cout << "ptbin_cm( 1.59): " << ptbin_cm(1.59) << std::endl;
+ std::cout << "ptbin_cm( 1.61): " << ptbin_cm(1.61) << std::endl;
 
  // Binning
  int nCorrTyp = nCorrTyp_; 
@@ -211,12 +217,34 @@ int main( int argc, const char *argv[] )
  //                          //
  //////////////////////////////
  
+ double l10 = TMath::Log(10);
+ 
+ double dplog   = ( TMath::Log(pmaxlog)   -TMath::Log(pminlog)    )/npBinslog/l10;
+ double ddEdxlog = ( TMath::Log(dEdxmaxlog)-TMath::Log(dEdxminlog) )/ndEdxBinslog/l10;
+
+ for (int i=0; i<=npBinslog; i++)
+ { pBins[i] = TMath::Exp(l10*(i*dplog + TMath::Log(pminlog)/l10)); }
+
+ for (int i=0; i<=ndEdxBinslog; i++)
+ { dEdxBins[i] = TMath::Exp(l10*(i*ddEdxlog+ TMath::Log(dEdxminlog)/l10)); }
+ 
  TH2D *matrix[npt];
+ TH2D *dEdxvsPMapsLin[npt];
+ TH2D *dEdxvsPMapsLog[npt];
+
+ TH2D *ptres = new TH2D("ptres",";p_{T,GEN};p_{T,RECO}", 40, 0.0, 2.0, 40, 0.0, 2.0 );
+
  for( int ptBin = 0; ptBin < npt; ptBin++ )
  {
+
    double pt1 = (ptMin + (ptBin  ) * ptbw);
 	double pt2 = (ptMin + (ptBin+1) * ptbw);
-	matrix[ptBin] = new TH2D(Form("contmatrix_pt_%.2f-%.2f", pt1, pt2),";RECO;MC", 4, 0.0, 4.0, 4, 0.0, 4.0);
+
+	matrix[ptBin]      = new TH2D(Form("contmatrix_pt_%.2f-%.2f", pt1, pt2),";RECO;MC", 4, 0.0, 4.0, 4, 0.0, 4.0);
+
+	dEdxvsPMapsLin[ptBin] = new TH2D(Form("dEdxvsPMapsLin_pt_%.2f-%.2f", pt1, pt2), ";p [GeV/c];dE/dx [MeV/cm]", npBins, pminlin, pmaxlin, ndEdxBins, dEdxminlin, dEdxmaxlin);
+	dEdxvsPMapsLog[ptBin] = new TH2D(Form("dEdxvsPMapsLog_pt_%.2f-%.2f", pt1, pt2), ";p [GeV/c];dE/dx [MeV/cm]", npBinslog, pBins, ndEdxBinslog, dEdxBins);
+
  }
 
  ///////////////////////////////////////
@@ -268,15 +296,16 @@ int main( int argc, const char *argv[] )
 			double eta = tTracks.pEta[iPart]; 
 			float  mp   = mpt * cosh( eta);
 			double pt  = tTracks.pPt [iPart];
+			float dEdx = tTracks.mtrkdedx[iPart];
 
 			int ptBin_RECO = ptbin_cm( mpt );
 			int ptBin_GEN  = ptbin_cm(  pt );
 
-//			std::cerr << "pt: " << pt << std::endl;
-
 			if ( ptBin_GEN == -1 ) continue;
 
-			double PID_RECO = pidutil->GetID_cm(mp, tTracks.mtrkdedx[iPart], eta);
+			ptres->Fill(pt, mpt);
+
+			double PID_RECO = pidutil->GetID_cm(mp, dEdx, eta);
 			double PID_GEN  =   McPID2AnaPID_cm( tTracks.pPId[iPart]       , eta);
 
 //			// Debuggg 
@@ -284,6 +313,8 @@ int main( int argc, const char *argv[] )
 //			std::cerr << "PID_GEN: " << PID_GEN << std::endl;
 //			std::cerr << "PID_RECO: " << PID_RECO << std::endl;
 
+			dEdxvsPMapsLin[ptBin_GEN ]->Fill(mp, dEdx);
+			dEdxvsPMapsLog[ptBin_GEN]->Fill(mp, dEdx);
 			matrix[ptBin_GEN]->Fill(PID_RECO, PID_GEN);
 		
 		 }

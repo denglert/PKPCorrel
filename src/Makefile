@@ -1,7 +1,7 @@
 CC = g++
 CFLAGS = `root-config --cflags`  
 LFLAGS = -O3 -Wl,--no-as-needed `root-config --libs`
-OBJS = CorrelationUtils.o CorrelationUtils_FigureTools.o PIDUtils.o AnalysisFW.o AnalysisBinning.o SetupCustomTrackTree.o PhyConst.o EvtSelection.o EvtAnalyzer.o
+OBJS = CorrelationUtils.o CorrelationUtils_FigureTools.o PIDUtils.o AnalysisFW.o AnalysisBinning.o SetupCustomTrackTree.o PhyConst.o EvtSelection.o EvtAnalyzer.o GraphTools.o
 CMN =  commonSetup.h
 
 all : ../bin/preprocess ../bin/process ../bin/preprocess_minimal
@@ -60,6 +60,14 @@ makedEdxMap.o : makedEdxMap.cpp
 	$(CC) $(LFLAGS) -o $@ $< $(OBJS) 
 
 PIDSetup.o : PIDSetup.cpp
+	$(CC) $(CFLAGS) -o $@ -c $<
+
+####################################################################################
+### PIDStudy
+../bin/PIDStudy : PIDStudy.o $(CMN) $(OBJS)
+	$(CC) $(LFLAGS) -o $@ $< $(OBJS) 
+
+PIDStudy.o : PIDStudy.cpp
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 ####################################################################################
@@ -145,6 +153,10 @@ AnalysisBinning.o : AnalysisBinning.cpp AnalysisBinning.h
 
 # AnalysisFW
 AnalysisFW.o : AnalysisFW.cpp AnalysisFW.h
+	$(CC) $(CFLAGS) -c $< -o $@ 
+
+# GraphTools
+GraphTools.o : GraphTools.cpp GraphTools.h
 	$(CC) $(CFLAGS) -c $< -o $@ 
 
 # PhyConst

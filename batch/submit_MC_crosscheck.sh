@@ -10,12 +10,12 @@ flag=$1
 #########################
 ### --- MAIN AREA --- ###
 #########################
-# ./submitall.sh full
+# ./submit_MC_crosscheck.sh full
 # parameters
 
 #workdir=MinBias_Etalon_2nd
 inputlist="list_MC_vzhukova-EPOS_RECO_batch_HiForest"
-workdir=MC_vzhukova-EPOS_RECO_batch_comparison_genelevel_2nd_beta
+workdir=MC_vzhukova-EPOS_RECO_batch_genelevel_2nd_newbin
 nEvents=-1
 queue=2nd
 

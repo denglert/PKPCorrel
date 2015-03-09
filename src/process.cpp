@@ -16,11 +16,12 @@ int main( int argc, const char *argv[] )
 { 
 
 
- if(argc != 3)
- { std::cerr << "Usage: process <.root file to be processed> <tag>" << std::endl; }
+ if(argc != 4)
+ { std::cerr << "Usage: process <.root file to be processed> <tag> <cont matrix>" << std::endl; }
 
- TString inpFilename   = argv[1];
- std::string tag		  = argv[2];
+ TString inpFilename             = argv[1];
+ std::string tag		            = argv[2];
+ std::string contmatrix_filename = argv[3];
 
 
  // Binning
@@ -52,9 +53,11 @@ int main( int argc, const char *argv[] )
 
  CorrelationFramework CFW(nCorrTyp, nPtBins, nMultiplicityBins_Ana, nMultiplicityBins_EvM);
  CFW.tag = tag;
+ CFW.contmatrix_filename = contmatrix_filename;
  CFW.DoSelfCorrelation = false;
  CFW.SetupForProcess();
  CFW.ReadIn_CorrelationFuncs( f );
+ CFW.DeContaminate();
  CFW.Set_dEtacut();
 
  ///////////////////////////

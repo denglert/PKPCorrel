@@ -41,6 +41,8 @@ CorrelationFramework::CorrelationFramework( int nCorrTyp_a, int *nPtBins_a, int 
 // - SetupForProcess()
 void CorrelationFramework::SetupForProcess()
 {
+ 	TH1::SetDefaultSumw2( );
+ 	TH2::SetDefaultSumw2( );
 
 	std::cout << "Initializing Correlation Framework." << std::endl;
 	std::cout << "Setting up for process." << std::endl;
@@ -56,6 +58,10 @@ void CorrelationFramework::SetupForProcess()
 
 
 	Setup_TH2Ds_nCorrnPtnMult( correl2D_functi, nCorrTyp, nPtBins, nMultiplicityBins_Ana, "correl2D"     , "functi");
+
+	Setup_TH2Ds_nCorrnPtnMult( correl2D_signal, nCorrTyp, nPtBins, nMultiplicityBins_Ana, "correl2D"     , "true_signal");
+	Setup_TH2Ds_nCorrnPtnMult( correl2D_backgr, nCorrTyp, nPtBins, nMultiplicityBins_Ana, "correl2D"     , "true_backgr");
+
 	Setup_TH2Ds_nMult( correl2D_cpar_ref_functi, nMultiplicityBins_Ana, "correl2D", "cpar_ref_functi", ptref1, ptref2 );
 
 	Setup_TH1Ds_nCorrnPtnMult( correl1D, nCorrTyp, nPtBins, nMultiplicityBins_Ana, "correl1D", "");
@@ -108,14 +114,155 @@ void CorrelationFramework::SetupForPreprocess()
 	Setup_nEvents_Processed( nEvents_Processed_signal_total, nEvents_Processed_backgr_total,  nEvents_Processed_signal, nEvents_Processed_backgr, nMultiplicityBins_Ana );
 }
 
+////////////////////
+// - DeContaminate
+
+void CorrelationFramework::DeContaminate()
+{
+
+ 	TH1::SetDefaultSumw2( );
+ 	TH2::SetDefaultSumw2( );
+
+	if ( contmatrix_filename != "no" ) { DoDeContaminate = true;  }
+	else 									     { DoDeContaminate = false; }
+
+
+	if ( DoDeContaminate )
+	{
+
+		// Open file
+		f_contmatrix = new TFile( contmatrix_filename.c_str(), "READ");
+ 		if ( f_contmatrix->IsZombie() ) {std::cerr << "Error opening ContMatrix file: " << contmatrix_filename << std::endl; }
+ 		else{ std::cout << Form("TFile %s seems to be loaded.", contmatrix_filename.c_str()) << std::endl; };
+
+		// pt binning
+		const int nPtBins_contmatrix1 = 7;
+		const int nPtBins_contmatrix2 = 7;
+		const double ptstep = 0.1;
+		const double ptstart = 0.2;
+
+		// Read In Contamination matrix
+		    contmatrix = new TH2D*[nPtBins_contmatrix1];
+		  cont_tmatrix = new TMatrix*[nPtBins_contmatrix1];
+		decont_tmatrix = new TMatrix*[nPtBins_contmatrix1];
+
+		for(int ptBin = 0; ptBin < nPtBins_contmatrix1; ptBin++)
+		{
+			double pt1 = ptstart + (ptBin    ) * ptstep;
+			double pt2 = ptstart + (ptBin + 1) * ptstep;
+		       contmatrix[ptBin] = (TH2D*)f_contmatrix->Get(Form("contmatrix_pt_%.2f-%.2f", pt1, pt2)); 
+			  cont_tmatrix[ptBin] = new TMatrix(3,3);
+			decont_tmatrix[ptBin] = new TMatrix(3,3);
+		}
+
+
+		// Fill in TMatrix
+		for(int ptBin = 0; ptBin < nPtBins_contmatrix1; ptBin++)
+		for(int i = 1; i < 4; i++)
+		{
+		 	double entries = 0;
+		
+		 	for(int j = 1; j < 4; j++)
+		 	{
+		 	  entries = entries + contmatrix[ptBin]->GetBinContent(i,j);
+		 	}
+			
+		 	for(int j = 1; j < 4; j++)
+		 	{
+				double r = contmatrix[ptBin]->GetBinContent(i,j)/entries;
+				if (isnan(r) ) {r = 0;}
+				(*cont_tmatrix[ptBin])(i-1,j-1) = r;
+		 	}
+		}
+
+		// Inverse matrix
+		for(int ptBin = 0; ptBin < nPtBins_contmatrix1; ptBin++)
+		{
+
+			decont_tmatrix[ptBin] = (TMatrix*)cont_tmatrix[ptBin]->Clone(Form("decont_matrix_%d", ptBin));
+			decont_tmatrix[ptBin]->Invert();
+		}
+
+		std::cout << "Contamination matrices." << std::endl;
+
+		for(int ptBin = 0; ptBin < nPtBins_contmatrix1; ptBin++)
+		{
+			std::cout << Form("ptBin: %d", ptBin) << std::endl;
+
+			for(int i = 1; i < 4; i++)
+			{
+				for(int j = 1; j < 4; j++)
+				{
+					std::cout << Form("%2.2f", (*cont_tmatrix[ptBin])(i-1,j-1)) << " ";
+				}
+
+			std::cout << std::endl;
+			}
+		std::cout << std::endl;
+
+			for(int i = 1; i < 4; i++)
+			{
+				for(int j = 1; j < 4; j++)
+				{
+					std::cout << Form("%2.2f", (*decont_tmatrix[ptBin])(i-1,j-1)) << " ";
+				}
+
+			std::cout << std::endl;
+			}
+		std::cout << std::endl;
+
+		}
+
+
+		// Decontaminate
+		for(int i = 1; i < 4; i++)
+		for(int ptBin = 0; ptBin < nPtBins_contmatrix1; ptBin++)
+		for(int multBin = 0; multBin < nMultiplicityBins_Ana; multBin++)
+		{
+
+		
+			for(int j = 1; j < 4; j++)
+			{
+
+				correl2D_signal[i][ptBin][multBin]->Add(correl2D_signal_meas[j][ptBin][multBin], (*decont_tmatrix[ptBin])(i-1,j-1));
+				correl2D_backgr[i][ptBin][multBin]->Add(correl2D_backgr_meas[j][ptBin][multBin], (*decont_tmatrix[ptBin])(i-1,j-1));
+			}
+		
+		}		
+
+		for(int TypBin = 1; TypBin < 4; TypBin++)
+		for(int ptBin = nPtBins_contmatrix1; ptBin < nPtBins[TypBin]; ptBin++)
+		for(int multBin = 0; multBin < nMultiplicityBins_Ana; multBin++)
+		{
+			correl2D_signal[TypBin][ptBin][multBin] = correl2D_signal_meas[TypBin][ptBin][multBin];
+			correl2D_backgr[TypBin][ptBin][multBin] = correl2D_backgr_meas[TypBin][ptBin][multBin];
+		}
+
+
+		for(int ptBin = 0; ptBin < nPtBins[0]; ptBin++)
+		for(int multBin=0; multBin < nMultiplicityBins_Ana; multBin++)
+		{
+			correl2D_signal[0][ptBin][multBin] = correl2D_signal_meas[0][ptBin][multBin];
+			correl2D_backgr[0][ptBin][multBin] = correl2D_backgr_meas[0][ptBin][multBin];
+		}
+	
+	}
+	// No DeContamination, just pass measured correlations as true correlations
+	else
+	{
+		correl2D_signal = correl2D_signal_meas;
+		correl2D_backgr = correl2D_backgr_meas;
+	}
+};
+
 /////////////////////////////////
 // - ReadIn_CorrelationFuncs()
 void CorrelationFramework::ReadIn_CorrelationFuncs( TFile *f )
 {
 
 	std::cout << "Starting to read in correl2D signal and backgr" << std::endl;
-	ReadIn_TH2Ds_nCorrnPtnMult(f, correl2D_signal, nCorrTyp, nPtBins, nMultiplicityBins_Ana, "correl2D", "signal");
-	ReadIn_TH2Ds_nCorrnPtnMult(f, correl2D_backgr, nCorrTyp, nPtBins, nMultiplicityBins_Ana, "correl2D", "backgr");
+	ReadIn_TH2Ds_nCorrnPtnMult(f, correl2D_signal_meas, nCorrTyp, nPtBins, nMultiplicityBins_Ana, "correl2D", "signal");
+	ReadIn_TH2Ds_nCorrnPtnMult(f, correl2D_backgr_meas, nCorrTyp, nPtBins, nMultiplicityBins_Ana, "correl2D", "backgr");
 
 	if ( DoSelfCorrelation )
 	{
@@ -401,6 +548,17 @@ void CorrelationFramework::AddCurrentEventCorrelation( EventData* ev )
  	for(int TypBin=0; TypBin < nCorrTyp; TypBin++)
 	for(int ptBin=0; ptBin < nPtBins[TypBin]; ptBin++)
 	{
+		std::cout << Form("TypBin: %d ptBin: %d", TypBin, ptBin) << std::endl;
+		std::cout << Form("nTrig: %d 1/nTrig: %.2f", (*ev).nTriggerParticles[TypBin][ptBin], 1./double((*ev).nTriggerParticles[TypBin][ptBin])) << std::endl;
+		std::cout << Form("signal entries: %f, entries/nTrig: %.2f ", correl2D_currev_signal[TypBin][ptBin]->GetEntries(), correl2D_currev_signal[TypBin][ptBin]->GetEntries()/double(((*ev).nTriggerParticles[TypBin][ptBin])) )<< std::endl;
+		std::cout << Form("backgr entries: %f, entries/nTrig: %.2f ", correl2D_currev_backgr[TypBin][ptBin]->GetEntries(), correl2D_currev_backgr[TypBin][ptBin]->GetEntries()/double(((*ev).nTriggerParticles[TypBin][ptBin])) ) << std::endl;
+		std::cout << "nTrig_cpar_ref: " << double((*ev).nTriggerParticles_cpar_ref) << std::endl;
+	}
+
+
+ 	for(int TypBin=0; TypBin < nCorrTyp; TypBin++)
+	for(int ptBin=0; ptBin < nPtBins[TypBin]; ptBin++)
+	{
 
 //		std::cerr << Form("TypBin: %d ptBin: %d nTrig: %d", TypBin, ptBin, (*ev).nTriggerParticles[TypBin][ptBin]) << std::endl;
 //		std::cerr << Form("Entries of correl2D: %f", correl2D_currev_signal[TypBin][ptBin]->GetEntries()) << std::endl;
@@ -409,6 +567,8 @@ void CorrelationFramework::AddCurrentEventCorrelation( EventData* ev )
 		if( (*ev).nTriggerParticles[TypBin][ptBin] == 0 ) continue;
 	 	correl2D_signal[TypBin][ptBin][currev_multBin]->Add( correl2D_currev_signal[TypBin][ptBin], 1./double((*ev).nTriggerParticles[TypBin][ptBin]) );
 	 	correl2D_backgr[TypBin][ptBin][currev_multBin]->Add( correl2D_currev_backgr[TypBin][ptBin], 1./double((*ev).nTriggerParticles[TypBin][ptBin]) );
+
+
 
 		if ( DoSelfCorrelation )
 		{

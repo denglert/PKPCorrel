@@ -98,21 +98,24 @@ tag_preproc_gen=$(label_preproc_gen)_nEv_$(nEvents_preproc_gen)
 #batchjobtag=PIDscan_MinBias_dEdxminsweep_config_strict_2_trkCorr_no/
 
 #batchjobtag=PIDscan_MinBias_dEdxminsweep_full_config_0_trkCorr_no/
-#batchjobtag=PIDscan_MinBias_dEdxminsweep_full_config_1_trkCorr_no/
+batchjobtag=PIDscan_MinBias_dEdxminsweep_full_config_1_trkCorr_no/
 #batchjobtag=PIDscan_MinBias_dEdxminsweep_full_config_2_trkCorr_no/
 #batchjobtag=PIDscan_MinBias_dEdxminsweep_full_config_3_trkCorr_no/
 #batchjobtag=PIDscan_MinBias_dEdxminsweep_full_config_4_trkCorr_no/
 #batchjobtag=PIDscan_MinBias_dEdxminsweep_full_config_5_trkCorr_no/
 #batchjobtag=PIDscan_MinBias_dEdxminsweep_full_config_6_trkCorr_no/
 
-batchjobtag=MC_vzhukova-EPOS_RECO_batch_recolevel_PIDconfig_default_trkCorr_yes
+#batchjobtag=MC_vzhukova-EPOS_RECO_batch_recolevel_PIDconfig_default_trkCorr_yes
 
 #filetoprocess=correl_FULL.root
-filetoprocess=correl_analysis_1.root
+#filetoprocess=correl_analysis_1.root
 #filetoprocess=correl_tempmerge.root
-#filetoprocess=correl_full.root
+filetoprocess=correl_full.root
 #filetoprocess=correl_MinBiasHighMulti.root
 #filetoprocess=correl_selection20.root
+
+#batchjob_contmatrix=no
+batchjob_contmatrix=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/ContMatrix/Contamination_Matrix_PIDConfig_test_a2_EPOS_LHC_MC/PID_Contamination_matrix_0.root
 
 ##################################
 # = PROCESS BATCHJOB & PUBLISH = #
@@ -373,12 +376,12 @@ SimplePreProc: build_SimplePreProc
 
 proc : build_proc
 	@rm -rf ./results/$(tag)
-	./bin/process ./preprocessed/$(tag)/correl_analysis_$(jobid).root $(tag)  
+	./bin/process ./preprocessed/$(tag)/correl_analysis_$(jobid).root $(tag) $(contmatrix)
 
 
 procbatchjob : build_proc
 	@rm -rf ./results/$(batchjobtag);
-	./bin/process ./preprocessed/$(batchjobtag)/$(filetoprocess) $(batchjobtag)  
+	./bin/process ./preprocessed/$(batchjobtag)/$(filetoprocess) $(batchjobtag) $(batchjob_contmatrix)
 
 
 procbatchjob_and_publish : build_proc
@@ -490,7 +493,7 @@ build_utiltest :
 ######################################################
 ### MC_Contamination_Matrix
 MC_Contamination_Matrix : build_MC_Contamination_Matrix
-	@rm -rf ./results/$(MC_Contamination_Matrix_tag); mkdir ./results/$(MC_Contamination_Matrix_tag); 
+	@rm -rf ./ContMatrix/$(MC_Contamination_Matrix_tag); mkdir ./ContMatrix/$(MC_Contamination_Matrix_tag); 
 	@echo -e "\nMC_Contamination_Matrix."
 	@echo
 	@echo WORKDIR: $(MC_Contamination_Matrix_tag)
@@ -500,7 +503,7 @@ MC_Contamination_Matrix : build_MC_Contamination_Matrix
 	@echo MC - file: $(MC_Contamination_Matrix_inputfileMC)
 	@echo MC - Number of events: $(MC_Contamination_Matrix_nEventsMC)
 	@echo
-	cd ./results/$(MC_Contamination_Matrix_tag); ../../bin/MC_Contamination_Matrix $(MC_Contamination_Matrix_inputfileDATA) $(MC_Contamination_Matrix_inputfileMC) $(MC_Contamination_Matrix_jobid) $(MC_Contamination_Matrix_nEventsDATA) $(MC_Contamination_Matrix_nEventsMC) $(MC_Contamination_Matrix_PIDConfig);
+	cd ./ContMatrix/$(MC_Contamination_Matrix_tag); ../../bin/MC_Contamination_Matrix $(MC_Contamination_Matrix_inputfileDATA) $(MC_Contamination_Matrix_inputfileMC) $(MC_Contamination_Matrix_jobid) $(MC_Contamination_Matrix_nEventsDATA) $(MC_Contamination_Matrix_nEventsMC) $(MC_Contamination_Matrix_PIDConfig);
 
 ### MC_Contamination_Matrix_viewer
 MC_Contamination_Matrix_viewer : build_MC_Contamination_Matrix_viewer

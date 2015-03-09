@@ -212,7 +212,6 @@ void EventData::ReadInDATA( Tracks &tTracks, TH2D *dEdxvsP, PIDUtil *pidutil)
   		trk.phi     = tTracks.trkPhi[iTrk];
   		trk.eta     = tTracks.trkEta[iTrk];
 
-
 		EventData::AddTrack(trk);
 
 		// chadron
@@ -312,7 +311,6 @@ void Setup_nEvents_Processed(TH1D *&nEvents_Processed_signal_total, TH1D *&nEven
 		                                                      Form("Processed Events - backgr, nTrk [%d - %d];",
 																		                                        mult1, mult2),
 																				                              2, -0.5, 1.5);
- 
  }
 	
 }

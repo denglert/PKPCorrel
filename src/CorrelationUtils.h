@@ -6,6 +6,7 @@
 #include "AnalysisBinning.h"
 #include "AnalysisFW.h"
 #include <TGraphErrors.h>
+#include <TMatrix.h>
 
 //////////////////////////////////////
 //   *  Correl1DfitResultsData  *   //
@@ -66,13 +67,22 @@ class CorrelationFramework
 	// === Constructor === //
 	CorrelationFramework( int nCorrTyp_a, int *nPtBins_a, int nMultiplicityBins_Ana_, int nMultiplicityBins_EvM_);
 
-	// === Variables === //
+	// === Functionalities (bool) === //
 	
 	bool DoSelfCorrelation;
 	bool DoTrackWeight;
+	bool DoDeContaminate;
 
 	// Project tag
 	std::string tag;
+
+	// Contamination matrix filename
+	std::string contmatrix_filename;
+	TFile *f_contmatrix;
+
+	TH2D **contmatrix;
+	TMatrix   **cont_tmatrix;
+	TMatrix **decont_tmatrix;
 
 	// Output dump
 	TFile *Corr_Results;
@@ -88,6 +98,9 @@ class CorrelationFramework
  	TH2D *correl2D_currev_cpar_ref_backgr;
 
 	// correl2D all event
+ 	TH2D ****correl2D_signal_meas;
+ 	TH2D ****correl2D_backgr_meas;
+	
 	TH2D ****correl2D_functi;
  	TH2D ****correl2D_signal;
  	TH2D ****correl2D_backgr;
@@ -135,6 +148,7 @@ class CorrelationFramework
 
 	double trackWeight(int PID, float pt, float eta, float phi);
 
+	void DeContaminate();
 	void SignalCorrelation(EventData *ev);
 	void MixedCorrelation( EventData *ev, std::deque< EventData > ***EventCache);
 	void AddCurrentEventCorrelation( EventData* ev);

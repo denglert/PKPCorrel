@@ -4,6 +4,7 @@
 #include <TFile.h>
 #include <TH1D.h>
 #include <TH2D.h>
+#include <TMatrix.h>
 #include <deque>
 #include <vector>
 #include <TNtuple.h>
@@ -263,8 +264,11 @@ int main( int argc, const char *argv[] )
 //	std::cout << "zvtxbin: " << zvtxbin(-13.5, nZvtxBins_) << std::endl;
 //	std::cout << "zvtxbin: " << zvtxbin(12.5, nZvtxBins_) << std::endl;
 
-std::string configfile = "./PIDUtils/config/default";
-pidutil = new PIDUtil;
-pidutil->ReadInConfig( configfile );
+// std::string configfile = "./PIDUtils/config/config_default";
+// PIDUtil * pidutil = new PIDUtil;
+// pidutil->ReadInConfig( configfile );
+
+TMatrix matrix(3,3);
+matrix.Invert();
 
 }

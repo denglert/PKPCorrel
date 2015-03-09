@@ -313,7 +313,7 @@ int main( int argc, const char *argv[] )
 //			std::cerr << "PID_GEN: " << PID_GEN << std::endl;
 //			std::cerr << "PID_RECO: " << PID_RECO << std::endl;
 
-			dEdxvsPMapsLin[ptBin_GEN ]->Fill(mp, dEdx);
+			dEdxvsPMapsLin[ptBin_GEN]->Fill(mp, dEdx);
 			dEdxvsPMapsLog[ptBin_GEN]->Fill(mp, dEdx);
 			matrix[ptBin_GEN]->Fill(PID_RECO, PID_GEN);
 		

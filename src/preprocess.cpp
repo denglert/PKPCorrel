@@ -273,7 +273,6 @@ int main( int argc, const char *argv[] )
 	if ( zvtxbin(vz, nZvtxBins) == -1 ) continue;
 	CFW.nEvents_Processed_signal_total->Fill(0.);
 	if ( multiplicitybin_Ana(hiNtracks, nMultiplicityBins_Ana) == -1) continue;
-	CFW.nEvents_Processed_signal[ multiplicitybin_Ana(hiNtracks, nMultiplicityBins_Ana) ]->Fill(0.);
 
  	ev->Clear(nCorrTyp, nPtBins);
 
@@ -283,9 +282,7 @@ int main( int argc, const char *argv[] )
 
 	// Statistics
 	CFW.nEvents_Processed_signal_total->Fill(1.);
-	CFW.nEvents_Processed_signal[ multiplicitybin_Ana(hiNtracks, nMultiplicityBins_Ana) ]->Fill(1.);
 	nTrkDistr_signal->Fill( hiNtracks );
-
 	
 	CFW.ResetCurrentEventCorrelation();
 

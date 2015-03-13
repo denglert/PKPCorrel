@@ -8,6 +8,15 @@
 #include <TGraphErrors.h>
 #include <TMatrix.h>
 
+///////////////////////////
+//  * Global variables * //
+///////////////////////////
+
+// nEvents_Processed
+const int    nEvents_Processed_nBins =  2;
+const double nEvents_Processed_min   = -0.5;
+const double nEvents_Processed_max   =  1.5;
+
 //////////////////////////////////////
 //   *  Correl1DfitResultsData  *   //
 //////////////////////////////////////
@@ -73,6 +82,11 @@ class CorrelationFramework
 	bool DoTrackWeight;
 	bool DoDeContaminate;
 
+
+	// Inputfilename
+	std::string preprocessed_filename;
+	TFile *f_preproc;
+
 	// Project tag
 	std::string tag;
 
@@ -127,8 +141,8 @@ class CorrelationFramework
 	// number of events counter
 	TH1D  *nEvents_Processed_signal_total;
  	TH1D  *nEvents_Processed_backgr_total;
- 	TH1D **nEvents_Processed_signal;
- 	TH1D **nEvents_Processed_backgr;
+ 	TH1D ****nEvents_Processed_signal;
+ 	TH1D ****nEvents_Processed_backgr;
 
 	// variables holding the results
 	CorrelResults 			  ***correl_Results;
@@ -190,6 +204,22 @@ class CorrelationFramework
 
 	std::vector< double > Get_self_v2vec ( int TypBin, int multBin);
 	std::vector< double > Get_self_v2_StatErrorvec ( int TypBin, int multBin);
+
+	// Read functions
+	void Setup_TH1Ds_CorrPtMult( TH1D ****&histo, const char histoname[], const char titlelabels[], int nBins, double min, double max );
+	void Setup_TH2Ds_CorrPtMult( TH2D ****&histo, const char histoname[], const char titlelabels[], int XnBins, double Xmin, double Xmax, int YnBins, double Ymin, double Ymax );
+	void Setup_TH2Ds_Mult( TH2D **&histo, const char histoname[], const char titlelabels[], int XnBins, double Xmin, double Xmax, int YnBins, double Ymin, double Ymax );
+	
+	void Read_TH1Ds_CorrPtMult( TH1D ****&histo, const char histoname[] );
+	void Read_TH2Ds_CorrPtMult( TH2D ****&histo, const char histoname[] );
+	void Read_TH2Ds_Mult( TH2D **&histo, const char histoname[] );
+
+	// Auxiliary
+	std::string genStrCorrPtMult (const char name[], int TypBin, int ptBin, int multBin);
+	std::string genStrMult (const char name[], int multBin);
+	void Allocate_TH1Ds_CorrPtMult( TH1D ****&histo );
+	void Allocate_TH2Ds_CorrPtMult( TH2D ****&histo );
+	void Allocate_TH2Ds_Mult( TH2D **&histo );
 
 	private:
 	detacut dEtacut;

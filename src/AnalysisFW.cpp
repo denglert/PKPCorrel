@@ -177,7 +177,7 @@ bool mTrackSelection_c( const Tracks_c &tTracks, int iTrk )
 
 
 // ReadInDATA
-void EventData::ReadInDATA( Tracks &tTracks, TH2D *dEdxvsP, PIDUtil *pidutil)
+void EventData::ReadInDATA( const Tracks &tTracks, TH2D *dEdxvsP, PIDUtil *pidutil)
 {
 	int nTrk = tTracks.nTrk;
 

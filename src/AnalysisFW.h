@@ -63,7 +63,7 @@ class EventData
 	int GetMultiplicityBin_Ana(int nMultiplicityBins_Ana);
 	int GetMultiplicityBin_EvM();
 
-	void ReadInDATA(Tracks &tTracks, TH2D *dEdxvsP, PIDUtil *pidutil);
+	void ReadInDATA(const Tracks &tTracks, TH2D *dEdxvsP, PIDUtil *pidutil);
 	void ReadInMC  (Tracks &tTracks);
 
 	void Clear(int nCorrTyp, int *nPtBins);

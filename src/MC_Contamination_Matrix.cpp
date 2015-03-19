@@ -22,22 +22,55 @@
 
 // zvtx distribution parameters
 const int nZvtxDistrBins  =  13;
-const int nPart = 4;
 const double zVtxDistrMin = -13;
 const double zVtxDistrMax =  13;
 
-const int    npt   = 14;
+const int npt = 14;
+
 const double ptMin = 0.2;
 const double ptMax = 1.6;
 const double ptbw  = 0.1;
 
-int ptbin_cm (double pt)
+int GetPtBin_sl (double pt)
 {
    if ( (pt < ptMin) || (ptMax < pt))
 	{return -1;}
 	else
 	{return floor( (pt-ptMin)/ptbw );}
 }
+
+// const int npt_regions = 3;
+// const int npt[npt_regions] = {7, 1, 6};
+// const int ptMin[npt_regions] = {0.2, 0.9, 1.0};
+// const int ptMax[npt_regions] = {0.9, 1.0, 1.6};
+// const double ptbw[npt_regions] = {0.1, 0.1, 0.1};
+// 
+// const int nmxBins[npt_regions]  = {  4,   3,  3 };
+// const double mxMin[npt_regions] = {0.0, 0.0, 0.0};
+// const double mxMax[npt_regions] = {4.0, 3.0, 3.0};
+
+// int GetPtBin_sl (double pt)
+// {
+//    if ( (pt < ptMin) || (ptMax < pt))
+// 	{return -1;}
+// 	else
+// 	{return floor( (pt-ptMin)/ptbw );}
+// }
+// 
+// int GetPtRegionBin ( double pt )
+// {  
+// 	if ( (pt < ptMin[0]) || (ptMax[npt_regions-1] < pt))
+// 	{return -1;}
+// 
+// 	for (int i = 0; i < npt_regions, i++)
+// 	{
+// 		if ( (ptMin[i] < pt) && (pt < ptMax[i]) )
+// 		{ return i; }
+// 	}
+// }
+// 
+// int GetPtBin ( int PtRegionBin, double pt )
+// {   return ( floor( (pt-ptMin[PtRegionBin])/ptbw[PtRegionBin]) );  }
 
 
 int main( int argc, const char *argv[] )
@@ -60,10 +93,10 @@ int main( int argc, const char *argv[] )
  pidutil->ReadInConfig(PIDconfig);
 
  // pT Binning self-check
- std::cout << "ptbin_cm( 0.19): " << ptbin_cm(0.19) << std::endl;
- std::cout << "ptbin_cm( 0.21): " << ptbin_cm(0.21) << std::endl;
- std::cout << "ptbin_cm( 1.59): " << ptbin_cm(1.59) << std::endl;
- std::cout << "ptbin_cm( 1.61): " << ptbin_cm(1.61) << std::endl;
+ std::cout << "GetPtBin_sl(0.19): " << GetPtBin_sl(0.19) << std::endl;
+ std::cout << "GetPtBin_sl(0.21): " << GetPtBin_sl(0.21) << std::endl;
+ std::cout << "GetPtBin_sl(1.59): " << GetPtBin_sl(1.59) << std::endl;
+ std::cout << "GetPtBin_sl(1.61): " << GetPtBin_sl(1.61) << std::endl;
 
  // Binning
  int nCorrTyp = nCorrTyp_; 
@@ -164,7 +197,7 @@ int main( int argc, const char *argv[] )
  EvAnaMC.setupEvtAnaTree( fmc );
 
  EvtSelection EvSelMC;
- EvSelMC.setupSkimTree_pPb( fmc, false);
+ EvSelMC.setupSkimTree_pPb( fmc, true);
 
  
  ////////////////
@@ -217,6 +250,9 @@ int main( int argc, const char *argv[] )
  //                          //
  //////////////////////////////
  
+ double pBins[npBinslog+1];
+ double dEdxBins[ndEdxBinslog+1];
+
  double l10 = TMath::Log(10);
  
  double dplog   = ( TMath::Log(pmaxlog)   -TMath::Log(pminlog)    )/npBinslog/l10;
@@ -227,25 +263,47 @@ int main( int argc, const char *argv[] )
 
  for (int i=0; i<=ndEdxBinslog; i++)
  { dEdxBins[i] = TMath::Exp(l10*(i*ddEdxlog+ TMath::Log(dEdxminlog)/l10)); }
- 
- TH2D *matrix[npt];
+
  TH2D *dEdxvsPMapsLin[npt];
  TH2D *dEdxvsPMapsLog[npt];
 
  TH2D *ptres = new TH2D("ptres",";p_{T,GEN};p_{T,RECO}", 40, 0.0, 2.0, 40, 0.0, 2.0 );
 
+ // dEdxvsPMaps
  for( int ptBin = 0; ptBin < npt; ptBin++ )
  {
+   double pt1 = (ptMin + (ptBin  ) * ptbw);
+	double pt2 = (ptMin + (ptBin+1) * ptbw);
+	dEdxvsPMapsLin[ptBin] = new TH2D(Form("dEdxvsPMapsLin_pt_%.2f-%.2f", pt1, pt2), ";p [GeV/c];dE/dx [MeV/cm]", npBins, pminlin, pmaxlin, ndEdxBins, dEdxminlin, dEdxmaxlin);
+	dEdxvsPMapsLog[ptBin] = new TH2D(Form("dEdxvsPMapsLog_pt_%.2f-%.2f", pt1, pt2), ";p [GeV/c];dE/dx [MeV/cm]", npBinslog, pBins, ndEdxBinslog, dEdxBins);
+ }
 
+ // Contamination Matrices
+// TH2D ***matrix;
+//
+// matrix = new TH2D**[npt_regions];
+//
+// for( int ptRegion = 0; ptRegion < npt_regions;   ptRegion++ )
+// for( int ptBin    = 0; ptBin    < npt[ptRegion]; ptBin++   )
+// {
+//   double pt1 = (ptMin[ptRegion] + (ptBin  ) * ptbw[ptRegion]);
+//	double pt2 = (ptMin[ptRegion] + (ptBin+1) * ptbw[ptRegion]);
+//
+//	matrix[ptRegion][ptBin] = new TH2D (Form("contmatrix_pt_%.2f-%.2f", pt1, pt2),";RECO;MC", nmxBins[ptRegion], mxMin[ptRegion], mxMax[ptRegion], nmxBins[ptRegion], mxMin[ptRegion], mxMax[ptRegion]);
+// }
+
+ TH2D *matrix[npt];
+
+ for( int ptBin = 0; ptBin < npt; ptBin++ )
+ {
    double pt1 = (ptMin + (ptBin  ) * ptbw);
 	double pt2 = (ptMin + (ptBin+1) * ptbw);
 
 	matrix[ptBin]      = new TH2D(Form("contmatrix_pt_%.2f-%.2f", pt1, pt2),";RECO;MC", 4, 0.0, 4.0, 4, 0.0, 4.0);
 
-	dEdxvsPMapsLin[ptBin] = new TH2D(Form("dEdxvsPMapsLin_pt_%.2f-%.2f", pt1, pt2), ";p [GeV/c];dE/dx [MeV/cm]", npBins, pminlin, pmaxlin, ndEdxBins, dEdxminlin, dEdxmaxlin);
-	dEdxvsPMapsLog[ptBin] = new TH2D(Form("dEdxvsPMapsLog_pt_%.2f-%.2f", pt1, pt2), ";p [GeV/c];dE/dx [MeV/cm]", npBinslog, pBins, ndEdxBinslog, dEdxBins);
-
  }
+
+
 
  ///////////////////////////////////////
  //                                   //
@@ -280,10 +338,7 @@ int main( int argc, const char *argv[] )
 	
 		// Tracks & particles
 		trackTree->GetEntry(iEvA);
-
-		
-		int nTrk = tTracks.nTrk;
-		
+		int nTrk = tTracks.nTrk; 
 		// === Particle loop === //
 		for(int iPart = 0; iPart < tTracks.nParticle; iPart++)
 		{
@@ -292,30 +347,37 @@ int main( int argc, const char *argv[] )
 			// particle selection
 			if( !( mTrackSelection_c( tTracks, iPart) )) continue;
 
-			double mpt  = tTracks.mtrkPt [iPart];
+			double mpt = tTracks.mtrkPt [iPart];
 			double eta = tTracks.pEta[iPart]; 
-			float  mp   = mpt * cosh( eta);
+			float  mp  = mpt * cosh( eta);
 			double pt  = tTracks.pPt [iPart];
 			float dEdx = tTracks.mtrkdedx[iPart];
 
-			int ptBin_RECO = ptbin_cm( mpt );
-			int ptBin_GEN  = ptbin_cm(  pt );
-
-			if ( ptBin_GEN == -1 ) continue;
+			//int ptBin_RECO_sl = GetPtBin_sl( mpt );
+			//int ptBin_RECO_sl = GetPtBin( PtRegionBin_RECO, mpt );
 
 			ptres->Fill(pt, mpt);
 
-			double PID_RECO = pidutil->GetID_cm(mp, dEdx, eta);
-			double PID_GEN  =   McPID2AnaPID_cm( tTracks.pPId[iPart]       , eta);
+			double PID_RECO = pidutil->GetID_cm( tTracks, iPart );
+			if (   PID_RECO == 99 ) continue; // un-ID or 0.8 < |eta| particle
 
-//			// Debuggg 
-//			std::cerr << "afterptbinpass pt: " << pt << std::endl;
+			int  ptBin_RECO =  ptbin( floor(PID_RECO+1.0), mpt);
+			if ( ptBin_RECO == -1 ) continue; // particle outside pt range
+
+			double PID_GENE = McPID2AnaPID_cm  ( tTracks, iPart );
+
+			int ptBin_GENE_sl = GetPtBin_sl(  pt );
+			int ptBin_RECO_sl = GetPtBin_sl( mpt );
+
+			if ( (ptBin_GENE_sl == -1) || (ptBin_RECO_sl == -1) ) continue;
+
 //			std::cerr << "PID_GEN: " << PID_GEN << std::endl;
 //			std::cerr << "PID_RECO: " << PID_RECO << std::endl;
 
-			dEdxvsPMapsLin[ptBin_GEN]->Fill(mp, dEdx);
-			dEdxvsPMapsLog[ptBin_GEN]->Fill(mp, dEdx);
-			matrix[ptBin_GEN]->Fill(PID_RECO, PID_GEN);
+			dEdxvsPMapsLin[ptBin_RECO_sl]->Fill(mp, dEdx);
+			dEdxvsPMapsLog[ptBin_RECO_sl]->Fill(mp, dEdx);
+
+			matrix[ptBin_RECO_sl]->Fill(PID_RECO, PID_GENE);
 		
 		 }
 		

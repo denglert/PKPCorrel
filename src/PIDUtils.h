@@ -8,6 +8,7 @@
 #include <TLine.h>
 #include <fstream>
 #include <string>
+#include "SetupCustomTrackTree.h"
 
 const int nPIDBins = 4;
 
@@ -17,6 +18,7 @@ const double pMax 	= 3;
 const int ndEdxBins 	= 300;
 const double dEdxMin = -2;
 const double dEdxMax = 30;
+
 
 const int npBinslog    = 100;
 const int ndEdxBinslog = 100;
@@ -83,8 +85,8 @@ public :
 	
 	void ReadInConfig( std::string PIDconfigfile_str );
 
-	int GetID   (float p, float dEdx, float eta);
-	double GetID_cm(float p, float dEdx, float eta);
+	int    GetID   (const Tracks &tTracks, int iTrk);
+	double GetID_cm(const Tracks_c &tTracks, int iTrk);
 };
 
 // Bethe-Bloch Curve function
@@ -124,7 +126,7 @@ float BBcurve1c(float *x, const float *par);
 double BBcurve1 (double *x, double *par);
 int GetPID(float p, float dEdx, float eta);
 int McPID2AnaPID       ( int McPID, double eta);
-double McPID2AnaPID_cm ( int McPID, double eta);
+double McPID2AnaPID_cm(const Tracks_c &tTracks, int iPart);
 bool isPion(float p, float dEdx);
 bool isKaon(float p, float dEdx);
 bool isProt(float p, float dEdx);

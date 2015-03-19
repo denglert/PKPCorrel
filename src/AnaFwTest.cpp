@@ -15,6 +15,7 @@
 #include "TGraphErrors.h"
 #include "PIDUtils.h"
 #include "CorrelationUtils.h"
+#include "ContMatrix.h"
 
 
 //void SetupCorr( TH2D ***&correl_currev_signal )
@@ -268,7 +269,47 @@ int main( int argc, const char *argv[] )
 // PIDUtil * pidutil = new PIDUtil;
 // pidutil->ReadInConfig( configfile );
 
-TMatrix matrix(3,3);
-matrix.Invert();
+TH2D *matrix = new TH2D("matrix",";RECO;GEN", 4, 0.0, 4.0, 4, 0.0, 4.0 );
+TH2D *matrix2;
+
+matrix->Fill(0.5,0.5);
+matrix->Fill(0.5,0.5);
+matrix->Fill(0.5,0.5);
+
+matrix->Fill(0.5,1.5);
+matrix->Fill(0.5,1.5);
+matrix->Fill(0.5,1.5);
+
+matrix->Fill(0.5,2.5);
+matrix->Fill(0.5,2.5);
+matrix->Fill(0.5,2.5);
+matrix->Fill(0.5,2.5);
+matrix->Fill(0.5,2.5);
+matrix->Fill(0.5,2.5);
+
+matrix->Fill(1.5,0.5);
+
+matrix->Fill(2.5,0.5);
+
+matrix->Fill(3.5,0.5);
+matrix->Fill(3.5,0.5);
+
+matrix->Fill(3.5,1.5);
+matrix->Fill(3.5,1.5);
+matrix->Fill(3.5,1.5);
+
+matrix->Fill(3.5,3.5);
+
+CM::displayMatrix_TH2D(matrix);
+
+CM::CopyTH2DtoTH2D( matrix, matrix2, "new", 123);
+
+CM::displayMatrix_TH2D(matrix2);
+
+CM::normalizeColoumn_TH2D(matrix2, 1);
+
+CM::displayMatrix_TH2D(matrix2);
+
+CM::plotContMatrix(matrix2, 234, "lolmatrix" );
 
 }

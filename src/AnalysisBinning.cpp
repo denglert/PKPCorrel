@@ -8,17 +8,19 @@
 
 // Number of correlation types:
 // 0 - chadron - chadron
-// 1 - pion - chadron
-// 2 - kaon - chadron
-// 3 - prot - chadron
-const int nCorrTyp_ = 4;
+// 1 - 	pion - chadron
+// 2 - 	kaon - chadron
+// 3 - 	prot - chadron
+// 4 - non-prot - chadron
+
+const int nCorrTyp_ = 5;
 
 ////////////////////////
 // *** Pt binning *** //
 ////////////////////////
 
 const int nPtBinsMax_      	=   16; 
-const int nPtBins_[nCorrTyp_] = { 12, 8, 7, 14 };
+const int nPtBins_[nCorrTyp_] = { 12, 8, 7, 14, 6 };
 ////const int nPtBins_[nCorrTyp_] = { 6, 3, 4, 6 };
 //
 const float trigptbins[nCorrTyp_][nPtBinsMax_][2] = 
@@ -85,6 +87,22 @@ const float trigptbins[nCorrTyp_][nPtBinsMax_][2] =
 	  {  1.30,  1.40 },
 	  {  1.40,  1.50 },
 	  {  1.50,  1.60 },
+	  { -1.00, -1.00 },
+	  { -1.00, -1.00 }},
+	 {{  1.00,  1.10 },
+	  {  1.10,  1.20 },
+	  {  1.20,  1.30 },
+	  {  1.30,  1.40 },
+	  {  1.40,  1.50 },
+	  {  1.50,  1.60 },
+	  { -1.00,  0.90 },
+	  { -1.00,  1.00 },
+	  { -1.00,  1.10 },
+	  { -1.00,  1.20 },
+	  { -1.00,  1.30 },
+	  { -1.00,  1.40 },
+	  { -1.00,  1.50 },
+	  { -1.00,  1.60 },
 	  { -1.00, -1.00 },
 	  { -1.00, -1.00 }}
 };

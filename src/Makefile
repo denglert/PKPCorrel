@@ -1,7 +1,9 @@
 CC = g++
 CFLAGS = `root-config --cflags`  
 LFLAGS = -O3 -Wl,--no-as-needed `root-config --libs`
-OBJS = CorrelationUtils.o CorrelationUtils_FigureTools.o PIDUtils.o AnalysisFW.o AnalysisBinning.o SetupCustomTrackTree.o PhyConst.o EvtSelection.o EvtAnalyzer.o GraphTools.o
+CORE = CorrelationUtils.o  PIDUtils.o AnalysisFW.o AnalysisBinning.o SetupCustomTrackTree.o EvtSelection.o EvtAnalyzer.o 
+EXT = CorrelationUtils_FigureTools.o PhyConst.o GraphTools.o ContMatrix.o
+FULL = $(CORE) $(EXT)
 CMN =  commonSetup.h
 
 all : ../bin/preprocess ../bin/process ../bin/preprocess_minimal
@@ -10,45 +12,45 @@ all : ../bin/preprocess ../bin/process ../bin/preprocess_minimal
 
 ### Proton, kaon and pion - charged hadron correlation
 # process
-../bin/process : process.o $(CMN) $(OBJS)
-	$(CC) $(LFLAGS) -o $@ $< $(OBJS)
+../bin/process : process.o $(CMN) $(CORE)
+	$(CC) $(LFLAGS) -o $@ $< $(CORE)
 
 process.o : process.cpp 
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 # process_light
-../bin/process_light : process_light.o $(CMN) $(OBJS)
-	$(CC) $(LFLAGS) -o $@ $< $(OBJS)
+../bin/process_light : process_light.o $(CMN) $(CORE)
+	$(CC) $(LFLAGS) -o $@ $< $(CORE)
 
 process_light.o : process_light.cpp 
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 # preprocess
-../bin/preprocess : preprocess.o $(CMN) $(OBJS)
-	$(CC) $(LFLAGS) -o $@ $< $(OBJS)
+../bin/preprocess : preprocess.o $(CMN) $(CORE)
+	$(CC) $(LFLAGS) -o $@ $< $(CORE)
 
-preprocess.o : preprocess.cpp $(CMN) $(OBJS)
+preprocess.o : preprocess.cpp $(CMN) $(CORE)
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 # preprocess_genlevel
-../bin/preprocess_genlevel : preprocess_genlevel.o $(CMN) $(OBJS)
-	$(CC) $(LFLAGS) -o $@ $< $(OBJS)
+../bin/preprocess_genlevel : preprocess_genlevel.o $(CMN) $(CORE)
+	$(CC) $(LFLAGS) -o $@ $< $(CORE)
 
-preprocess_genlevel.o : preprocess_genlevel.cpp $(CMN) $(OBJS)
+preprocess_genlevel.o : preprocess_genlevel.cpp $(CMN) $(CORE)
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 # SimplePreProc
-../bin/SimplePreProc : SimplePreProc.o $(CMN) $(OBJS)
-	$(CC) $(LFLAGS) -o $@ $< $(OBJS)
+../bin/SimplePreProc : SimplePreProc.o $(CMN) $(CORE)
+	$(CC) $(LFLAGS) -o $@ $< $(CORE)
 
-SimplePreProc.o : SimplePreProc.cpp $(CMN) $(OBJS)
+SimplePreProc.o : SimplePreProc.cpp $(CMN) $(CORE)
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 
 ####################################################################################
 ### dEdxMap
-../bin/makedEdxMap : makedEdxMap.o $(CMN) $(OBJS)
-	$(CC) $(LFLAGS) -o $@ $< $(OBJS) 
+../bin/makedEdxMap : makedEdxMap.o $(CMN) $(CORE)
+	$(CC) $(LFLAGS) -o $@ $< $(CORE) 
 
 makedEdxMap.o : makedEdxMap.cpp
 	$(CC) $(CFLAGS) -o $@ -c $<
@@ -56,39 +58,39 @@ makedEdxMap.o : makedEdxMap.cpp
 
 ####################################################################################
 ### PIDSetup
-../bin/PIDSetup : PIDSetup.o $(CMN) $(OBJS)
-	$(CC) $(LFLAGS) -o $@ $< $(OBJS) 
+../bin/PIDSetup : PIDSetup.o $(CMN) $(CORE)
+	$(CC) $(LFLAGS) -o $@ $< $(CORE) 
 
 PIDSetup.o : PIDSetup.cpp
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 ####################################################################################
 ### PIDStudy
-../bin/PIDStudy : PIDStudy.o $(CMN) $(OBJS)
-	$(CC) $(LFLAGS) -o $@ $< $(OBJS) 
+../bin/PIDStudy : PIDStudy.o $(CMN) $(CORE)
+	$(CC) $(LFLAGS) -o $@ $< $(CORE) 
 
 PIDStudy.o : PIDStudy.cpp
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 ####################################################################################
 ### EtaPhiDistr
-../bin/EtaPhiDistr : EtaPhiDistr.o $(CMN) $(OBJS)
-	$(CC) $(LFLAGS) -o $@ $< $(OBJS) 
+../bin/EtaPhiDistr : EtaPhiDistr.o $(CMN) $(CORE)
+	$(CC) $(LFLAGS) -o $@ $< $(CORE) 
 
 EtaPhiDistr.o : EtaPhiDistr.cpp
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 ####################################################################################
 ### MC_Contamination_Matrix
-../bin/MC_Contamination_Matrix : MC_Contamination_Matrix.o $(CMN) $(OBJS)
-	$(CC) $(LFLAGS) -o $@ $< $(OBJS) 
+../bin/MC_Contamination_Matrix : MC_Contamination_Matrix.o $(CMN) $(CORE)
+	$(CC) $(LFLAGS) -o $@ $< $(CORE) 
 
 MC_Contamination_Matrix.o : MC_Contamination_Matrix.cpp
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 # MC_Contamination_Matrix_viewer
-../bin/MC_Contamination_Matrix_viewer : MC_Contamination_Matrix_viewer.o $(CMN) $(OBJS)
-	$(CC) $(LFLAGS) -o $@ $< $(OBJS) 
+../bin/MC_Contamination_Matrix_viewer : MC_Contamination_Matrix_viewer.o $(CMN) $(FULL)
+	$(CC) $(LFLAGS) -o $@ $< $(FULL) 
 
 MC_Contamination_Matrix_viewer.o : MC_Contamination_Matrix_viewer.cpp
 	$(CC) $(CFLAGS)-o $@ -c $<  
@@ -104,22 +106,22 @@ TrackCorrection.o : TrackCorrection.cpp
 ###########################################
 ###  *** Framework and utility test *** ###
 # AnalysisFWTest
-../bin/AnaFwTest : AnaFwTest.o $(CMN) $(OBJS)
-	$(CC) $(LFLAGS) -o $@ $< $(OBJS) 
+../bin/AnaFwTest : AnaFwTest.o $(CMN) $(FULL)
+	$(CC) $(LFLAGS) -o $@ $< $(FULL) 
 
 AnaFwTest.o : AnaFwTest.cpp
 	$(CC) $(CFLAGS)-o $@ -c $<  
 
 # TrackCorrection_viewer
-../bin/TrackCorrection_viewer : TrackCorrection_viewer.o $(CMN) $(OBJS)
-	$(CC) $(LFLAGS) -o $@ $< $(OBJS) 
+../bin/TrackCorrection_viewer : TrackCorrection_viewer.o $(CMN) $(CORE)
+	$(CC) $(LFLAGS) -o $@ $< $(CORE) 
 
 TrackCorrection_viewer.o : TrackCorrection_viewer.cpp
 	$(CC) $(CFLAGS)-o $@ -c $<  
 
 # UtilityTest
-../bin/utilitytest : UtilityTest.o $(CMN) $(OBJS)
-	$(CC) $(LFLAGS) -o $@ $< $(OBJS) 
+../bin/utilitytest : UtilityTest.o $(CMN) $(CORE)
+	$(CC) $(LFLAGS) -o $@ $< $(CORE) 
 
 UtilityTest.o : UtilityTest.cpp
 	$(CC) $(CFLAGS)-o $@ -c $<  
@@ -169,6 +171,10 @@ CorrelationUtils.o : CorrelationUtils.cpp CorrelationUtils.h
 
 # CorrelationUtils_FigureTools
 CorrelationUtils_FigureTools.o : CorrelationUtils_FigureTools.cpp CorrelationUtils.h
+	$(CC) $(CFLAGS) -o $@ -c $<
+
+# ContMatrix
+ContMatrix.o : ContMatrix.cpp ContMatrix.h
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 # PIDUtils

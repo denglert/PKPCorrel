@@ -106,7 +106,6 @@ tag_preproc_gen=$(label_preproc_gen)_nEv_$(nEvents_preproc_gen)
 #batchjobtag=PIDscan_MinBias_dEdxminsweep_full_config_6_trkCorr_no/
 
 #batchjobtag=MC_vzhukova-EPOS_RECO_batch_recolevel_PIDconfig_default_trkCorr_yes
-
 batchjobtag=EPOS_RECO_level_trkCorr_yes_nEv_2000
 
 #filetoprocess=correl_FULL.root
@@ -278,7 +277,7 @@ MC_Contamination_Matrix_tag=$(MC_Contamination_Matrix_label)
 #MC_Contamination_Matrix_viewer_label=Contamination_Matrix_PIDConfig_default_HIJING_MC
 MC_Contamination_Matrix_viewer_label=Contamination_Matrix_PIDConfig_test_a3_EPOS_LHC_MC
 MC_Contamination_Matrix_viewer_PIDConfig=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/PIDUtils/config/config_test_a3
-MC_Contamination_Matrix_viewer_dir=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/${MC_Contamination_Matrix_viewer_label}/
+MC_Contamination_Matrix_viewer_dir=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/ContMatrix/${MC_Contamination_Matrix_viewer_label}/
 MC_Contamination_Matrix_viewer_inputfilename=PID_Contamination_matrix_0.root
 MC_Contamination_Matrix_viewer_inputfile=$(MC_Contamination_Matrix_viewer_dir)$(MC_Contamination_Matrix_viewer_inputfilename)
 

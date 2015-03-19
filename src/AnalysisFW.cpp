@@ -190,7 +190,7 @@ void EventData::ReadInDATA( const Tracks &tTracks, TH2D *dEdxvsP, PIDUtil *pidut
 		// *** Track selection *** //
 		if ( !TrackSelection(tTracks, iTrk ) ) continue;
 
-		int PID = pidutil->GetID(p, tTracks.dedx[iTrk], tTracks.trkEta[iTrk]);
+		int PID = pidutil->GetID( tTracks, iTrk);
 
 		int ptBin_CH = ptbin(   0 , tTracks.trkPt[iTrk]);
 		int ptBin_ID = ptbin( PID , tTracks.trkPt[iTrk]);

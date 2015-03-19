@@ -139,14 +139,14 @@ int main( int argc, const char *argv[] )
  CFW.SetupForPreprocess();
 
  // TrackCorrection file
- TFile *f_trkCorr = new TFile(trkCorrFilename, "READ");
- if ( f_trkCorr->IsZombie() ) {std::cerr << "Error opening file: " << trkCorrFilename << std::endl; exit(-1);}
+ TFile *f_trkCorr = NULL; 
+ f_trkCorr = new TFile(trkCorrFilename, "READ");
+ if ( (f_trkCorr->IsZombie()) || (f_trkCorr == NULL) ) {std::cerr << "Error opening file: " << trkCorrFilename << std::endl; exit(-1);}
  else {std::cout << "trkCorr File successfully opened." << std::endl;}
-
 
  CFW.trkCorr = Read_TH3D_1Darray(f_trkCorr, "hcorr3D typ", 4);
 
- for (int i = 0; i < nCorrTyp; i++)
+ for (int i = 0; i < 4; i++)
  { CFW.trkCorr[i]->SetDirectory(0); }
 
  f_trkCorr->Close();
@@ -254,6 +254,7 @@ int main( int argc, const char *argv[] )
  //                       //
  ///////////////////////////
  
+
  if (nEvMax == -1) {nEvMax = trackTree->GetEntries();}
 
  log->wr(Form("trackTree entries: %d", trackTree->GetEntries()));

@@ -59,62 +59,84 @@ void PIDUtil::ReadInConfig( std::string PIDconfigfile_str )
 	config >> BB_Prot_mindEdxcut;
 	config >> BB_Prot_maxpcut;
 	
-	std::cout << "##########" << std::endl;
-	std::cout << "Pion"       << std::endl;
-	std::cout << "low"        << std::endl;
-	std::cout << "a[0]: "     << BB_Pion_low_par[0] << std::endl;
-	std::cout << "a[1]: "     << BB_Pion_low_par[1] << std::endl;
-	std::cout << "a[2]: "     << BB_Pion_low_par[2] << std::endl;
-	std::cout << "hig"        << std::endl;
-	std::cout << "a[0]: "     << BB_Pion_hig_par[0] << std::endl;
-	std::cout << "a[1]: "     << BB_Pion_hig_par[1] << std::endl;
-	std::cout << "a[2]: "     << BB_Pion_hig_par[2] << std::endl;
-	std::cout << "dEdx_min: " << BB_Pion_mindEdxcut << std::endl;
-	std::cout << "pmin: "     << BB_Pion_minpcut    << std::endl;
-	std::cout << "pmax: "     << BB_Pion_maxpcut    << std::endl;
-	std::cout << "##########" << std::endl;
-	std::cout << "Kaon"       << std::endl;
-	std::cout << "low"        << std::endl;
-	std::cout << "a[0]: "     << BB_Kaon_low_par[0] << std::endl;
-	std::cout << "a[1]: "     << BB_Kaon_low_par[1] << std::endl;
-	std::cout << "a[2]: "     << BB_Kaon_low_par[2] << std::endl;
-	std::cout << "hig"        << std::endl;
-	std::cout << "a[0]: "     << BB_Kaon_hig_par[0] << std::endl;
-	std::cout << "a[1]: "     << BB_Kaon_hig_par[1] << std::endl;
-	std::cout << "a[2]: "     << BB_Kaon_hig_par[2] << std::endl;
-	std::cout << "dEdx_min: " << BB_Kaon_mindEdxcut << std::endl;
-	std::cout << "pmax: "     << BB_Kaon_maxpcut    << std::endl;
-	std::cout << "##########" << std::endl;
-	std::cout << "Prot"       << std::endl;
-	std::cout << "low"        << std::endl;
-	std::cout << "a[0]: "     << BB_Prot_low_par[0] << std::endl;
-	std::cout << "a[1]: "     << BB_Prot_low_par[1] << std::endl;
-	std::cout << "a[2]: "     << BB_Prot_low_par[2] << std::endl;
-	std::cout << "hig"        << std::endl;
-	std::cout << "a[0]: "     << BB_Prot_hig_par[0] << std::endl;
-	std::cout << "a[1]: "     << BB_Prot_hig_par[1] << std::endl;
-	std::cout << "a[2]: "     << BB_Prot_hig_par[2] << std::endl;
-	std::cout << "dEdx_min: " << BB_Prot_mindEdxcut << std::endl;
-	std::cout << "pmax: "     << BB_Prot_maxpcut    << std::endl;
+//	std::cout << "##########" << std::endl;
+//	std::cout << "Pion"       << std::endl;
+//	std::cout << "low"        << std::endl;
+//	std::cout << "a[0]: "     << BB_Pion_low_par[0] << std::endl;
+//	std::cout << "a[1]: "     << BB_Pion_low_par[1] << std::endl;
+//	std::cout << "a[2]: "     << BB_Pion_low_par[2] << std::endl;
+//	std::cout << "hig"        << std::endl;
+//	std::cout << "a[0]: "     << BB_Pion_hig_par[0] << std::endl;
+//	std::cout << "a[1]: "     << BB_Pion_hig_par[1] << std::endl;
+//	std::cout << "a[2]: "     << BB_Pion_hig_par[2] << std::endl;
+//	std::cout << "dEdx_min: " << BB_Pion_mindEdxcut << std::endl;
+//	std::cout << "pmin: "     << BB_Pion_minpcut    << std::endl;
+//	std::cout << "pmax: "     << BB_Pion_maxpcut    << std::endl;
+//	std::cout << "##########" << std::endl;
+//	std::cout << "Kaon"       << std::endl;
+//	std::cout << "low"        << std::endl;
+//	std::cout << "a[0]: "     << BB_Kaon_low_par[0] << std::endl;
+//	std::cout << "a[1]: "     << BB_Kaon_low_par[1] << std::endl;
+//	std::cout << "a[2]: "     << BB_Kaon_low_par[2] << std::endl;
+//	std::cout << "hig"        << std::endl;
+//	std::cout << "a[0]: "     << BB_Kaon_hig_par[0] << std::endl;
+//	std::cout << "a[1]: "     << BB_Kaon_hig_par[1] << std::endl;
+//	std::cout << "a[2]: "     << BB_Kaon_hig_par[2] << std::endl;
+//	std::cout << "dEdx_min: " << BB_Kaon_mindEdxcut << std::endl;
+//	std::cout << "pmax: "     << BB_Kaon_maxpcut    << std::endl;
+//	std::cout << "##########" << std::endl;
+//	std::cout << "Prot"       << std::endl;
+//	std::cout << "low"        << std::endl;
+//	std::cout << "a[0]: "     << BB_Prot_low_par[0] << std::endl;
+//	std::cout << "a[1]: "     << BB_Prot_low_par[1] << std::endl;
+//	std::cout << "a[2]: "     << BB_Prot_low_par[2] << std::endl;
+//	std::cout << "hig"        << std::endl;
+//	std::cout << "a[0]: "     << BB_Prot_hig_par[0] << std::endl;
+//	std::cout << "a[1]: "     << BB_Prot_hig_par[1] << std::endl;
+//	std::cout << "a[2]: "     << BB_Prot_hig_par[2] << std::endl;
+//	std::cout << "dEdx_min: " << BB_Prot_mindEdxcut << std::endl;
+//	std::cout << "pmax: "     << BB_Prot_maxpcut    << std::endl;
 }
 
-int PIDUtil::GetID(float p, float dEdx, float eta)
+int PIDUtil::GetID(const Tracks &tTracks, int iTrk)
 {
-	if ( etaMax < fabs(eta) ) return unIDcode;
-	if ( isPion(p, dEdx) == true) {return 1;}
-	if ( isKaon(p, dEdx) == true) {return 2;}
-	if ( isProt(p, dEdx) == true) {return 3;}
+	float eta  = tTracks.trkEta[iTrk];
+  	float p    = tTracks.trkPt[iTrk] * cosh(tTracks.trkEta[iTrk]);
+	float pt   = tTracks.trkPt[iTrk];
+	float dEdx = tTracks.dedx[iTrk];
+
+	if (  etaMax < fabs(eta) ) 							{return unIDcode;}
+	if (  isPion(p, dEdx) == true ) 						{return 1;}
+	if (  isKaon(p, dEdx) == true ) 						{return 2;}
+	if ( (isProt(p, dEdx) == false) && (1.0 < pt) ) {return 4;}
+	if (  isProt(p, dEdx) == true ) 						{return 3;}
 	return unIDcode;
 }
 
-double PIDUtil::GetID_cm(float p, float dEdx, float eta)
+//int PIDUtil::GetID(float p, float dEdx, float eta)
+//{
+//	if ( etaMax < fabs(eta) ) return unIDcode;
+//	if ( isPion(p, dEdx) == true) {return 1;}
+//	if ( isKaon(p, dEdx) == true) {return 2;}
+//	if ( isProt(p, dEdx) == true) {return 3;}
+//	return unIDcode;
+//}
+
+double PIDUtil::GetID_cm(const Tracks_c &tTracks, int iTrk)
 {
-	if ( etaMax < fabs(eta) ) return unIDcode_cm;
-	if ( isPion(p, dEdx) == true) {return 0.5;}
-	if ( isKaon(p, dEdx) == true) {return 1.5;}
-	if ( isProt(p, dEdx) == true) {return 2.5;}
-	return unIDcode_cm;
+	float eta  = tTracks.pEta[iTrk];
+	float mpt  = tTracks.mtrkPt[iTrk];
+  	float mp   = mpt * cosh(eta);
+	float dEdx = tTracks.mtrkdedx[iTrk];
+
+	if (  etaMax < fabs(eta) ) 							  {return unIDcode;}
+	if (  isPion(mp, dEdx) == true ) 					  {return 0.5;}
+	if (  isKaon(mp, dEdx) == true ) 					  {return 1.5;}
+	if ( (isProt(mp, dEdx) == false) && (1.0 < mpt) ) {return 3.5;}
+	if (  isProt(mp, dEdx) == true ) 					  {return 2.5;}
+	return unIDcode;
 }
+
 
 float PIDUtil::BBcurve(float *x, const float *par)
 {
@@ -205,20 +227,43 @@ double BBcurve1(double *x, double *par)
 int McPID2AnaPID ( int McPID, double eta)
 {
 	if ( 0.8 < fabs(eta) ) {return 99;}
-	if (( McPID == 211)  || (McPID == -211) ) { return 1; }
-	if (( McPID == 321)  || (McPID == -321) ) { return 2; }
-	if (( McPID == 2212) || (McPID == -2212)) { return 3; }
+	if (( McPID == 211)  || (McPID == -211) ) 	{ return 1; }
+	if (( McPID == 321)  || (McPID == -321) ) 	{ return 2; }
+	if (( McPID == 2212) || (McPID == -2212)) 	{ return 3; }
 	return 99;
 };
 
-double McPID2AnaPID_cm ( int McPID, double eta)
+
+double McPID2AnaPID_cm(const Tracks_c &tTracks, int iPart)
 {
-	if ( 0.8 < fabs(eta) ) {return 3.5;}
-	if (( McPID == 211)  || (McPID == -211) ) { return 0.5; }
-	if (( McPID == 321)  || (McPID == -321) ) { return 1.5; }
-	if (( McPID == 2212) || (McPID == -2212)) { return 2.5; }
-	return 3.5;
-};
+	
+	float eta  = tTracks.pEta[iPart];
+	float pt   = tTracks.pPt [iPart];
+	int McPID  = tTracks.pPId[iPart];
+	
+	if (  0.8 < fabs(eta) ) 							{return 99;}
+
+	if ( (0.2 < pt) && (pt < 0.9) )
+	{
+		if (( McPID == 211)  || (McPID == -211) )    { return 0.5; }
+		if (( McPID == 321)  || (McPID == -321) )    { return 1.5; }
+		if (( McPID == 2212) || (McPID == -2212))    { return 2.5; }
+	}
+
+	if ( (0.9 < pt) && (pt < 1.0) )
+	{
+		if (( McPID == 211)  || (McPID == -211) )    { return 0.5; }
+		if (( McPID == 2212) || (McPID == -2212))    { return 2.5; }
+	}
+
+	if ( (1.0 < pt) && (pt < 1.6) )
+	{
+		if (  ( McPID == 2212) || (McPID == -2212) ) { return 2.5; }
+		if (!(( McPID == 2212) || (McPID == -2212))) { return 3.5; }
+	}
+
+	return 99;
+}
 
 void makedEdxvspFiglinlin(TH2D* dEdxvsP, std::string PIDconfig, std::string figurename)
 {
@@ -278,7 +323,6 @@ void makedEdxvspFiglinlin(TH2D* dEdxvsP, std::string PIDconfig, std::string figu
 	BB_Kaon_lowcut->SetLineColor(kBlue);
 	BB_Kaon_maxpcut->SetLineColor(kBlue);
 	
-	
 	dEdxvsP->Draw("colz");
 	
 	BB_Pion_hig.Draw("same");
@@ -286,7 +330,6 @@ void makedEdxvspFiglinlin(TH2D* dEdxvsP, std::string PIDconfig, std::string figu
 	BB_Kaon_hig.Draw("same");
 	BB_Prot_low.Draw("same");
 	BB_Prot_hig.Draw("same");
-	
 	
 	BB_Pion_maxpcut->Draw("same");
 	

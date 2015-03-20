@@ -5,7 +5,7 @@ namespace CM
 
 //////////////////////
 // CopyTH2DtoTMatrix()
-void CopyTH2DtoTMatrix( TH2D *th2d_matrix, TMatrix *tmatrix, int indices )
+void CopyTH2DtoTMatrix( TH2D *th2d_matrix, TMatrix *&tmatrix, int indices )
 {
 
 	int nSize = GetNdigits( indices );
@@ -88,6 +88,22 @@ void displayMatrix_TH2D( TH2D *matrix )
 	{
 		for(int j = 1; j < (nSize+1); j++)
 		{ std::cout << Form("%2.2f", matrix->GetBinContent(i,j) ) << " "; }
+		std::cout << std::endl;
+	}
+	std::cout << std::endl;
+}
+
+////////////////////////
+// displayMatrix_TMatrix
+void displayMatrix_TMatrix( TMatrix *matrix )
+{
+	int nSize = matrix->GetNrows();	
+
+	std::cout << std::endl;
+	for(int i = 0; i < nSize; i++)
+	{
+		for(int j = 0; j < nSize; j++)
+		{ std::cout << Form("%2.2f", (*matrix)(i,j) ) << " "; }
 		std::cout << std::endl;
 	}
 	std::cout << std::endl;

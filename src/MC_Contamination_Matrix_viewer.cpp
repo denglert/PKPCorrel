@@ -70,9 +70,8 @@ int main( int argc, const char *argv[] )
  //                            //
  ////////////////////////////////
  
- 
-// TFile *output = new TFile(Form("./correl_analysis_%s.root", tag.c_str() ),"RECREATE");
-// output->cd();
+ TFile *output = new TFile( "./Cont_Matrix.root", "RECREATE");
+ output->cd();
 
  /////////////////////////
  //                     //
@@ -80,8 +79,10 @@ int main( int argc, const char *argv[] )
  //                     //
  /////////////////////////
 
- TH2D *th2D_matrix[CM::nPt];
-
+ TH2D *cont_matrix_nor_TH2D[CM::nPt];
+ TH2D *cont_matrix_inv_TH2D[CM::nPt];
+ TMatrix *cont_matrix_nor_TMatrix[CM::nPt];
+ TMatrix *cont_matrix_inv_TMatrix[CM::nPt];
 
  for( int RgnBin = 0; RgnBin < CM::nRegions; RgnBin++ )
  for( int i = 0; i < CM::nPtBins[RgnBin]; i++ )
@@ -94,15 +95,23 @@ int main( int argc, const char *argv[] )
 
 		std::string matrixname = Form("cont_matrix_pt_%.2f-%.2f", pt1, pt2);
 
-		CM::CopyTH2DtoTH2D( matrix[ptBin], th2D_matrix[ptBin], matrixname.c_str(), CM::Indices[RgnBin] );
-		CM::normalizeMatrix_TH2D(th2D_matrix[ptBin]);
-		CM::plotContMatrix( th2D_matrix[ptBin], CM::Indices[RgnBin], matrixname.c_str() );
+		CM::CopyTH2DtoTH2D   ( matrix[ptBin], cont_matrix_nor_TH2D[ptBin],    matrixname.c_str(), CM::Indices[RgnBin] );
+		CM::normalizeMatrix_TH2D( cont_matrix_nor_TH2D[ptBin] );
 
+		CM::CopyTH2DtoTMatrix( cont_matrix_nor_TH2D[ptBin], cont_matrix_nor_TMatrix[ptBin],   CM::Indices_red[RgnBin] );
+		cont_matrix_inv_TMatrix[ptBin] = (TMatrix*)cont_matrix_nor_TMatrix[ptBin]->Clone();
+		cont_matrix_inv_TMatrix[ptBin]->Invert();
+
+		CM::plotContMatrix( cont_matrix_nor_TH2D[ptBin], CM::Indices[RgnBin], matrixname.c_str() );
 
 		CM::displayMatrix_TH2D( matrix[ptBin] );
-		CM::displayMatrix_TH2D( th2D_matrix[ptBin] );
+		CM::displayMatrix_TH2D( cont_matrix_nor_TH2D[ptBin] );
+		CM::displayMatrix_TMatrix( cont_matrix_nor_TMatrix[ptBin] );
+		CM::displayMatrix_TMatrix( cont_matrix_inv_TMatrix[ptBin] );
  }
 
+
+ TH2D *th2D_matrix[CM::nPt];
 
  ////////////////////////
 
@@ -154,28 +163,50 @@ int main( int argc, const char *argv[] )
 //
 // }
 
-  for( int ptBin = 0; ptBin < npt; ptBin++ )
-  {
-
-  	double pt1 = (ptMin + (ptBin  ) * ptbw);
- 	double pt2 = (ptMin + (ptBin+1) * ptbw);
-
-
- 	std::string dEdxvsplinFigBase = Form( "dEdxvspLin_typ_%.2f-%.2f", pt1, pt2 	);
- 	std::string dEdxvsplogFigBase = Form( "dEdxvspLog_typ_%.2f-%.2f", pt1, pt2 	);
-
- 	std::string dEdxvsplinFigPNG = dEdxvsplinFigBase+".png";
- 	std::string dEdxvsplinFigPDF = dEdxvsplinFigBase+".pdf";
- 	std::string dEdxvsplogFigPNG = dEdxvsplogFigBase+".png";
- 	std::string dEdxvsplogFigPDF = dEdxvsplogFigBase+".pdf";
-
-	makedEdxvspFigloglog( dEdxvsPMapsLog[ptBin], PIDconfig, dEdxvsplogFigPNG);
-	makedEdxvspFigloglog( dEdxvsPMapsLog[ptBin], PIDconfig ,dEdxvsplogFigPDF);
-	makedEdxvspFiglinlin( dEdxvsPMapsLin[ptBin], PIDconfig, dEdxvsplinFigPNG);
-	makedEdxvspFiglinlin( dEdxvsPMapsLin[ptBin], PIDconfig, dEdxvsplinFigPDF);
-
-  }
+//  for( int ptBin = 0; ptBin < npt; ptBin++ )
+//  {
+//
+//  	double pt1 = (ptMin + (ptBin  ) * ptbw);
+// 	double pt2 = (ptMin + (ptBin+1) * ptbw);
+//
+//
+// 	std::string dEdxvsplinFigBase = Form( "dEdxvspLin_typ_%.2f-%.2f", pt1, pt2 	);
+// 	std::string dEdxvsplogFigBase = Form( "dEdxvspLog_typ_%.2f-%.2f", pt1, pt2 	);
+//
+// 	std::string dEdxvsplinFigPNG = dEdxvsplinFigBase+".png";
+// 	std::string dEdxvsplinFigPDF = dEdxvsplinFigBase+".pdf";
+// 	std::string dEdxvsplogFigPNG = dEdxvsplogFigBase+".png";
+// 	std::string dEdxvsplogFigPDF = dEdxvsplogFigBase+".pdf";
+//
+//	makedEdxvspFigloglog( dEdxvsPMapsLog[ptBin], PIDconfig, dEdxvsplogFigPNG);
+//	makedEdxvspFigloglog( dEdxvsPMapsLog[ptBin], PIDconfig ,dEdxvsplogFigPDF);
+//	makedEdxvspFiglinlin( dEdxvsPMapsLin[ptBin], PIDconfig, dEdxvsplinFigPNG);
+//	makedEdxvspFiglinlin( dEdxvsPMapsLin[ptBin], PIDconfig, dEdxvsplinFigPDF);
+//
+//  }
 
  plotTH2D(ptres, ";p_{T,gen} [GeV/c];p_{T,reco} [GeV/c]", "ptgenreco", "COLZ");
+
+ output->cd();
+
+ for( int RgnBin = 0; RgnBin < CM::nRegions; RgnBin++ )
+ for( int i = 0; i < CM::nPtBins[RgnBin]; i++ )
+ {
+	int ptBin = CM::PtBins[RgnBin][i];
+
+   double pt1 = (CM::ptMin + (ptBin  ) * CM::PtBw);
+	double pt2 = (CM::ptMin + (ptBin+1) * CM::PtBw);
+
+	std::string str_cont_matrix_nor_TH2D    = Form("cont_matrix_nor_TH2D_pt_%.2f-%2.2f", pt1, pt2);
+	std::string str_cont_matrix_nor_TMatrix = Form("cont_matrix_nor_TMatrix_pt_%.2f-%2.2f", pt1, pt2);
+	std::string str_cont_matrix_inv_TMatrix = Form("cont_matrix_inv_TMatrix_pt_%.2f-%2.2f", pt1, pt2);
+
+	cont_matrix_nor_TH2D[ptBin]->Write(str_cont_matrix_nor_TH2D.c_str());
+	cont_matrix_nor_TMatrix[ptBin]->Write(str_cont_matrix_nor_TMatrix.c_str());
+	cont_matrix_inv_TMatrix[ptBin]->Write(str_cont_matrix_inv_TMatrix.c_str());
+
+ }
+ output->Close();
+
  
 }

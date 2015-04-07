@@ -53,7 +53,6 @@ void CorrelationFramework::makeFigv2vspT_allparticles(int multBin, std::string t
 			v2_SystError[TypBin][ptBin]  = v2_SystErrorvec[ptBin];
 		};
 
-
 	}
 
 	// *** Plotting the graphs *** //
@@ -82,7 +81,6 @@ void CorrelationFramework::makeFigv2vspT_allparticles(int multBin, std::string t
 	double v2vspt_v2min = 0.0;
 	double v2vspt_v2max = 0.16;
 	//double v2vspt_v2max = 0.6;
-	
 
 	cparv2.SetTitle("");
    cparv2.GetXaxis()->SetLimits(v2vspt_ptmin,v2vspt_ptmax);
@@ -96,25 +94,27 @@ void CorrelationFramework::makeFigv2vspT_allparticles(int multBin, std::string t
 	cparv2.GetYaxis()->SetTitleOffset(1.2);
 	cparv2.GetYaxis()->SetTitleSize(figuretextsize);
 
-	TF1 *cparv2_fit = new TF1 ("cparv2_fit", "[1]*x+[2]*x*x",0,3);
-	TF1 *pionv2_fit = new TF1 ("pionv2_fit", "[1]*x+[2]*x*x",0,0.9);
-	TF1 *kaonv2_fit = new TF1 ("kaonv2_fit", "[1]*x+[2]*x*x",0,0.9);
-	TF1 *protv2_fit = new TF1 ("protv2_fit", "[1]*x+[2]*x*x",0,1.5);
+// No fit.
 
-	cparv2_fit->SetLineColor(kBlack);
-	pionv2_fit->SetLineColor(kRed);
-	kaonv2_fit->SetLineColor(kGreen);
-	protv2_fit->SetLineColor(kBlue);
-
-	cparv2_fit->SetLineStyle(9);
-	pionv2_fit->SetLineStyle(9);
-	kaonv2_fit->SetLineStyle(9);
-	protv2_fit->SetLineStyle(9);
-
-	cparv2.Fit("cparv2_fit", "R");
-	pionv2.Fit("pionv2_fit", "R");
-	kaonv2.Fit("kaonv2_fit", "R");
-	protv2.Fit("protv2_fit", "R");
+//	TF1 *cparv2_fit = new TF1 ("cparv2_fit", "[1]*x+[2]*x*x",0,3);
+//	TF1 *pionv2_fit = new TF1 ("pionv2_fit", "[1]*x+[2]*x*x",0,0.9);
+//	TF1 *kaonv2_fit = new TF1 ("kaonv2_fit", "[1]*x+[2]*x*x",0,0.9);
+//	TF1 *protv2_fit = new TF1 ("protv2_fit", "[1]*x+[2]*x*x",0,1.5);
+//
+//	cparv2_fit->SetLineColor(kBlack);
+//	pionv2_fit->SetLineColor(kRed);
+//	kaonv2_fit->SetLineColor(kGreen);
+//	protv2_fit->SetLineColor(kBlue);
+//
+//	cparv2_fit->SetLineStyle(9);
+//	pionv2_fit->SetLineStyle(9);
+//	kaonv2_fit->SetLineStyle(9);
+//	protv2_fit->SetLineStyle(9);
+//
+//	cparv2.Fit("cparv2_fit", "R");
+//	pionv2.Fit("pionv2_fit", "R");
+//	kaonv2.Fit("kaonv2_fit", "R");
+//	protv2.Fit("protv2_fit", "R");
 
 	cparv2.Draw("AP");
 	pionv2.Draw("P");
@@ -152,7 +152,6 @@ void CorrelationFramework::makeFigv2vspT_allparticles(int multBin, std::string t
 	double multlabelposx = 0.62;
 	double multlabelposy = 0.24;
 
-
 	TLegend v2vsptlegend (legend_x1, legend_y1, legend_x2, legend_y2);
 	v2vsptlegend.SetFillStyle(0);
 	v2vsptlegend.SetBorderSize(0);
@@ -160,11 +159,13 @@ void CorrelationFramework::makeFigv2vspT_allparticles(int multBin, std::string t
 	v2vsptlegend.AddEntry(&pionv2,"#pi", "P");
 	v2vsptlegend.AddEntry(&kaonv2,"K", "P");
 	v2vsptlegend.AddEntry(&protv2,"p", "P");
+
 //	v2vsptlegend.AddEntry(&cms,"# CMS HIN 13-002 c.p - c.p nTrk [120-150]", "L");
 //	v2vsptlegend.AddEntry(&alice_0_20_cpar,"# ALICE [0-20] c.p - c.p", "P");
 //	v2vsptlegend.AddEntry(&alice_0_20_pion,"# ALICE [0-20] #pi - c.p", "P");
 //	v2vsptlegend.AddEntry(&alice_0_20_kaon,"# ALICE [0-20] K - c.p", "P");
 //	v2vsptlegend.AddEntry(&alice_0_20_prot,"# ALICE [0-20] p - c.p", "P");
+
 	v2vsptlegend.SetTextSize(figuretextsize);
 	v2vsptlegend.Draw("SAME");
 
@@ -206,6 +207,7 @@ void CorrelationFramework::makeFigv2vspT_allparticles(int multBin, std::string t
 	pionv2.Write();
 	kaonv2.Write();
 	protv2.Write();
+
 	cparv2_syst.Write();
 	pionv2_syst.Write();
 	kaonv2_syst.Write();

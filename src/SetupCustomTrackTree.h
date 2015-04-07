@@ -28,12 +28,6 @@ public :
    Float_t         trkDxyError1[maxTracks];   //[nTrk]
    Float_t         trkDz1[maxTracks];   //[nTrk]
    Float_t         trkDzError1[maxTracks];   //[nTrk]
-	Int_t           nParticle;
-   Int_t           pStatus[maxTracks];   //[nParticle]
-   Int_t           pPId[maxTracks];   //[nParticle]
-   Float_t         pEta[maxTracks];   //[nParticle]
-   Float_t         pPhi[maxTracks];   //[nParticle]
-   Float_t         pPt[maxTracks];   //[nParticle]
 
    // List of branches
    TBranch        *b_nTrk;   //!
@@ -48,6 +42,22 @@ public :
    TBranch        *b_trkDxyError1;   //!
    TBranch        *b_trkDz1;   //!
    TBranch        *b_trkDzError1;   //!
+};
+
+class Particles {
+public :
+   Particles(){};
+   ~Particles(){};
+
+   // Declaration of leaf types
+	Int_t           nParticle;
+   Int_t           pStatus[maxTracks];   //[nParticle]
+   Int_t           pPId[maxTracks];   //[nParticle]
+   Float_t         pEta[maxTracks];   //[nParticle]
+   Float_t         pPhi[maxTracks];   //[nParticle]
+   Float_t         pPt[maxTracks];   //[nParticle]
+
+   // List of branches
    TBranch        *b_nParticle;   //!
    TBranch        *b_pStatus;   //!
    TBranch        *b_pPId;   //!
@@ -204,7 +214,7 @@ public :
 };
 
 
-void setupTrackTree(TTree *t,Tracks &tTracks,bool doCheck);
+void setupTrackTree(TTree *t, Tracks &tTracks );
 void setupTrackTree_c(TTree *t,Tracks_c &tTracks,bool doCheck);
-void setupParticleTree(TTree *t, Tracks &tTracks);
+void setupParticleTree(TTree *t, Particles &tTracks);
 #endif

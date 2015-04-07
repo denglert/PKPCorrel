@@ -20,32 +20,33 @@ double figuretextsize = 0.043;
 double TH1Dlabelposx = 0.63;
 double TH1Dlabelposy = 0.20;
 
-const int npt[4]      = { 10,     6,    6,   12 };
-const double ptMin[4] = { 0.3, 0.20, 0.20, 0.20 };
-const double ptMax[4] = { 3.0, 0.80, 0.80, 1.40 };
-
 const double ptGlobalMin = 0.1;
-
-//const int neta[4]      = { 48 , 16 , 16  , 16 };
-const int neta[4]      = { 24 ,  8 ,   8  , 8 };
-const double etaMin[4] = {-2.4,-0.8,-0.8 ,-0.8};
-const double etaMax[4] = { 2.4, 0.8, 0.8 , 0.8};
 
 //const int nphi = 70;
 const int nphi = 35;
 const double phiMin = -TMath::Pi();
 const double phiMax =  TMath::Pi();
-const	int nParticles = 4;
+
+
+const int nCorrTyp = 5;
+
+const int npt[nCorrTyp]      = { 15,     8,    7,   14,     6 };
+const double ptMin[nCorrTyp] = { 0.3, 0.20, 0.20, 0.20,  1.00 };
+const double ptMax[nCorrTyp] = { 3.0, 1.00, 0.90, 1.60,  1.60 };
+
+const int neta[nCorrTyp]      = { 24 ,   8,   8 ,  8 ,    8 };
+const double etaMin[nCorrTyp] = {-2.4,-0.8,-0.8 ,-0.8, -0.8 };
+const double etaMax[nCorrTyp] = { 2.4, 0.8, 0.8 , 0.8,  0.8 };
 
 void plottable( TH3D **table, const char figbasename[] )
 {
 	gStyle->SetOptStat(0);
 	
-	double ptbw[4];
-	for(int i = 0; i < nParticles; i++)
+	double ptbw[nCorrTyp];
+	for(int i = 0; i < nCorrTyp; i++)
 	{ ptbw[i] = (ptMax[i]-ptMin[i])/npt[i]; }
 	
-	for (int pid = 0; pid < nParticles; pid++)
+	for (int pid = 0; pid < nCorrTyp; pid++)
 	for (int ptBin = 1; ptBin < (npt[pid]+1); ptBin++)
 	{
 		TCanvas canvas_table ("trkTable", ";Eta;Phi", 900, 600);
@@ -126,9 +127,9 @@ void plottable( TH3D **table, const char figbasename[] )
 	}
 }
 
-void plotTH2D( TH2D *histo, const char figbasename[], const char xaxisname[], const char yaxisname[], const char label[])
+void plotTH2D( TH2D *histo, const char figbasename[], const char label[])
 {
-	TCanvas canvas_table ("trkcorrfigure", Form("%s;%s", yaxisname, xaxisname), 800, 600);
+	TCanvas canvas_table ("trkcorrfigure", "lol", 800, 600);
 
   	canvas_table.Divide(2,1);
 
@@ -200,11 +201,10 @@ int main( int argc, const char *argv[] )
  if ( f->IsZombie() ) {std::cerr << "Error opening file: " << inpFilename << std::endl; exit(-1);}
  else {std::cout << "File successfully opened." << std::endl;}
 
- int nCorrTyp = 4;
-
+ TH3D **hgen3D         = Read_TH3D_1Darray( f, "hgen3D typ",  nCorrTyp);
  TH3D **heff3D         = Read_TH3D_1Darray( f, "heff3D part",  nCorrTyp);
  TH3D **trkCorr3D      = Read_TH3D_1Darray( f, "hcorr3D typ",  nCorrTyp);
-
+ TH3D **hmatched3D     = Read_TH3D_1Darray( f, "hmatched3D typ",  nCorrTyp);
 
  TH1D **hmultrec1D = Read_TH1D_1Darray( f, "hmultrec1D typ", nCorrTyp);
  TH1D **hmatched1D = Read_TH1D_1Darray( f, "hmatched1D typ", nCorrTyp);
@@ -221,12 +221,14 @@ int main( int argc, const char *argv[] )
  TH1D **hfake1D        = Read_TH1D_1Darray( f, "hfake1D typ",        nCorrTyp);
 
  // Initilaizing
- double ptbw[4];
- for(int i = 0; i < nParticles; i++)
- { ptbw[i] = (ptMax[i]-ptMin[i])/npt[i]; }
+ double ptbw[nCorrTyp];
+ for(int i = 0; i < nCorrTyp; i++)
+ { ptbw[i] = (ptMax[i]-ptMin[i])/npt[i]; 
+	std::cout << Form("ptbw: %.2f \n", ptbw[i]);
+ }
 
-  double etabw[4]; 
-  for(int i = 0; i < nParticles; i++)
+  double etabw[nCorrTyp]; 
+  for(int i = 0; i < nCorrTyp; i++)
   { etabw[i] = (etaMax[i]-etaMin[i])/neta[i];}
 
   const double phiMin = -TMath::Pi();
@@ -234,30 +236,30 @@ int main( int argc, const char *argv[] )
   const int nphi = 35;
   const double phibw = (phiMax-phiMin)/nphi;
 
-  for(int i = 0; i < 1; i++)
-  for(int x = 1; x < npt[i]  +1; x++)
-  for(int y = 1; y < neta[i] +1; y++)
-  for(int z = 1; z < nphi +1; z++)
-  {
-	  double pt  = ptMin[i]+x*ptbw[i]; 
-	  double eta = etaMin[i]+y*etabw[i]; 
-	  double phi = phiMin+z*phibw; 
+//  for(int i = 0; i < 1; i++)
+//  for(int x = 1; x < npt[i]  +1; x++)
+//  for(int y = 1; y < neta[i] +1; y++)
+//  for(int z = 1; z < nphi +1; z++)
+//  {
+//	  double pt  = ptMin[i]+x*ptbw[i]; 
+//	  double eta = etaMin[i]+y*etabw[i]; 
+//	  double phi = phiMin+z*phibw; 
+//
+//	  std::cout << Form("pt: %.2f eta: %.2f phi: %.2f", pt, eta, phi) << std::endl;
+//	  std::cout << "efff: " << heff3D[i]->GetBinContent(x,y,z) << std::endl;
+//	  std::cout << "fake: " << hfake2D[i]->GetBinContent(x,y) << std::endl;
+//	  std::cout << "seco: " << hsecondary2D[i]->GetBinContent(x,y) << std::endl;
+//	  std::cout << "mult: " << hmultrecrate2D[i]->GetBinContent(x,y) << std::endl;
+//
+//   double value = (1.0-hfake2D[i]->GetBinContent(x,y))*(1.0-hsecondary2D[i]->GetBinContent(x,y)) / ((heff3D[i]->GetBinContent(x,y,z)) * (hmultrecrate2D[i]->GetBinContent(x,y)));
+//
+//	std::cout << "trkCorr: " << value << std::endl;
+////	  hcorr3D[i]->SetBinContent(x,y,z,value);
+// //	  log.wr(Form("%d %.3f %.2f %.2f : %.4f", i, pt, eta, phi, value));
+//  }
 
-	  std::cout << Form("pt: %.2f eta: %.2f phi: %.2f", pt, eta, phi) << std::endl;
-	  std::cout << "efff: " << heff3D[i]->GetBinContent(x,y,z) << std::endl;
-	  std::cout << "fake: " << hfake2D[i]->GetBinContent(x,y) << std::endl;
-	  std::cout << "seco: " << hsecondary2D[i]->GetBinContent(x,y) << std::endl;
-	  std::cout << "mult: " << hmultrecrate2D[i]->GetBinContent(x,y) << std::endl;
 
-   double value = (1.0-hfake2D[i]->GetBinContent(x,y))*(1.0-hsecondary2D[i]->GetBinContent(x,y)) / ((heff3D[i]->GetBinContent(x,y,z)) * (hmultrecrate2D[i]->GetBinContent(x,y)));
-
-	std::cout << "trkCorr: " << value << std::endl;
-//	  hcorr3D[i]->SetBinContent(x,y,z,value);
- //	  log.wr(Form("%d %.3f %.2f %.2f : %.4f", i, pt, eta, phi, value));
-  }
-
-
- for(int i = 0; i < nParticles; i++)
+ for(int i = 0; i < nCorrTyp; i++)
  {
 
  std::string type = particletype(i);
@@ -284,33 +286,48 @@ int main( int argc, const char *argv[] )
  plotTH1D(hmultrec1D[i],    filebasename_multreco_ptint_etadep.c_str(),"#eta", "multreco"      , label_ptint_etadep.c_str());
  plotTH1D(hmatched1D[i],    filebasename_matchedt_ptint_etadep.c_str(),"#eta", "matched"       , label_ptint_etadep.c_str());
 
- plotTH2D(hfake2D[i]       ,filebasename_fake_ptetadep.c_str(),"p_{T}", "#eta", label_fake_ptetadep.c_str());
- plotTH2D(hsecondary2D[i]  ,filebasename_seco_ptetadep.c_str(),"p_{T}", "#eta", label_seco_ptetadep.c_str());
- plotTH2D(hmultrecrate2D[i],filebasename_mult_ptetadep.c_str(),"p_{T}", "#eta", label_mult_ptetadep.c_str());
+ plotTH2D(hfake2D[i]       ,filebasename_fake_ptetadep.c_str(),Form("%s fake;p_{T};#eta", type.c_str()) );
+ plotTH2D(hsecondary2D[i]  ,filebasename_seco_ptetadep.c_str(),Form("%s seco;p_{T};#eta", type.c_str()) );
+ plotTH2D(hmultrecrate2D[i],filebasename_mult_ptetadep.c_str(),Form("%s mult;p_{T};#eta", type.c_str()) );
 
  }
 
- for (int i = 0; i < nParticles; i++)
+ for (int i = 0; i < nCorrTyp; i++)
  for (int ptBin = 1; ptBin < (npt[i]+1); ptBin++)
  {
- double pt1 = ptMin[i] + ptbw[i] * (ptBin-1);
- double pt2 = ptMin[i] + ptbw[i] * (ptBin );
- 
- trkCorr3D[i]->GetXaxis()->SetRange(ptBin, ptBin);
- heff3D[i]   ->GetXaxis()->SetRange(ptBin, ptBin);
 
- TH2D *trkCorr = (TH2D*)trkCorr3D[i]->Project3D("zy");
- TH2D *heff    = (TH2D*)heff3D   [i]->Project3D("zy");
+ double pt1 = (ptMin[i] + (ptbw[i] * (ptBin-1)));
+ double pt2 = (ptMin[i] + (ptbw[i] * (ptBin  )));
+ 
+ std::cout << Form("i = %d, ptbw[i] = %.2f, ptMin[i] = %.2f, ptBin = %d", i, ptbw[i], ptMin[i], ptBin) << std::endl;
+ std::cout << Form("pt = [ %.2f - %.2f ]", pt1, pt2) << std::endl;
+ 
+ trkCorr3D[i]  ->GetXaxis()->SetRange(ptBin, ptBin);
+ heff3D[i]     ->GetXaxis()->SetRange(ptBin, ptBin);
+ hgen3D[i]     ->GetXaxis()->SetRange(ptBin, ptBin);
+ hmatched3D[i] ->GetXaxis()->SetRange(ptBin, ptBin);
+
+ TH2D *trkCorr  = (TH2D*)trkCorr3D  [i]->Project3D("zy");
+ TH2D *heff     = (TH2D*)heff3D     [i]->Project3D("zy");
+ TH2D *hgen     = (TH2D*)hgen3D     [i]->Project3D("zy");
+ TH2D *hmatched = (TH2D*)hmatched3D [i]->Project3D("zy");
 
  std::string type = particletype(i);
 
  std::string filebasename_trkCorr = Form("trkCorr_%d_pT_%.2f_%.2f", i, pt1, pt2);
  std::string filebasename_eff     = Form("efficiency_%d_pT_%.2f_%.2f", i, pt1, pt2);
+ std::string filebasename_gen     = Form("gen_%d_pT_%.2f_%.2f", i, pt1, pt2);
+ std::string filebasename_matched = Form("matchedt_%d_pT_%.2f_%.2f", i, pt1, pt2);
+
  std::string label_trkCorr        = Form("#splitline{%s, trkCorrections}{p_{T} [ %.2f - %.2f]}", type.c_str(), pt1, pt2);
  std::string label_eff            = Form("#splitline{%s, efficiency}{p_{T} [ %.2f - %.2f]}", type.c_str(), pt1, pt2);
+ std::string label_gen            = Form("#splitline{%s, gen}{p_{T} [ %.2f - %.2f]}", type.c_str(), pt1, pt2);
+ std::string label_matched        = Form("#splitline{%s, matched}{p_{T} [ %.2f - %.2f]}", type.c_str(), pt1, pt2);
 
- 	plotTH2D(trkCorr,filebasename_trkCorr.c_str(),"p_{T}", "#eta", label_trkCorr.c_str());
- 	plotTH2D(heff   ,filebasename_eff.c_str()    ,"p_{T}", "#eta", label_eff.c_str());
+ 	plotTH2D(trkCorr,filebasename_trkCorr.c_str(),Form("%s;#eta;#phi", label_trkCorr.c_str()) );
+ 	plotTH2D(heff   ,filebasename_eff.c_str()    ,Form("%s;#eta;#phi", label_eff.c_str())     );
+ 	plotTH2D(hgen   ,filebasename_gen.c_str()    ,Form("%s;#eta;#phi", label_gen.c_str())     );
+ 	plotTH2D(hmatched   ,filebasename_matched.c_str(),Form("%s;#eta;#phi", label_matched.c_str())     );
  }
 
 

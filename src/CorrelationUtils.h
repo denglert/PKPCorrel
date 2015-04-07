@@ -94,9 +94,9 @@ class CorrelationFramework
 	std::string contmatrix_filename;
 	TFile *f_contmatrix;
 
-	TH2D **contmatrix;
-	TMatrix   **cont_tmatrix;
-	TMatrix **decont_tmatrix;
+	TMatrix **cont_matrix_inv_TMatrix;
+	TMatrix **cont_matrix_nor_TMatrix;
+	TH2D **cont_matrix_nor_TH2D;
 
 	// Output dump
 	TFile *Corr_Results;

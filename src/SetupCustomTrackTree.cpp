@@ -1,6 +1,6 @@
 #include "SetupCustomTrackTree.h"
 
-void setupTrackTree(TTree *t, Tracks &tTracks, bool doMC)
+void setupTrackTree(TTree *t, Tracks &tTracks )
 {
 
    t->SetBranchAddress("nTrk", &tTracks.nTrk, &tTracks.b_nTrk);
@@ -15,17 +15,6 @@ void setupTrackTree(TTree *t, Tracks &tTracks, bool doMC)
    t->SetBranchAddress("trkDxyError1", tTracks.trkDxyError1, &tTracks.b_trkDxyError1);
    t->SetBranchAddress("trkDz1", tTracks.trkDz1, &tTracks.b_trkDz1);
    t->SetBranchAddress("trkDzError1", tTracks.trkDzError1, &tTracks.b_trkDzError1);
-
-	if (doMC)
-	{
-   t->SetBranchAddress("nParticle", &tTracks.nParticle, &tTracks.b_nParticle);
-   t->SetBranchAddress("pStatus", tTracks.pStatus, &tTracks.b_pStatus);
-   t->SetBranchAddress("pPId", tTracks.pPId, &tTracks.b_pPId);
-   t->SetBranchAddress("pEta", tTracks.pEta, &tTracks.b_pEta);
-   t->SetBranchAddress("pPhi", tTracks.pPhi, &tTracks.b_pPhi);
-   t->SetBranchAddress("pPt", tTracks.pPt, &tTracks.b_pPt);
-	}
-
 
 }
 
@@ -105,7 +94,7 @@ void setupTrackTree_c(TTree *t, Tracks_c &tTracks, bool doMC)
 }
 
 
-void setupParticleTree(TTree *t, Tracks &tTracks)
+void setupParticleTree(TTree *t, Particles &tTracks)
 {
    t->SetBranchAddress("nParticle", &tTracks.nParticle, &tTracks.b_nParticle);
    t->SetBranchAddress("pStatus", tTracks.pStatus, &tTracks.b_pStatus);

@@ -107,5 +107,8 @@ int main( int argc, const char *argv[] )
  // ***** Setting output ***** //
  ////////////////////////////////
 
+ CFW.Corr_Results->Close();
+
+
 
 }

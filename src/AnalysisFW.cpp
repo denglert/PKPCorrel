@@ -137,7 +137,7 @@ bool TrackSelection( const Tracks &tTracks, int iTrk )
 }
 
 // TrackSelection()
-bool TrackSelection_c( const Tracks_c &tTracks, int iTrk )
+bool TrackSelection( const Tracks_c &tTracks, int iTrk )
 {
 	// *** Track selection *** //
 	if ( tTracks.highPurity[iTrk] == false ) {return false;}
@@ -179,6 +179,7 @@ bool mTrackSelection_c( const Tracks_c &tTracks, int iTrk )
 // ReadInDATA
 void EventData::ReadInDATA( const Tracks &tTracks, TH2D *dEdxvsP, PIDUtil *pidutil)
 {
+
 	int nTrk = tTracks.nTrk;
 
 	for (int iTrk = 0; iTrk < nTrk; iTrk++)
@@ -231,7 +232,7 @@ void EventData::ReadInDATA( const Tracks &tTracks, TH2D *dEdxvsP, PIDUtil *pidut
 }
 
 // ReadInMC
-void EventData::ReadInMC( Tracks &tTracks)
+void EventData::ReadInMC( Particles &tTracks)
 {
 	int nPart = tTracks.nParticle;
 
@@ -240,7 +241,7 @@ void EventData::ReadInMC( Tracks &tTracks)
 
   		float p = tTracks.pPt[iPar] * cosh(tTracks.pEta[iPar]);
 
-		int PID = McPID2AnaPID ( tTracks.pPId[iPar], tTracks.pEta[iPar]);
+		int PID = McPID2AnaPID ( tTracks, iPar );
 		int ptBin_CH = ptbin(   0 , tTracks.pPt[iPar]);
 		int ptBin_ID = ptbin( PID , tTracks.pPt[iPar]);
 

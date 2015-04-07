@@ -13,7 +13,7 @@ namespace CM
 const int nRegions = 3;
 const int nCorr[nRegions] = {3, 2, 2};
 
-
+const int nCorrs = 5;
 const int nPt = 14;
 const double ptMin = 0.2;
 const double ptMax = 1.6;
@@ -30,10 +30,36 @@ const int Corr[nRegions][3] = {
 
 const int nPtBins[nRegions] = {7, 1, 6};
 
-const int PtBins[nRegions][7] = {
+const int PtBins[nCorrs][nRegions][7] = {
+											{
+		  									{ -1,  1, -1, -1, -1, -1,  -1 },
+		  									{ -1, -1, -1, -1, -1, -1, -1 },
+		  									{ -1, -1, -1, -1, -1, -1, -1 },
+											},
+
+											{
 		  									{ 0,  1,  2,  3,  4,  5,  6 },
 		  									{ 7, -1, -1, -1, -1, -1, -1 },
 		  									{ 8,  9, 10, 11, 12, 13, -1 },
+											},
+
+											{
+		  									{ 0,  1,  2,  3,  4,  5,  6 },
+		  									{ 7, -1, -1, -1, -1, -1, -1 },
+		  									{ 8,  9, 10, 11, 12, 13, -1 },
+											},
+
+											{
+		  									{ 0,  1,  2,  3,  4,  5,  6 },
+		  									{ 7, -1, -1, -1, -1, -1, -1 },
+		  									{ 8,  9, 10, 11, 12, 13, -1 },
+											},
+
+											{
+		  									{ -1, -1, -1, -1, -1, -1, -1 },
+		  									{ -1, -1, -1, -1, -1, -1, -1 },
+		  									{  0,  1,  2,  3,  4,  5, -1 },
+											}
 										  };
 
 

@@ -24,7 +24,7 @@ int main( int argc, const char *argv[] )
 	 exit(1);
   }
 
- TString inpFilename     = argv[1];
+ std::string inpFilename = argv[1];
  std::string isMC        = argv[2];
  TString dotrkCorr_str 	 = argv[3];
  TString trkCorrFilename = argv[4];
@@ -47,7 +47,7 @@ int main( int argc, const char *argv[] )
  pidutil->ReadInConfig( PIDconfig );
 
  // Log
- LogFile *log = new LogFile("log");
+ LogFile *log = new LogFile(Form("log_%d", tag));
  log->repeat = 1000;
  log->label = "DATA";
 
@@ -66,27 +66,31 @@ int main( int argc, const char *argv[] )
  //////////////////////////////////////
  
  // Open file
- TFile *f = TFile::Open(inpFilename);
- if ( f->IsZombie() ) {std::cerr << "Error opening file: " << inpFilename << std::endl; exit(-1);}
-
- TTree *trackTree;
-
- // trackTree
- if ( isMC == "no" )
- { trackTree = (TTree*)f->Get("pptracks/trackTree"); }
- else if ( isMC == "yes" )
- { trackTree = (TTree*)f->Get("ppTrack/trackTree");  }
-
-
- Tracks tTracks;
+ TFile *f = NULL;
+ std::cout << "\nBefore open f: " << f << std::endl;
+ f = TFile::Open(inpFilename.c_str());
+ std::cout << "\nAfter open f: " << f << std::endl;
+ if ( f->IsZombie() || (f == NULL) ) {std::cerr << "Error opening file: " << inpFilename << std::endl; exit(-1);}
+ else {std::cout << Form("TFile %s seem to have loaded.\n", inpFilename.c_str()); }
 
  bool doMC;
  if (isMC == "no")
- { doMC = false; }
+ { doMC = false; std::cout << "doMC: false" << std::endl; }
  else if ( isMC == "yes")
- { doMC = true;  }
+ { doMC = true; std::cout << "doMC: false" << std::endl; }
+
+ TTree *trackTree;
+
+
+ // trackTree
+ if ( doMC == false )
+ { trackTree = (TTree*)f->Get("pptracks/trackTree"); std::cout << "No MC - pptracks/trackTree" << std::endl; }
+ else if ( doMC == true )
+ { trackTree = (TTree*)f->Get("ppTrack/trackTree"); std::cout << "Yes MC - ppTrack/trackTree" << std::endl; }
+
+ Tracks tTracks;
  
- setupTrackTree(trackTree, tTracks, doMC);
+ setupTrackTree(trackTree, tTracks);
 
  // hiEvtAnalyzer
  TTree *EvtAna= (TTree*)f->Get("hiEvtAnalyzer/HiTree");
@@ -177,6 +181,7 @@ int main( int argc, const char *argv[] )
 	
 	int iEv = 0;
 
+
  	while ( (count < (nev+1)) && (iEv < trackTree->GetEntries() )) 
 	{
 
@@ -193,6 +198,7 @@ int main( int argc, const char *argv[] )
 
 			trackTree->GetEntry(iEv);
 			int nTrk = tTracks.nTrk;
+			if ( maxTracks < tTracks.nTrk) continue;
 
 	 		for (int iTrk = 0; iTrk < nTrk; iTrk++)
 			{
@@ -275,6 +281,8 @@ int main( int argc, const char *argv[] )
 	CFW.nEvents_Processed_signal_total->Fill(0.);
 	if ( multiplicitybin_Ana(hiNtracks, nMultiplicityBins_Ana) == -1) continue;
 
+	int multBin = multiplicitybin_Ana(hiNtracks, nMultiplicityBins_Ana);
+
  	ev->Clear(nCorrTyp, nPtBins);
 
 	ev->EventID = iEvA;
@@ -289,6 +297,8 @@ int main( int argc, const char *argv[] )
 
 	// Load in tracks
 	trackTree->GetEntry(iEvA);
+
+	if ( maxTracks < tTracks.nTrk) continue;
 
 	// Read in event
 	ev->ReadInDATA(tTracks, dEdxvsp, pidutil);

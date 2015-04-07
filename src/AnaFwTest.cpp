@@ -269,47 +269,74 @@ int main( int argc, const char *argv[] )
 // PIDUtil * pidutil = new PIDUtil;
 // pidutil->ReadInConfig( configfile );
 
-TH2D *matrix = new TH2D("matrix",";RECO;GEN", 4, 0.0, 4.0, 4, 0.0, 4.0 );
-TH2D *matrix2;
+//TH2D *matrix = new TH2D("matrix",";RECO;GEN", 4, 0.0, 4.0, 4, 0.0, 4.0 );
+//TH2D *matrix2;
+//
+//matrix->Fill(0.5,0.5);
+//matrix->Fill(0.5,0.5);
+//matrix->Fill(0.5,0.5);
+//
+//matrix->Fill(0.5,1.5);
+//matrix->Fill(0.5,1.5);
+//matrix->Fill(0.5,1.5);
+//
+//matrix->Fill(0.5,2.5);
+//matrix->Fill(0.5,2.5);
+//matrix->Fill(0.5,2.5);
+//matrix->Fill(0.5,2.5);
+//matrix->Fill(0.5,2.5);
+//matrix->Fill(0.5,2.5);
+//
+//matrix->Fill(1.5,0.5);
+//
+//matrix->Fill(2.5,0.5);
+//
+//matrix->Fill(3.5,0.5);
+//matrix->Fill(3.5,0.5);
+//
+//matrix->Fill(3.5,1.5);
+//matrix->Fill(3.5,1.5);
+//matrix->Fill(3.5,1.5);
+//
+//matrix->Fill(3.5,3.5);
+//
+//CM::displayMatrix_TH2D(matrix);
+//
+//CM::CopyTH2DtoTH2D( matrix, matrix2, "new", 123);
+//
+//CM::displayMatrix_TH2D(matrix2);
+//
+//CM::normalizeColoumn_TH2D(matrix2, 1);
+//
+//CM::displayMatrix_TH2D(matrix2);
+//
+//CM::plotContMatrix(matrix2, 234, "lolmatrix" );
 
-matrix->Fill(0.5,0.5);
-matrix->Fill(0.5,0.5);
-matrix->Fill(0.5,0.5);
 
-matrix->Fill(0.5,1.5);
-matrix->Fill(0.5,1.5);
-matrix->Fill(0.5,1.5);
+	std::string filename = "/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/preprocessed/EPOS_RECO_level_trkCorr_no_nEv_-1/correl_analysis_0.root";
 
-matrix->Fill(0.5,2.5);
-matrix->Fill(0.5,2.5);
-matrix->Fill(0.5,2.5);
-matrix->Fill(0.5,2.5);
-matrix->Fill(0.5,2.5);
-matrix->Fill(0.5,2.5);
+	TFile *f = new TFile( filename.c_str(), "READ");
+	if ( f->IsZombie() ) {std::cerr << "Error opening file: " << filename << std::endl; }
+	else{ std::cout << Form("TFile %s seems to be loaded.", filename.c_str()) << std::endl; };
 
-matrix->Fill(1.5,0.5);
+	TH2D *corr1 = (TH2D*)f->Get("correl2D_signal_Typ_1_pt_0.20-0.30_nTrk_000-120");
+	TH2D *corr2 = (TH2D*)f->Get("correl2D_signal_Typ_2_pt_0.20-0.30_nTrk_000-120");
+	TH2D *corr3 = (TH2D*)f->Get("correl2D_signal_Typ_3_pt_0.20-0.30_nTrk_000-120");
 
-matrix->Fill(2.5,0.5);
+	TH2D *corr = new TH2D( "lol", "2D Correlation function;#Delta #eta; #Delta #Phi",
+		                                            ndEtaBins,dEtaMin,dEtaMax,ndPhiBins,dPhiMin,dPhiMax);
+;
+	corr->Add(corr1, -0.03);
+	corr->Add(corr2, -0.14);
+	corr->Add(corr3,  1.07);
 
-matrix->Fill(3.5,0.5);
-matrix->Fill(3.5,0.5);
 
-matrix->Fill(3.5,1.5);
-matrix->Fill(3.5,1.5);
-matrix->Fill(3.5,1.5);
+	std::string figurename = "correlation";
+	std::string title = "lol";
+	std::string zaxistitle = "lol";
+	std::string leftlabel  = "leftlabel";
+	std::string rightlabel = "rightlabel";
 
-matrix->Fill(3.5,3.5);
-
-CM::displayMatrix_TH2D(matrix);
-
-CM::CopyTH2DtoTH2D( matrix, matrix2, "new", 123);
-
-CM::displayMatrix_TH2D(matrix2);
-
-CM::normalizeColoumn_TH2D(matrix2, 1);
-
-CM::displayMatrix_TH2D(matrix2);
-
-CM::plotContMatrix(matrix2, 234, "lolmatrix" );
+	plot2DCorrelation(corr , figurename, title, zaxistitle, leftlabel, rightlabel);
 
 }

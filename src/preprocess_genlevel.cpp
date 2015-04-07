@@ -24,8 +24,10 @@ int main( int argc, const char *argv[] )
 	 exit(1);
   }
 
+ std::cout << "preprocess_genlevel started" << std::endl;
 
- TString inpFilename   = argv[1];
+
+ std::string inpFilename   = argv[1];
  std::string tag		  = argv[2];
  int nEvMax 	  		  = atoi( argv[3] );
 
@@ -45,6 +47,7 @@ int main( int argc, const char *argv[] )
  log->repeat = 1000;
  log->label = "DATA";
 
+
  //////////////////////////////////////
  //                                  //
  // ****** Opening input file ****** //
@@ -52,12 +55,15 @@ int main( int argc, const char *argv[] )
  //////////////////////////////////////
 
  // Open file
- TFile *f = TFile::Open(inpFilename);
- if ( f->IsZombie() ) {std::cerr << "Error opening file: " << inpFilename << std::endl; exit(-1);}
+ TFile *f;
+ f = NULL;
+ f = TFile::Open(inpFilename.c_str());
+ if ( f->IsZombie() || (f == NULL) ) {std::cerr << "Error opening file: " << inpFilename << std::endl; exit(-1);}
+ else {std::cout << Form("TFile %s seem to have loaded.\n", inpFilename.c_str()); }
 
  // trackTree
  TTree *trackTree = (TTree*)f->Get("ppTrack/trackTree");
- Tracks tTracks;
+ Particles tTracks;
  bool isMC = true;
  setupParticleTree(trackTree, tTracks);
 
@@ -237,7 +243,6 @@ int main( int argc, const char *argv[] )
 	if ( zvtxbin(vz, nZvtxBins) == -1 ) continue;
 	CFW.nEvents_Processed_signal_total->Fill(0.);
 	if ( multiplicitybin_Ana(hiNtracks, nMultiplicityBins_Ana) == -1) continue;
-	CFW.nEvents_Processed_signal[ multiplicitybin_Ana(hiNtracks, nMultiplicityBins_Ana) ]->Fill(0.);
 
  	ev->Clear(nCorrTyp, nPtBins);
 
@@ -247,7 +252,6 @@ int main( int argc, const char *argv[] )
 
 	// Statistics
 	CFW.nEvents_Processed_signal_total->Fill(1.);
-	CFW.nEvents_Processed_signal[ multiplicitybin_Ana(hiNtracks, nMultiplicityBins_Ana) ]->Fill(1.);
 	nTrkDistr_signal->Fill( hiNtracks );
 	
 	CFW.ResetCurrentEventCorrelation();
@@ -256,7 +260,7 @@ int main( int argc, const char *argv[] )
 	trackTree->GetEntry(iEvA);
 
 	// Read in event
-	ev->ReadInMC(tTracks);
+	ev->ReadInMC( tTracks );
 
 	CFW.SignalCorrelation(ev);
 	CFW.MixedCorrelation(ev, EventCache_ptr);

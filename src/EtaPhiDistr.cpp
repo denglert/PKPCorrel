@@ -87,12 +87,13 @@ int main( int argc, const char *argv[] )
  //////////////////////////////////////
  
  // Open trkCorr file
- TFile *f_trkCorr = new TFile(trkCorrFilename, "READ");
- if ( f_trkCorr->IsZombie() ) {std::cerr << "Error opening file: " << trkCorrFilename << std::endl; exit(-1);}
+ TFile *f_trkCorr = NULL;
+ f_trkCorr = new TFile(trkCorrFilename, "READ");
+ if ( (f_trkCorr->IsZombie() ) || f_trkCorr == NULL ) {std::cerr << "Error opening file: " << trkCorrFilename << std::endl; exit(-1);}
  else {std::cout << "trkCorr File successfully opened." << std::endl;}
 
+ TH3D **trkEff = Read_TH3D_1Darray(f_trkCorr, "hcorr3D typ", nCorrTyp);
 
- TH3D **trkEff = Read_TH3D_1Darray(f_trkCorr, "hcorr typ", 4);
 
  for (int i = 0; i < nCorrTyp; i++)
  {
@@ -110,12 +111,11 @@ int main( int argc, const char *argv[] )
  // trackTree
  // DATA - pptracks
  // MC   - ppTrack
- TTree *trackTree = (TTree*)f->Get("pptracks/trackTree");
- // TTree *trackTree = (TTree*)f->Get("ppTrack/trackTree");
- Tracks tTracks;
- bool isMC = false;
- setupTrackTree(trackTree, tTracks, isMC);
-
+ // TTree *trackTree = (TTree*)f->Get("pptracks/trackTree");
+ TTree *trackTree = (TTree*)f->Get("ppTrack/trackTree");
+ Tracks_c tTracks;
+ bool isMC = true;
+ setupTrackTree_c(trackTree, tTracks, isMC);
 
  // hiEvtAnalyzer
  TTree *EvtAna= (TTree*)f->Get("hiEvtAnalyzer/HiTree");
@@ -126,8 +126,8 @@ int main( int argc, const char *argv[] )
  TTree *SkimAna= (TTree*)f->Get("skimanalysis/HltTree");
  // DATA  -pPAcollisionEventSelection
  // MC   - pPAcollisionEventSelectionPA
- // int pPAcollisionEventSelection; SkimAna->SetBranchAddress("pPAcollisionEventSelectionPA", &pPAcollisionEventSelection);
-int pPAcollisionEventSelection; SkimAna->SetBranchAddress("pPAcollisionEventSelection", &pPAcollisionEventSelection);
+ int pPAcollisionEventSelection; SkimAna->SetBranchAddress("pPAcollisionEventSelectionPA", &pPAcollisionEventSelection);
+// int pPAcollisionEventSelection; SkimAna->SetBranchAddress("pPAcollisionEventSelection", &pPAcollisionEventSelection);
  int pileUpBit;                  SkimAna->SetBranchAddress("pVertexFilterCutGplus", &pileUpBit);
 
  ////////////////////////////////
@@ -138,6 +138,9 @@ int pPAcollisionEventSelection; SkimAna->SetBranchAddress("pPAcollisionEventSele
  
  TFile *output = new TFile(Form("./EtaPhi_distr_%s.root", tag.c_str() ),"RECREATE");
  output->cd();
+
+ // Debuggg 
+ std::cerr << "chicks " << std::endl;
 
  //////////////////////////////
  //                          //
@@ -152,8 +155,8 @@ int pPAcollisionEventSelection; SkimAna->SetBranchAddress("pPAcollisionEventSele
  AnaFW->Setup();
 
  // dEdxvsp map
- TH2D *dEdxvsplinlintyp[4];
- TH2D *dEdxvsploglogtyp[4];
+ TH2D *dEdxvsplinlintyp[nCorrTyp];
+ TH2D *dEdxvsploglogtyp[nCorrTyp];
 
  double l10 = TMath::Log(10);
 
@@ -181,8 +184,7 @@ int pPAcollisionEventSelection; SkimAna->SetBranchAddress("pPAcollisionEventSele
  for (int i=0; i<=ndEdxBinslog; i++)
  { dEdxBins[i] = TMath::Exp(l10*(i*ddEdxlog+ TMath::Log(dEdxminlog)/l10)); }
 
-
- for (int i = 0; i < 4 ; i++)
+ for (int i = 0; i < nCorrTyp ; i++)
  {
 	 dEdxvsplinlintyp[i] = new TH2D (Form("dEdxVsP lin-lin %s", particletype(i).c_str()) ,";p(GeV/c);dE/dx [MeV/cm]", npBins, pminlin, pmaxlin, ndEdxBins, dEdxminlin, dEdxmaxlin);
 	 dEdxvsploglogtyp[i] = new TH2D (Form("dEdxVsP log-log %s", particletype(i).c_str()) ,";p(GeV/c);dE/dx [MeV/cm]", npBinslog, pBins, ndEdxBinslog, dEdxBins);
@@ -193,7 +195,7 @@ int pPAcollisionEventSelection; SkimAna->SetBranchAddress("pPAcollisionEventSele
 
  // Eta and (Eta,Phi) distributions
 
- int nParticles = 4;
+ int nParticles = nCorrTyp;
 
  int nEtaBins  = 100;
  int nPhiBins  = 100;
@@ -274,7 +276,6 @@ int pPAcollisionEventSelection; SkimAna->SetBranchAddress("pPAcollisionEventSele
 	// Load in tracks
 	trackTree->GetEntry(iEvA);
 
-
 	int nTrk = tTracks.nTrk;
 
 	for (int iTrk = 0; iTrk < nTrk; iTrk++)
@@ -285,7 +286,7 @@ int pPAcollisionEventSelection; SkimAna->SetBranchAddress("pPAcollisionEventSele
 		// *** Track selection *** //
 		if ( !TrackSelection(tTracks, iTrk ) ) continue;
 
-		int PID   = pidutil->GetID(p, tTracks.dedx[iTrk], tTracks.trkEta[iTrk]);
+		int PID = pidutil->GetID(tTracks, iTrk);
 
 		int ptBin_ID = ptbin( PID , tTracks.trkPt[iTrk]);
 		int ptBin_CH = ptbin(   0 , tTracks.trkPt[iTrk]);

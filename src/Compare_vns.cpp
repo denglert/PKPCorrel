@@ -93,10 +93,10 @@ int main( int argc, const char *argv[] )
 	kaon_2->SetMarkerStyle(30);
 	prot_2->SetMarkerStyle(4);
 
-	cpar_1->GetFunction("cparv2_fit")->SetBit(TF1::kNotDraw);
-	pion_1->GetFunction("pionv2_fit")->SetBit(TF1::kNotDraw);
-	kaon_1->GetFunction("kaonv2_fit")->SetBit(TF1::kNotDraw);
-	prot_1->GetFunction("protv2_fit")->SetBit(TF1::kNotDraw);
+//	cpar_1->GetFunction("cparv2_fit")->SetBit(TF1::kNotDraw);
+//	pion_1->GetFunction("pionv2_fit")->SetBit(TF1::kNotDraw);
+//	kaon_1->GetFunction("kaonv2_fit")->SetBit(TF1::kNotDraw);
+//	prot_1->GetFunction("protv2_fit")->SetBit(TF1::kNotDraw);
 	cpar_2->GetFunction("cparv2_fit")->SetBit(TF1::kNotDraw);
 	pion_2->GetFunction("pionv2_fit")->SetBit(TF1::kNotDraw);
 	kaon_2->GetFunction("kaonv2_fit")->SetBit(TF1::kNotDraw);
@@ -155,10 +155,10 @@ int main( int argc, const char *argv[] )
 	kaonv2_fit->SetLineStyle(9);
 	protv2_fit->SetLineStyle(9);
 
-   cpar_1->Fit("cparv2_fit", "R");
-   pion_1->Fit("pionv2_fit", "R");
-   kaon_1->Fit("kaonv2_fit", "R");
-   prot_1->Fit("protv2_fit", "R");
+   cpar_1->Fit("cparv2_fit", "0R");
+   pion_1->Fit("pionv2_fit", "0R");
+   kaon_1->Fit("kaonv2_fit", "0R");
+   prot_1->Fit("protv2_fit", "0R");
 
 	// Draw
 	cpar_1->Draw("AP");
@@ -191,6 +191,7 @@ int main( int argc, const char *argv[] )
 	double CMSsystemlabelposy = 0.84;
 	double multlabelposx = 0.62;
 	double multlabelposy = 0.24;
+
 
 	TLegend v2vsptlegend (legend_x1, legend_y1, legend_x2, legend_y2);
 	v2vsptlegend.SetFillStyle(0);

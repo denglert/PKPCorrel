@@ -22,13 +22,13 @@
 
 // zvtx distribution parameters
 const int nZvtxDistrBins  =  13;
-const int nPart = 4;
+const int nCorrTyp = 5;
 const double zVtxDistrMin = -13;
 const double zVtxDistrMax =  13;
 
-const int npt[4]      = { 10,     6,    6,   12 };
-const double ptMin[4] = { 0.3, 0.20, 0.20, 0.20 };
-const double ptMax[4] = { 3.0, 0.80, 0.80, 1.40 };
+const int npt[nCorrTyp]      = { 15,     8,    7,   14,     6 };
+const double ptMin[nCorrTyp] = { 0.3, 0.20, 0.20, 0.20,  1.00 };
+const double ptMax[nCorrTyp] = { 3.0, 1.00, 0.90, 1.60,  1.60 };
 
 // const int npt[4]      = {1,    1,   1,  1};
 // const double ptMin[4] = {0.3, 0.15, 0.15, 0.15};
@@ -37,9 +37,9 @@ const double ptMax[4] = { 3.0, 0.80, 0.80, 1.40 };
 const double ptGlobalMin = 0.1;
 
 //const int neta[4]      = { 48 , 16 , 16  , 16 };
-const int neta[4]      = { 24 ,   8,   8 ,  8 };
-const double etaMin[4] = {-2.4,-0.8,-0.8 ,-0.8};
-const double etaMax[4] = { 2.4, 0.8, 0.8 , 0.8};
+const int neta[nCorrTyp]      = { 24 ,   8,   8 ,  8 ,    8 };
+const double etaMin[nCorrTyp] = {-2.4,-0.8,-0.8 ,-0.8, -0.8 };
+const double etaMax[nCorrTyp] = { 2.4, 0.8, 0.8 , 0.8,  0.8 };
 
 
 //const int nphi = 70;
@@ -50,9 +50,9 @@ const double phiMax =  TMath::Pi();
 
 TH3D** Setup_TH3D_nCorrTyp(const char histoname[], const char histolabel[], const int nXBins[], const double xmin[], const double xmax[], const int nYBins[], const double ymin[], const double ymax[], int nZBins, double zmin, double zmax )
 {
-	TH3D **histos = new TH3D*[nPart];
+	TH3D **histos = new TH3D*[nCorrTyp];
 
-	for( int i = 0; i < nPart; i++)
+	for( int i = 0; i < nCorrTyp; i++)
 	{
 		 histos[i] = new TH3D( Form("%s typ %d", histoname, i), histolabel, nXBins[i], xmin[i], xmax[i], nYBins[i], ymin[i], ymax[i], nZBins, zmin, zmax);
 	}
@@ -62,9 +62,9 @@ TH3D** Setup_TH3D_nCorrTyp(const char histoname[], const char histolabel[], cons
 
 TH2D** Setup_TH2D_nCorrTyp(const char histoname[], const char histolabel[], const int nXBins[], const double xmin[], const double xmax[], const int nYBins[], const double ymin[], const double ymax[])
 {
-	TH2D **histos = new TH2D*[nPart];
+	TH2D **histos = new TH2D*[nCorrTyp];
 
-	for( int i = 0; i < nPart; i++)
+	for( int i = 0; i < nCorrTyp; i++)
 	{
 		 histos[i] = new TH2D( Form("%s typ %d", histoname, i), histolabel, nXBins[i], xmin[i], xmax[i], nYBins[i], ymin[i], ymax[i]);
 	}
@@ -74,9 +74,9 @@ TH2D** Setup_TH2D_nCorrTyp(const char histoname[], const char histolabel[], cons
 
 TH1D** Setup_TH1D_nCorrTyp(const char histoname[], const char histolabel[], const int nXBins[], const double xmin[], const double xmax[])
 {
-	TH1D **histos = new TH1D*[nPart];
+	TH1D **histos = new TH1D*[nCorrTyp];
 
-	for( int i = 0; i < nPart; i++)
+	for( int i = 0; i < nCorrTyp; i++)
 	{
 		 histos[i] = new TH1D( Form("%s typ %d", histoname, i), histolabel, nXBins[i], xmin[i], xmax[i]);
 	}
@@ -93,24 +93,21 @@ bool isInsidePt(int PID, double pt)
 int main( int argc, const char *argv[] )
 {
 
-  if(argc != 8)
+  if(argc != 7)
   {
-    std::cerr << "Usage: TrackCorrection <MC sample> <DATA sample> <sample type> <tag> <nEventsDATA> <nEventsMC> <PIDconfig>" << std::endl;
+    std::cerr << "Usage: TrackCorrection <MC sample> <DATA sample> <tag> <nEventsDATA> <nEventsMC> <PIDconfig>" << std::endl;
 	 exit(1);
   }
 
  std::string inpFilenameDATA = argv[1];
  std::string inpFilenameMC   = argv[2];
- std::string str_sampleType  = argv[3];
- std::string tag		        = argv[4];
- int nEvMaxDATA 	  		     = atoi( argv[5] );
- int nEvMaxMC 	  		        = atoi( argv[6] );
- std::string PIDconfig		  = argv[7];
+ std::string tag		        = argv[3];
+ int nEvMaxDATA 	  		     = atoi( argv[4] );
+ int nEvMaxMC 	  		        = atoi( argv[5] );
+ std::string PIDconfig		  = argv[6];
  
  PIDUtil *pidutil = new PIDUtil;
  pidutil->ReadInConfig(PIDconfig);
-
- sampleType sType = str2enumSampleTyp(str_sampleType);
  
  // Binning
  int nCorrTyp = nCorrTyp_; 
@@ -148,8 +145,10 @@ int main( int argc, const char *argv[] )
  // Open file //
  ///////////////
  
- TFile *fdt = TFile::Open(inpFilenameDATA.c_str());
- if ( fdt->IsZombie() ) {std::cerr << "Error opening file: " << inpFilenameDATA << std::endl; exit(-1);}
+ TFile *fdt = NULL;
+ fdt = TFile::Open(inpFilenameDATA.c_str());
+ if ( fdt->IsZombie() || (fdt == NULL) ) {std::cerr << "Error opening file: " << inpFilenameDATA.c_str() << std::endl; exit(-1);}
+ else {std::cout << Form("TFile %s seem to have loaded.\n", inpFilenameDATA.c_str()); }
 
  //////////////////
  // Initializing //
@@ -159,7 +158,7 @@ int main( int argc, const char *argv[] )
  EvAnaDATA.setupEvtAnaTree( fdt );
 
  EvtSelection EvSelDATA;
- EvSelDATA.setupSkimTree_pPb( fdt, true);
+ EvSelDATA.setupSkimTree_pPb( fdt, false);
 
  ////////////////
  // Event loop //
@@ -186,7 +185,6 @@ int main( int argc, const char *argv[] )
 
  } 
 
-
  log.wr( "DATA processed." );
  log.wr( "zVtx distribution." );
  fdt->Close();
@@ -200,8 +198,10 @@ int main( int argc, const char *argv[] )
  // Open file //
  ///////////////
  
- TFile *fmc = TFile::Open(inpFilenameMC.c_str());
- if ( fmc->IsZombie() ) {std::cerr << "Error opening file: " << inpFilenameMC << std::endl; exit(-1);}
+ TFile *fmc = NULL;
+ fmc = TFile::Open(inpFilenameMC.c_str());
+ if ( (fmc->IsZombie()) || (fmc == NULL) ) {std::cerr << "Error opening file: " << inpFilenameMC << std::endl; exit(-1);}
+ else {std::cout << Form("TFile %s seem to have loaded.\n", inpFilenameMC.c_str()); }
 
  //////////////////
  // Initializing //
@@ -211,9 +211,8 @@ int main( int argc, const char *argv[] )
  EvAnaMC.setupEvtAnaTree( fmc );
 
  EvtSelection EvSelMC;
- EvSelMC.setupSkimTree_pPb( fmc, false);
+ EvSelMC.setupSkimTree_pPb( fmc, true);
 
- 
  ////////////////
  // Event loop //
  ////////////////
@@ -270,9 +269,13 @@ int main( int argc, const char *argv[] )
  //                          //
  //////////////////////////////
  
+ std::cout << "Initializing..." << std::endl;
+
   TH3D **hmatched3D   = Setup_TH3D_nCorrTyp("hmatched3D",   ";p_{T};#eta;#phi", npt,ptMin,ptMax,neta,etaMin,etaMax,nphi,phiMin,phiMax);
   TH3D **hgen3D       = Setup_TH3D_nCorrTyp("hgen3D",       ";p_{T};#eta;#phi", npt,ptMin,ptMax,neta,etaMin,etaMax,nphi,phiMin,phiMax);
-  TH3D *heff3D[nPart];
+  TH3D *heff3D[nCorrTyp];
+
+  std::cout << "hmatched3D, hgen3D, heff3D initialized." << std::endl;
 
   TH2D **hmatched2D   = Setup_TH2D_nCorrTyp("hmatched2D",   ";p_{T};#eta", npt,ptMin,ptMax,neta,etaMin,etaMax);
   TH2D **hgen2D       = Setup_TH2D_nCorrTyp("hgen2D",       ";p_{T};#eta", npt,ptMin,ptMax,neta,etaMin,etaMax);
@@ -281,7 +284,9 @@ int main( int argc, const char *argv[] )
   TH2D **hsecondary2D = Setup_TH2D_nCorrTyp("hsecondary2D", ";p_{T};#eta", npt,ptMin,ptMax,neta,etaMin,etaMax);
   TH2D **hreal2D      = Setup_TH2D_nCorrTyp("hreal2D",      ";p_{T};#eta", npt,ptMin,ptMax,neta,etaMin,etaMax);
   TH2D **hmultrec2D   = Setup_TH2D_nCorrTyp("hmultrec2D",   ";p_{T};#eta", npt,ptMin,ptMax,neta,etaMin,etaMax);
-  TH2D *hmultrecrate2D[nPart];
+  TH2D *hmultrecrate2D[nCorrTyp];
+
+  std::cout << "hmatched2D, hgen2D, hfake2D, hreco2D, hsecondary2D, hreco2D, hmultrecrate2D, hmultrecrate2D initialized." << std::endl;
 
   TH1D **hmatched1D   = Setup_TH1D_nCorrTyp("hmatched1D",   ";#eta", neta,etaMin,etaMax);
   TH1D **hgen1D       = Setup_TH1D_nCorrTyp("hgen1D",       ";#eta", neta,etaMin,etaMax);
@@ -290,10 +295,14 @@ int main( int argc, const char *argv[] )
   TH1D **hsecondary1D = Setup_TH1D_nCorrTyp("hsecondary1D", ";#eta", neta,etaMin,etaMax);
   TH1D **hreal1D      = Setup_TH1D_nCorrTyp("hreal1D",      ";#eta", neta,etaMin,etaMax);
   TH1D **hmultrec1D   = Setup_TH1D_nCorrTyp("hmultrec1D",   ";#eta", neta,etaMin,etaMax);
-  TH1D *hmultrecrate1D[nPart];
+  TH1D *hmultrecrate1D[nCorrTyp];
+
+  std::cout << "hmatched1D, hgen1D, hfakse1D, hreco1D, hsecondary1D, hreal1D, hmultrec1D, hmultrecrate1D initialized." << std::endl;
 
   TH3D **hcorr3D      = Setup_TH3D_nCorrTyp("hcorr3D",      ";p_{T};#eta;#phi", npt,ptMin,ptMax,neta,etaMin,etaMax,nphi,phiMin,phiMax);
 
+
+  std::cout << "hcorr3D initialized." << std::endl;
 
  ///////////////////////////////////////
  //                                   //
@@ -336,13 +345,13 @@ int main( int argc, const char *argv[] )
 		{
 
 			// *** Track selection *** //
-			if ( !TrackSelection_c(tTracks, iTrk ) ) continue;
+			if ( !TrackSelection(tTracks, iTrk ) ) continue;
 
 			double pt  = tTracks.trkPt [iTrk];
 			double eta = tTracks.trkEta[iTrk]; 
 			double phi = tTracks.trkPhi[iTrk];
 			float p    = pt * cosh(eta);
-			int PID    = pidutil->GetID(p, tTracks.dedx[iTrk], tTracks.trkEta[iTrk]);
+			int PID 	= pidutil->GetID( tTracks, iTrk);
 			bool isPID = (PID != 99);
 			
 			bool isInsideChrPt = ( ptbin(  0, pt) != -1 );
@@ -401,7 +410,7 @@ int main( int argc, const char *argv[] )
 			double eta = tTracks.pEta[iPart];
 			double phi = tTracks.pPhi[iPart];
 
-			int PID = McPID2AnaPID( tTracks.pPId[iPart] , eta);
+			int PID 	= pidutil->GetIDgenPart_trkCorr( tTracks, iPart);
 			bool isPID = (PID != 99);
 
 		   bool isInsideChrPt = ( ptbin(  0, pt) != -1 );
@@ -425,15 +434,15 @@ int main( int argc, const char *argv[] )
 			// matched track selection
 			if( !( mTrackSelection_c( tTracks, iPart) )) continue;
 
+
 			double mpt  = tTracks.mtrkPt [iPart];
 			double meta = tTracks.pEta[iPart]; 
-			float  mp   = mpt * cosh(meta);
-			int    mPID = pidutil->GetID(mp, tTracks.mtrkdedx[iPart], eta);
+			int    mPID = pidutil->GetIDmTrk_trkCorr(tTracks, iPart);
 			bool   misPID = (mPID != 99);
 		
-				hmatched3D[ 0 ]->Fill(pt,eta,phi,wzvtx); 
-				hmatched2D[ 0 ]->Fill(pt,eta,    wzvtx); 
-				hmultrec2D[ 0 ]->Fill(pt,eta,wzvtx*tTracks.pNRec[iPart]);
+				hmatched3D[ 0 ]->Fill(mpt,eta,phi,wzvtx); 
+				hmatched2D[ 0 ]->Fill(mpt,eta,    wzvtx); 
+				hmultrec2D[ 0 ]->Fill(mpt,eta,wzvtx*tTracks.pNRec[iPart]);
 				if (isInsideChrPt)
 				{		  
 				hmultrec1D[ 0 ]->Fill(   eta,wzvtx*tTracks.pNRec[iPart]);
@@ -441,9 +450,9 @@ int main( int argc, const char *argv[] )
 				}
 			if ( misPID )
 			{ 
-				hmatched3D[mPID]->Fill(pt,eta,phi,wzvtx); 
-				hmatched2D[mPID]->Fill(pt,eta,    wzvtx); 
-				hmultrec2D[mPID]->Fill(pt,eta,wzvtx*tTracks.pNRec[iPart]);
+				hmatched3D[mPID]->Fill(mpt,eta,phi,wzvtx); 
+				hmatched2D[mPID]->Fill(mpt,eta,    wzvtx); 
+				hmultrec2D[mPID]->Fill(mpt,eta,wzvtx*tTracks.pNRec[iPart]);
 				if (isInsidePIDPt)
 				{
 				hmatched1D[mPID]->Fill(   eta,    wzvtx); 
@@ -453,10 +462,9 @@ int main( int argc, const char *argv[] )
 			}
 		
 		   }
-		
   }
 
-  for( int iPar = 0; iPar < nPart; iPar++)
+  for( int iPar = 0; iPar < nCorrTyp; iPar++)
   {
    	hfake2D     [iPar] -> Divide( hreco2D   [iPar] );
    	hfake1D     [iPar] -> Divide( hreco1D   [iPar] );
@@ -474,18 +482,18 @@ int main( int argc, const char *argv[] )
 
   // Filling track correction table
   double ptbw[4];
-  for(int i = 0; i < nPart; i++)
+  for(int i = 0; i < nCorrTyp; i++)
   {
 	ptbw[i] = (ptMax[i]-ptMin[i])/npt[i];
   }
 
   double etabw[4]; 
-  for(int i = 0; i < nPart; i++)
+  for(int i = 0; i < nCorrTyp; i++)
   { etabw[i] = (etaMax[i]-etaMin[i])/neta[i];}
 
   const double phibw = (phiMax-phiMin)/nphi;
 
-  for(int i = 0; i < nPart; i++)
+  for(int i = 0; i < nCorrTyp; i++)
   for(int x = 1; x < npt[i]  +1; x++)
   for(int y = 1; y < neta[i] +1; y++)
   for(int z = 1; z < nphi +1; z++)

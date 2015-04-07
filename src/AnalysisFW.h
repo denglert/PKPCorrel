@@ -64,7 +64,7 @@ class EventData
 	int GetMultiplicityBin_EvM();
 
 	void ReadInDATA(const Tracks &tTracks, TH2D *dEdxvsP, PIDUtil *pidutil);
-	void ReadInMC  (Tracks &tTracks);
+	void ReadInMC  (Particles &tTracks);
 
 	void Clear(int nCorrTyp, int *nPtBins);
 };
@@ -75,7 +75,7 @@ extern const int nMixEv;
 // Event & TrackSelection
 bool EventSelection( const int &pPAcollisionEventSelection, const int &pileUpBit );
 bool TrackSelection( const Tracks &tTracks, int iTrk );
-bool TrackSelection_c( const Tracks_c &tTracks, int iTrk );
+bool TrackSelection( const Tracks_c &tTracks, int iTrk );
 bool mTrackSelection_c( const Tracks_c &tTracks, int iTrk );
 double trackWeight (TH3D **trackCorr, int PID, double pt, double eta, double phi, bool doTable);
 

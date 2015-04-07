@@ -1,5 +1,4 @@
 #!/bin/sh
-
 echo "Running submitall.sh"
 
 # Flag = test or full
@@ -21,20 +20,23 @@ flag=$1
 #workdir=MinBias_withTrackCorrection_2nw_eta_0.8
 #workdir=HighMult_PID_pi_def_K_3.2_p_3.4_trkCorr
 #workdir=HighMult_PID_pi_def_K_3.4_p_3.6_trkCorr_debug
+#workdir=MC_vzhukova-EPOS_RECO_batch_recolevel_PIDconfig_default_trkCorr
+workdir=Daedalus_I_HighMult_Full_PIDConfig_default_trkCorr
+#workdir=Daedalus_I_MinBias_Full_PIDConfig_default_trkCorr
+
 binary=preprocess
-workdir=MC_vzhukova-EPOS_RECO_batch_recolevel_PIDconfig_default_trkCorr
 #workdir=PIDscan_MinBias_config_strict_1
-isMC=yes
+isMC=no
 dotrkCorr=no
 workdir=${workdir}_${dotrkCorr}
-trkCorrlabel=trkCorr_HIJING_raven_v1
+trkCorrlabel=trkCorr_HIJING_PIDConfig_default_celes_i
 trkCorrFile=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/trkCorr/${trkCorrlabel}/trkCorrections_0.root
 PIDconfig=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/PIDUtils/config/config_default
 nEvents=-1
 queue=1nw
 #inputlist="list_minbias"
-#inputlist="list_highmult"
-inputlist="list_MC_vzhukova-EPOS_RECO_batch_HiForest"
+inputlist="list_highmult"
+#inputlist="list_MC_vzhukova-EPOS_RECO_batch_HiForest"
 
 ##########################################################
 # script environment
@@ -74,10 +76,13 @@ cd $batchdir
 ####################
 # ./submitall.sh test
 # parameteres
+
 testworkdir=testsubmission
 testdotrkCorr=no
-testtrkCorrlabel=batchjob_TrackCorrection_full_mtrkdedx_added_minptfixed
-testtrkCorrFile=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/trkCorr/${trkCorrlabel}/trkCorrections_0.root
+testisMC=no
+#testtrkCorrlabel=batchjob_TrackCorrection_full_mtrkdedx_added_minptfixed
+testtrkCorrlabel=trkCorr_HIJING_PIDConfig_default_celes_i
+testtrkCorrFile=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/trkCorr/${testtrkCorrlabel}/trkCorrections_0.root
 testnEvents=10
 testqueue=test
 
@@ -112,7 +117,7 @@ if [ "$flag" == "test" ]; then
 		cp $testtrkCorrFile ${testtrkCorrFileit}
 		source=$(awk "NR == $i" $inputlist)
 		echo $source 
-		bsub -J PreProcess_PKP_test_$i -q $testqueue tasks.sh $relbinary $testworkdir $source $testdotrkCorr $testtrkCorrFileit $PIDconfig $i $testnEvents 
+		bsub -J PreProcess_PKP_test_$i -q $testqueue tasks.sh $relbinary $testworkdir $source $testisMC $testdotrkCorr $testtrkCorrFileit $PIDconfig $i $testnEvents 
 	done
 elif [ "$flag" == "full" ]; then
 	# Remove previous workdir and create new one

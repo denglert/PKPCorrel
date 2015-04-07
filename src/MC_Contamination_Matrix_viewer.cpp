@@ -26,6 +26,7 @@ const double ptbw  = 0.1;
 int main( int argc, const char *argv[] )
 { 
 
+
  if(argc != 3)
  {
    std::cerr << "Usage: MC_Contamination_viewer <trkCorr.root file to be displayed> <PIDConfig>" << std::endl;
@@ -88,7 +89,7 @@ int main( int argc, const char *argv[] )
  for( int i = 0; i < CM::nPtBins[RgnBin]; i++ )
  {
 
-		int ptBin = CM::PtBins[RgnBin][i];
+		int ptBin = CM::PtBins[1][RgnBin][i];
 
    	double pt1 = (CM::ptMin + (ptBin  ) * CM::PtBw);
 		double pt2 = (CM::ptMin + (ptBin+1) * CM::PtBw);
@@ -192,7 +193,7 @@ int main( int argc, const char *argv[] )
  for( int RgnBin = 0; RgnBin < CM::nRegions; RgnBin++ )
  for( int i = 0; i < CM::nPtBins[RgnBin]; i++ )
  {
-	int ptBin = CM::PtBins[RgnBin][i];
+	int ptBin = CM::PtBins[1][RgnBin][i];
 
    double pt1 = (CM::ptMin + (ptBin  ) * CM::PtBw);
 	double pt2 = (CM::ptMin + (ptBin+1) * CM::PtBw);
@@ -206,6 +207,7 @@ int main( int argc, const char *argv[] )
 	cont_matrix_inv_TMatrix[ptBin]->Write(str_cont_matrix_inv_TMatrix.c_str());
 
  }
+
  output->Close();
 
  

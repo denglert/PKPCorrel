@@ -12,8 +12,8 @@ all : ../bin/preprocess ../bin/process ../bin/preprocess_minimal
 
 ### Proton, kaon and pion - charged hadron correlation
 # process
-../bin/process : process.o $(CMN) $(CORE)
-	$(CC) $(LFLAGS) -o $@ $< $(CORE)
+../bin/process : process.o $(CMN) $(FULL)
+	$(CC) $(LFLAGS) -o $@ $< $(FULL)
 
 process.o : process.cpp 
 	$(CC) $(CFLAGS) -o $@ -c $<
@@ -82,8 +82,8 @@ EtaPhiDistr.o : EtaPhiDistr.cpp
 
 ####################################################################################
 ### MC_Contamination_Matrix
-../bin/MC_Contamination_Matrix : MC_Contamination_Matrix.o $(CMN) $(CORE)
-	$(CC) $(LFLAGS) -o $@ $< $(CORE) 
+../bin/MC_Contamination_Matrix : MC_Contamination_Matrix.o $(CMN) $(FULL)
+	$(CC) $(LFLAGS) -o $@ $< $(FULL) 
 
 MC_Contamination_Matrix.o : MC_Contamination_Matrix.cpp
 	$(CC) $(CFLAGS) -o $@ -c $<

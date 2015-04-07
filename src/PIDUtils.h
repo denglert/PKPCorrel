@@ -77,6 +77,9 @@ public :
 	float BB_Prot_mindEdxcut;
 	float BB_Prot_maxpcut;
 
+	float BB_NonProt_mindEdxcut;
+	float BB_NonProt_maxpcut;
+
 	std::string configfile;
 
 	int unIDcode;
@@ -85,7 +88,10 @@ public :
 	
 	void ReadInConfig( std::string PIDconfigfile_str );
 
-	int    GetID   (const Tracks &tTracks, int iTrk);
+	int GetID      (const Tracks &tTracks, int iTrk);
+	int GetID      (const Tracks_c &tTracks, int iTrk);
+	int GetIDmTrk_trkCorr(const Tracks_c &tTracks, int iTrk);
+	int GetIDgenPart_trkCorr(const Tracks_c &tTracks, int iPart);
 	double GetID_cm(const Tracks_c &tTracks, int iTrk);
 };
 
@@ -125,8 +131,11 @@ extern const float mindEdx;
 float BBcurve1c(float *x, const float *par);
 double BBcurve1 (double *x, double *par);
 int GetPID(float p, float dEdx, float eta);
-int McPID2AnaPID       ( int McPID, double eta);
+
+int McPID2AnaPID ( const Particles &tTracks, int iPart);
+int McPID2AnaPID ( const Tracks_c  &tTracks, int iPart);
 double McPID2AnaPID_cm(const Tracks_c &tTracks, int iPart);
+
 bool isPion(float p, float dEdx);
 bool isKaon(float p, float dEdx);
 bool isProt(float p, float dEdx);

@@ -30,7 +30,6 @@ PIDUtil::~PIDUtil(){};
 
 void PIDUtil::ReadInConfig( std::string PIDconfigfile_str )
 {
-
 	configfile = PIDconfigfile_str;
 
 	std::cout << "Reading in file: " << configfile.c_str() << std::endl;
@@ -58,47 +57,55 @@ void PIDUtil::ReadInConfig( std::string PIDconfigfile_str )
 	config >> BB_Prot_hig_par[0] >> BB_Prot_hig_par[1] >> BB_Prot_hig_par[2];
 	config >> BB_Prot_mindEdxcut;
 	config >> BB_Prot_maxpcut;
+	config >> dummyLine;
+	std::getline(config, dummyLine);
+	config >> BB_NonProt_mindEdxcut;
+	config >> BB_NonProt_maxpcut;
 	
-//	std::cout << "##########" << std::endl;
-//	std::cout << "Pion"       << std::endl;
-//	std::cout << "low"        << std::endl;
-//	std::cout << "a[0]: "     << BB_Pion_low_par[0] << std::endl;
-//	std::cout << "a[1]: "     << BB_Pion_low_par[1] << std::endl;
-//	std::cout << "a[2]: "     << BB_Pion_low_par[2] << std::endl;
-//	std::cout << "hig"        << std::endl;
-//	std::cout << "a[0]: "     << BB_Pion_hig_par[0] << std::endl;
-//	std::cout << "a[1]: "     << BB_Pion_hig_par[1] << std::endl;
-//	std::cout << "a[2]: "     << BB_Pion_hig_par[2] << std::endl;
-//	std::cout << "dEdx_min: " << BB_Pion_mindEdxcut << std::endl;
-//	std::cout << "pmin: "     << BB_Pion_minpcut    << std::endl;
-//	std::cout << "pmax: "     << BB_Pion_maxpcut    << std::endl;
-//	std::cout << "##########" << std::endl;
-//	std::cout << "Kaon"       << std::endl;
-//	std::cout << "low"        << std::endl;
-//	std::cout << "a[0]: "     << BB_Kaon_low_par[0] << std::endl;
-//	std::cout << "a[1]: "     << BB_Kaon_low_par[1] << std::endl;
-//	std::cout << "a[2]: "     << BB_Kaon_low_par[2] << std::endl;
-//	std::cout << "hig"        << std::endl;
-//	std::cout << "a[0]: "     << BB_Kaon_hig_par[0] << std::endl;
-//	std::cout << "a[1]: "     << BB_Kaon_hig_par[1] << std::endl;
-//	std::cout << "a[2]: "     << BB_Kaon_hig_par[2] << std::endl;
-//	std::cout << "dEdx_min: " << BB_Kaon_mindEdxcut << std::endl;
-//	std::cout << "pmax: "     << BB_Kaon_maxpcut    << std::endl;
-//	std::cout << "##########" << std::endl;
-//	std::cout << "Prot"       << std::endl;
-//	std::cout << "low"        << std::endl;
-//	std::cout << "a[0]: "     << BB_Prot_low_par[0] << std::endl;
-//	std::cout << "a[1]: "     << BB_Prot_low_par[1] << std::endl;
-//	std::cout << "a[2]: "     << BB_Prot_low_par[2] << std::endl;
-//	std::cout << "hig"        << std::endl;
-//	std::cout << "a[0]: "     << BB_Prot_hig_par[0] << std::endl;
-//	std::cout << "a[1]: "     << BB_Prot_hig_par[1] << std::endl;
-//	std::cout << "a[2]: "     << BB_Prot_hig_par[2] << std::endl;
-//	std::cout << "dEdx_min: " << BB_Prot_mindEdxcut << std::endl;
-//	std::cout << "pmax: "     << BB_Prot_maxpcut    << std::endl;
+	std::cout << "##########" << std::endl;
+	std::cout << "Pion"       << std::endl;
+	std::cout << "low"        << std::endl;
+	std::cout << "a[0]: "     << BB_Pion_low_par[0] << std::endl;
+	std::cout << "a[1]: "     << BB_Pion_low_par[1] << std::endl;
+	std::cout << "a[2]: "     << BB_Pion_low_par[2] << std::endl;
+	std::cout << "hig"        << std::endl;
+	std::cout << "a[0]: "     << BB_Pion_hig_par[0] << std::endl;
+	std::cout << "a[1]: "     << BB_Pion_hig_par[1] << std::endl;
+	std::cout << "a[2]: "     << BB_Pion_hig_par[2] << std::endl;
+	std::cout << "dEdx_min: " << BB_Pion_mindEdxcut << std::endl;
+	std::cout << "pmin: "     << BB_Pion_minpcut    << std::endl;
+	std::cout << "pmax: "     << BB_Pion_maxpcut    << std::endl;
+	std::cout << "##########" << std::endl;
+	std::cout << "Kaon"       << std::endl;
+	std::cout << "low"        << std::endl;
+	std::cout << "a[0]: "     << BB_Kaon_low_par[0] << std::endl;
+	std::cout << "a[1]: "     << BB_Kaon_low_par[1] << std::endl;
+	std::cout << "a[2]: "     << BB_Kaon_low_par[2] << std::endl;
+	std::cout << "hig"        << std::endl;
+	std::cout << "a[0]: "     << BB_Kaon_hig_par[0] << std::endl;
+	std::cout << "a[1]: "     << BB_Kaon_hig_par[1] << std::endl;
+	std::cout << "a[2]: "     << BB_Kaon_hig_par[2] << std::endl;
+	std::cout << "dEdx_min: " << BB_Kaon_mindEdxcut << std::endl;
+	std::cout << "pmax: "     << BB_Kaon_maxpcut    << std::endl;
+	std::cout << "##########" << std::endl;
+	std::cout << "Prot"       << std::endl;
+	std::cout << "low"        << std::endl;
+	std::cout << "a[0]: "     << BB_Prot_low_par[0] << std::endl;
+	std::cout << "a[1]: "     << BB_Prot_low_par[1] << std::endl;
+	std::cout << "a[2]: "     << BB_Prot_low_par[2] << std::endl;
+	std::cout << "hig"        << std::endl;
+	std::cout << "a[0]: "     << BB_Prot_hig_par[0] << std::endl;
+	std::cout << "a[1]: "     << BB_Prot_hig_par[1] << std::endl;
+	std::cout << "a[2]: "     << BB_Prot_hig_par[2] << std::endl;
+	std::cout << "dEdx_min: " << BB_Prot_mindEdxcut << std::endl;
+	std::cout << "pmax: "     << BB_Prot_maxpcut    << std::endl;
+	std::cout << "##########" << std::endl;
+	std::cout << "NonProt"       << std::endl;
+	std::cout << "dEdx_min: " << BB_NonProt_mindEdxcut << std::endl;
+	std::cout << "pmax: "     << BB_NonProt_maxpcut    << std::endl;
 }
 
-int PIDUtil::GetID(const Tracks &tTracks, int iTrk)
+int PIDUtil::GetID(const Tracks_c &tTracks, int iTrk)
 {
 	float eta  = tTracks.trkEta[iTrk];
   	float p    = tTracks.trkPt[iTrk] * cosh(tTracks.trkEta[iTrk]);
@@ -108,8 +115,82 @@ int PIDUtil::GetID(const Tracks &tTracks, int iTrk)
 	if (  etaMax < fabs(eta) ) 							{return unIDcode;}
 	if (  isPion(p, dEdx) == true ) 						{return 1;}
 	if (  isKaon(p, dEdx) == true ) 						{return 2;}
-	if ( (isProt(p, dEdx) == false) && (1.0 < pt) ) {return 4;}
-	if (  isProt(p, dEdx) == true ) 						{return 3;}
+
+	bool izProt = isProt(p, dEdx);
+
+	if (   izProt ) 											{return 3;}
+	if (  (izProt == false) && (p < BB_NonProt_maxpcut) && ( BB_NonProt_mindEdxcut < dEdx) ) {return 4;}
+	return unIDcode;
+}
+
+int PIDUtil::GetID(const Tracks &tTracks, int iTrk)
+{
+
+	float eta  = tTracks.trkEta[iTrk];
+  	float p    = tTracks.trkPt[iTrk] * cosh(tTracks.trkEta[iTrk]);
+	float pt   = tTracks.trkPt[iTrk];
+	float dEdx = tTracks.dedx[iTrk];
+
+	if (  etaMax < fabs(eta) ) 							{return unIDcode;}
+	if (  isPion(p, dEdx) == true ) 						{return 1;}
+	if (  isKaon(p, dEdx) == true ) 						{return 2;}
+
+	bool izProt = isProt(p, dEdx);
+
+	if (   izProt ) 											{return 3;}
+	if (  (izProt == false) && (p < BB_NonProt_maxpcut) && ( BB_NonProt_mindEdxcut < dEdx) ) {return 4;}
+
+	return unIDcode;
+}
+
+int PIDUtil::GetIDmTrk_trkCorr(const Tracks_c &tTracks, int iTrk)
+{
+
+	float eta  = tTracks.pEta[iTrk];
+	float pt   = tTracks.mtrkPt[iTrk];
+  	float p    = pt * cosh(eta);
+	float dEdx = tTracks.mtrkdedx[iTrk];
+
+	if (  etaMax < fabs(eta) ) 							{return unIDcode;}
+	if (  isPion(p, dEdx) == true ) 						{return 1;}
+	if (  isKaon(p, dEdx) == true ) 						{return 2;}
+
+	bool izProt = isProt(p, dEdx);
+
+	if (   izProt ) 											{return 3;}
+	if (  (izProt == false) && (p < BB_NonProt_maxpcut) && ( BB_NonProt_mindEdxcut < dEdx) ) {return 4;}
+
+	return unIDcode;
+}
+
+int PIDUtil::GetIDgenPart_trkCorr(const Tracks_c &tTracks, int iPart)
+{
+
+	float eta  = tTracks.pEta[iPart];
+	float pt   = tTracks.pPt [iPart];
+  	float p    = pt * cosh(eta);
+	int McPID  = tTracks.pPId[iPart];
+
+	if (  etaMax < fabs(eta) ) 						{return unIDcode;}
+
+	if ( p < BB_Kaon_maxpcut )
+	{
+		if (( McPID == 211)  || (McPID == -211) ) 	{ return 1; }
+		if (( McPID == 321)  || (McPID == -321) ) 	{ return 2; }
+		if (( McPID == 2212) || (McPID == -2212)) 	{ return 3; }
+	}
+	else if ( ( BB_Kaon_maxpcut < p) && (p < BB_Pion_maxpcut) )
+	{
+		if (( McPID == 211)  || (McPID == -211) ) 	{ return 1; }
+		if (( McPID == 2212) || (McPID == -2212)) 	{ return 3; }
+	}
+	else if ( ( BB_Pion_maxpcut < p) && (p < BB_Prot_maxpcut) )
+	{
+		if (  ( McPID == 2212) || (McPID == -2212)) 	{ return 3; }
+		else {return 4;}
+		
+	}
+
 	return unIDcode;
 }
 
@@ -132,8 +213,12 @@ double PIDUtil::GetID_cm(const Tracks_c &tTracks, int iTrk)
 	if (  etaMax < fabs(eta) ) 							  {return unIDcode;}
 	if (  isPion(mp, dEdx) == true ) 					  {return 0.5;}
 	if (  isKaon(mp, dEdx) == true ) 					  {return 1.5;}
-	if ( (isProt(mp, dEdx) == false) && (1.0 < mpt) ) {return 3.5;}
-	if (  isProt(mp, dEdx) == true ) 					  {return 2.5;}
+
+	bool izProt = isProt(mp, dEdx);
+
+	if (   izProt ) 											{return 2.5;}
+	if (  (izProt == false) && (mp < BB_NonProt_maxpcut) && ( BB_NonProt_mindEdxcut < dEdx) ) {return 3.5;}
+
 	return unIDcode;
 }
 
@@ -163,17 +248,17 @@ bool PIDUtil::isKaon(float p, float dEdx)
 }
 
 // isProt
-bool PIDUtil::isProt(float p, float dEdx)
+bool PIDUtil::isProt( float p, float dEdx )
 {
 	if (  (BBcurve(&p , BB_Prot_low_par) < dEdx ) && (dEdx < BBcurve(&p , BB_Prot_hig_par))  &&  (p < BB_Prot_maxpcut ) && (BB_Prot_mindEdxcut < dEdx) )
-	{ return true; }
+	{ return true;  }
 	else
-	{return false; }
+	{ return false; }
 }
 
 //////////////////////////////////////////////////////////////////////////
 
-double BBcurve1(double *x, double *par)
+double BBcurve1( double *x, double *par )
 {
 	return ((par[0] / (x[0]-par[2])) / (x[0]-par[2])) + par[1];
 }
@@ -224,12 +309,45 @@ double BBcurve1(double *x, double *par)
 //	return 99;
 //}
 
-int McPID2AnaPID ( int McPID, double eta)
+//int McPID2AnaPID ( const Tracks_c &tTracks, int iPart)
+//{
+//
+//	float eta  = tTracks.pEta[iPart];
+//	float pt   = tTracks.pPt [iPart];
+//	int McPID  = tTracks.pPId[iPart];
+//  	float p    = pt * cosh(eta);
+//
+//	if ( 0.8 < fabs(eta) ) {return 99;}
+//
+//	if ( p < 1.0 )
+//	{
+//	if (( McPID == 211)  || (McPID == -211) ) 	{ return 1; }
+//	if (( McPID == 321)  || (McPID == -321) ) 	{ return 2; }
+//	if (( McPID == 2212) || (McPID == -2212)) 	{ return 3; }
+//	}
+//	if ( 1.0 < p )
+//	{
+//		if (  ( McPID == 2212) || (McPID == -2212) ) { return 3; }
+//		if (!(( McPID == 2212) || (McPID == -2212))) { return 4; }
+//	}
+//
+//	return 99;
+//};
+
+int McPID2AnaPID ( const Particles &tTracks, int iPart)
 {
+
+	float eta  = tTracks.pEta[iPart];
+	float pt   = tTracks.pPt [iPart];
+	int McPID  = tTracks.pPId[iPart];
+  	float p    = pt * cosh(eta);
+
 	if ( 0.8 < fabs(eta) ) {return 99;}
+
 	if (( McPID == 211)  || (McPID == -211) ) 	{ return 1; }
 	if (( McPID == 321)  || (McPID == -321) ) 	{ return 2; }
 	if (( McPID == 2212) || (McPID == -2212)) 	{ return 3; }
+
 	return 99;
 };
 

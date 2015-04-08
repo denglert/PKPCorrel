@@ -135,9 +135,6 @@ class CorrelationFramework
 	// Log
 	LogFile *log;
 
-	// TrackCorrection table
-	TH3D **trkCorr;
-
 	// number of events counter
 	TH1D  *nEvents_Processed_signal_total;
  	TH1D  *nEvents_Processed_backgr_total;
@@ -159,8 +156,6 @@ class CorrelationFramework
 	void ReadIn_CorrelationFuncs( TFile *f );
 	void Set_dEtacut( int negdEtaCut1Bin, int negdEtaCut2Bin, int posdEtaCut1Bin, int posdEtaCut2Bin );
 	void Set_dEtacut( );
-
-	double trackWeight(int PID, float pt, float eta, float phi);
 
 	void DeContaminate();
 	void SignalCorrelation(EventData *ev);

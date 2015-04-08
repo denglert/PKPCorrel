@@ -13,6 +13,9 @@ const int nMixEv = 10;
 const double normalizationRegionMassMin = 1.0400;
 const double normalizationRegionMassMax = 1.0495;
 
+
+const double maxtrkCorr2 = 10;
+
 /////////////////////////////
 // *** EventData class *** //
 /////////////////////////////
@@ -25,6 +28,28 @@ void EventData::SetnTrk(int nTrk_) { nTrk  = nTrk_; }
 int EventData::GetzVtxBin()         { return zvtxbin(zVtx, nZvtxBins_); }
 int EventData::GetMultiplicityBin_Ana( int nMultiplicityBins_Ana) { int bin = multiplicitybin_Ana(nTrk, nMultiplicityBins_Ana); return bin;}
 int EventData::GetMultiplicityBin_EvM() { return multiplicitybin_EvM(nTrk); }
+
+///////////////////////
+// - trackWeight
+double TrackCorr::trackWeight(int PID, float pt, float eta, float phi)
+{
+
+	if( DoTrackWeight )
+	{ 
+		if( (PID == 0))
+		{ 
+			double value = table[0]->GetBinContent(table[0]->FindBin(pt,eta,phi));
+			return value;
+		}
+		else if( (PID != 99) )
+		 {
+			double value = table[PID]->GetBinContent(table[PID]->FindBin(pt,eta,phi));
+		 	return value;
+		 }
+	}	
+	else
+	{ return 1; }
+}
 
 LogFile::LogFile(const char filename[])
 { ofs.open( filename ); }
@@ -177,7 +202,7 @@ bool mTrackSelection_c( const Tracks_c &tTracks, int iTrk )
 
 
 // ReadInDATA
-void EventData::ReadInDATA( const Tracks &tTracks, TH2D *dEdxvsP, PIDUtil *pidutil)
+void EventData::ReadInDATA( const Tracks &tTracks, PIDUtil *pidutil, TrackCorr *trkCorr)
 {
 
 	int nTrk = tTracks.nTrk;
@@ -185,47 +210,49 @@ void EventData::ReadInDATA( const Tracks &tTracks, TH2D *dEdxvsP, PIDUtil *pidut
 	for (int iTrk = 0; iTrk < nTrk; iTrk++)
 	{
 
-  		float p = tTracks.trkPt[iTrk] * cosh(tTracks.trkEta[iTrk]);
-
-
 		// *** Track selection *** //
 		if ( !TrackSelection(tTracks, iTrk ) ) continue;
 
-		int PID = pidutil->GetID( tTracks, iTrk);
+		float pt  = tTracks.trkPt [iTrk];
+		float eta = tTracks.trkEta[iTrk];
+		float phi = tTracks.trkPhi[iTrk];
 
-		int ptBin_CH = ptbin(   0 , tTracks.trkPt[iTrk]);
-		int ptBin_ID = ptbin( PID , tTracks.trkPt[iTrk]);
-
-		bool isOutsideReferencePartPtRange = ( ( tTracks.trkPt[iTrk] < ptref1 ) || ( ptref2 < tTracks.trkPt[iTrk] ) );
-		bool isOutsideIdentifHadronPtRange = ( ptBin_ID == -1);
-		bool isOutsideChargedHadronPtRange = ( ptBin_CH == -1);
-
-		if ( isOutsideReferencePartPtRange && isOutsideChargedHadronPtRange && isOutsideIdentifHadronPtRange ) continue;
-		// *** Track selection *** //
-		
-		dEdxvsP->Fill( p, tTracks.dedx[iTrk] );
-
-  		// Track fill up
   		track trk;
-  		trk.charge  = tTracks.trkCharge[iTrk];
-  		trk.pid  	= PID;
-  		trk.pt      = tTracks.trkPt[iTrk];
-  		trk.phi     = tTracks.trkPhi[iTrk];
-  		trk.eta     = tTracks.trkEta[iTrk];
+		trk.pid 		 = pidutil->GetID( tTracks, iTrk);
+		trk.ptBin_CH = ptbin(       0 , pt );
+		trk.IsPID = false;
+		if ( trk.pid != 99)
+		{
+		 trk.ptBin_ID = ptbin( trk.pid , pt );
+		 trk.IsPID    = ( trk.ptBin_ID != -1 );
+		}
 
+		trk.IsInsideReferencePtRange = ( (ptref1 < pt) && ( pt < ptref2 ));
+		trk.IsInsideChParticlPtRange = ( trk.ptBin_CH != -1 );
+		if ( !trk.IsInsideReferencePtRange && !trk.IsPID ) continue;
+
+		trk.w0 = trkCorr->trackWeight(     0  , pt, eta, phi); 
+		trk.w  = trkCorr->trackWeight( trk.pid, pt, eta, phi); 
+		
+  		// Track fill up
+  		trk.charge  = tTracks.trkCharge[iTrk];
+  		trk.phi     = phi;
+  		trk.eta     = eta;
+
+		// *** Track selection *** //
 		EventData::AddTrack(trk);
 
 		// chadron
-		if( !isOutsideChargedHadronPtRange )
-		{ nTriggerParticles[0][ ptBin_CH ]++; }
+		if( trk.IsInsideChParticlPtRange )
+		{ nTriggerParticles[0][ trk.ptBin_CH ]++; }
  
 		// reference
-		if ( !isOutsideReferencePartPtRange )
+		if ( trk.IsInsideReferencePtRange )
 		{ nTriggerParticles_cpar_ref++; }
 
 		// pid particle
-		if( (trk.pid != 99) && !isOutsideIdentifHadronPtRange )
-		{ nTriggerParticles[ trk.pid ][ ptBin_ID ]++; }
+		if( trk.IsPID )
+		{ nTriggerParticles[ trk.pid ][ trk.ptBin_ID ]++; }
 
 	}
 
@@ -256,7 +283,6 @@ void EventData::ReadInMC( Particles &tTracks)
   		track part;
   		part.charge  = 0;
   		part.pid  	 = PID;
-  		part.pt      = tTracks.pPt[iPar];
   		part.phi     = tTracks.pPhi[iPar];
   		part.eta     = tTracks.pEta[iPar];
 

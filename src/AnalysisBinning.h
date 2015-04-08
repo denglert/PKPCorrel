@@ -58,8 +58,8 @@ extern const double posdEtaCut2;
 
 /////////////////////////////////////
 // Binning Utility functions
-extern double pt(int TypBin, int bin, int a);
-extern int ptbin(int TypBin, double pt);
+extern double pt(int TypBin, short int bin, int a);
+extern short int ptbin(int TypBin, float pt);
 extern int multiplicity_Ana(int bin, int a, int nbins);
 extern int multiplicitybin_Ana(int nTrk, int bins);
 extern int multiplicity_EvM(int bin, int a);

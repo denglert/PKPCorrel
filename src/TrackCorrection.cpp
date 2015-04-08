@@ -439,6 +439,7 @@ int main( int argc, const char *argv[] )
 			double meta = tTracks.pEta[iPart]; 
 			int    mPID = pidutil->GetIDmTrk_trkCorr(tTracks, iPart);
 			bool   misPID = (mPID != 99);
+
 		
 				hmatched3D[ 0 ]->Fill(mpt,eta,phi,wzvtx); 
 				hmatched2D[ 0 ]->Fill(mpt,eta,    wzvtx); 
@@ -448,7 +449,9 @@ int main( int argc, const char *argv[] )
 				hmultrec1D[ 0 ]->Fill(   eta,wzvtx*tTracks.pNRec[iPart]);
 				hmatched1D[ 0 ]->Fill(   eta,    wzvtx);
 				}
-			if ( misPID )
+
+
+			if ( misPID && (mPID == PID)  )
 			{ 
 				hmatched3D[mPID]->Fill(mpt,eta,phi,wzvtx); 
 				hmatched2D[mPID]->Fill(mpt,eta,    wzvtx); 

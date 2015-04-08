@@ -12,6 +12,8 @@
 //#include "../HiForestAnalysis/hiForest.h"
 #include "SetupCustomTrackTree.h"
 
+extern const double maxtrkCorr2;
+
 ////////////////////
 // Event Data Class
 class track
@@ -19,9 +21,26 @@ class track
 	public:
 	int pid;
 	int charge;
-   float pt;        
+	float w0;
+	float w;
    float phi;			
    float eta;			
+	short int ptBin_CH;
+	short int ptBin_ID;
+
+	// Booleans
+	bool IsPID;
+	bool IsInsideReferencePtRange;
+	bool IsInsideChParticlPtRange;
+};
+
+class TrackCorr
+{
+	// TrackCorrection table
+	public :
+	TH3D **table;
+	bool DoTrackWeight;
+	double trackWeight(int PID, float pt, float eta, float phi);
 };
 
 class LogFile
@@ -63,7 +82,7 @@ class EventData
 	int GetMultiplicityBin_Ana(int nMultiplicityBins_Ana);
 	int GetMultiplicityBin_EvM();
 
-	void ReadInDATA(const Tracks &tTracks, TH2D *dEdxvsP, PIDUtil *pidutil);
+	void ReadInDATA( const Tracks &tTracks, PIDUtil *pidutil, TrackCorr *trkCorr);
 	void ReadInMC  (Particles &tTracks);
 
 	void Clear(int nCorrTyp, int *nPtBins);

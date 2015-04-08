@@ -47,16 +47,10 @@ int main( int argc, const char *argv[] )
  pidutil->ReadInConfig( PIDconfig );
 
  // Log
- LogFile *log = new LogFile(Form("log_%d", tag));
+ LogFile *log = new LogFile(Form("log_%s", tag.c_str()));
  log->repeat = 1000;
  log->label = "DATA";
 
- std::cout << "dotrkCorr: " << dotrkCorr_str << std::endl;
-
- bool dotrkCorr;
-      if( dotrkCorr_str == "yes" ) { dotrkCorr =  true; }
- else if( dotrkCorr_str == "no" ) { dotrkCorr = false; }
- else {std::cerr << "dotrkCorr not defined." << std::endl; exit(-1);}
 
 
  //////////////////////////////////////
@@ -139,7 +133,6 @@ int main( int argc, const char *argv[] )
  CFW.DoSelfCorrelation = false;
  if ( CFW.DoSelfCorrelation ) { std::cout << "Analysis includes self correlation computation." << std::endl;}
 
- CFW.DoTrackWeight = dotrkCorr;
  CFW.SetupForPreprocess();
 
  // TrackCorrection file
@@ -148,10 +141,19 @@ int main( int argc, const char *argv[] )
  if ( (f_trkCorr->IsZombie()) || (f_trkCorr == NULL) ) {std::cerr << "Error opening file: " << trkCorrFilename << std::endl; exit(-1);}
  else {std::cout << "trkCorr File successfully opened." << std::endl;}
 
- CFW.trkCorr = Read_TH3D_1Darray(f_trkCorr, "hcorr3D typ", 4);
+ TrackCorr *trkCorr = new TrackCorr;
+ trkCorr->table = Read_TH3D_1Darray(f_trkCorr, "hcorr3D typ", 4);
 
+ std::cout << "dotrkCorr: " << dotrkCorr_str << std::endl;
+
+ bool dotrkCorr;
+      if( dotrkCorr_str == "yes" ) { dotrkCorr =  true; }
+ else if( dotrkCorr_str == "no" ) { dotrkCorr = false; }
+ else {std::cerr << "dotrkCorr not defined." << std::endl; exit(-1);}
+
+ trkCorr->DoTrackWeight = dotrkCorr;
  for (int i = 0; i < 4; i++)
- { CFW.trkCorr[i]->SetDirectory(0); }
+ { trkCorr->table[i]->SetDirectory(0); }
 
  f_trkCorr->Close();
 
@@ -205,18 +207,24 @@ int main( int argc, const char *argv[] )
 
 				// TRACK SELECTION //
 				if ( !TrackSelection(tTracks, iTrk ) ) continue;
-				bool isOutsideReferencePartPtRange = ( ( tTracks.trkPt[iTrk] < ptref1 ) || ( ptref2 < tTracks.trkPt[iTrk] ) );
-				if ( isOutsideReferencePartPtRange ) continue;	
-				// TRACK SELECTION //
-	
-				// Track fill up
-				track trk;
-				trk.charge  = tTracks.trkCharge[iTrk];
-				trk.pid  	= 0;
-				trk.pt      = tTracks.trkPt[iTrk];
-				trk.phi     = tTracks.trkPhi[iTrk];
-				trk.eta     = tTracks.trkEta[iTrk];
-	
+		
+				float pt  = tTracks.trkPt [iTrk];
+				float eta = tTracks.trkEta[iTrk];
+				float phi = tTracks.trkPhi[iTrk];
+		
+		  		track trk;
+		
+				trk.IsInsideReferencePtRange = ( (ptref1 < pt) && ( pt < ptref2 ));
+				if ( !trk.IsInsideReferencePtRange) continue;
+		
+				trk.w0 = trkCorr->trackWeight( 0 , pt, eta, phi); 
+				
+		  		// Track fill up
+				trk.pid 		= 0;
+		  		trk.charge  = tTracks.trkCharge[iTrk];
+		  		trk.phi     = phi;
+		  		trk.eta     = eta;
+
 				ev->AddTrack(trk);
 			}
 
@@ -301,7 +309,7 @@ int main( int argc, const char *argv[] )
 	if ( maxTracks < tTracks.nTrk) continue;
 
 	// Read in event
-	ev->ReadInDATA(tTracks, dEdxvsp, pidutil);
+	ev->ReadInDATA(tTracks, pidutil, trkCorr);
 
 	CFW.SignalCorrelation(ev);
 	CFW.MixedCorrelation(ev, EventCache_ptr);

@@ -182,6 +182,15 @@ const float assoptmax = 3.0;
 //	  { 100, 120 }
 //};
 
+// New MinBias
+// const int nMultiplicityBins_Ana_HDR = 3;
+// const int multiplicitybins_Ana[nMultiplicityBins_Ana_HDR][2] = 
+// {
+// 	  {   0,  50 },
+// 	  {  50,  80 },
+// 	  {  80, 120 }
+// };
+
 // MC comparison
 //const int nMultiplicityBins_Ana_HDR = 1;
 //const int multiplicitybins_Ana[nMultiplicityBins_Ana_HDR][2] = 
@@ -202,27 +211,6 @@ const int multiplicitybins_Ana[nMultiplicityBins_Ana_HDR][2] =
 };
 
 //// Event Mix multiplicity binning
-
-//// MinBias and High Multiplicity
-//const int nMultiplicityBins_EvM_HDR = 12;
-//const int multiplicitybins_EvM[nMultiplicityBins_EvM_HDR][2] = 
-//{
-// 	  {   0,  20 },
-// 	  {  20,  30 },
-// 	  {  30,  40 },
-// 	  {  40,  50 },
-// 	  {  50,  60 },
-// 	  {  60,  80 },
-// 	  {  80, 100 },
-// 	  { 100, 120 },
-//	  { 120, 150 },
-//	  { 150, 185 },
-//	  { 185, 220 },
-//	  { 220, 260 }
-////	  { 260, 300 }
-////	  { 300, 350 }
-//};
-
 
 // HIGH-MULTIPLICITY
 const int nMultiplicityBins_EvM_HDR = 4;
@@ -334,12 +322,12 @@ const double posdEtaCut2 = (dEtaMin + dEta_binWidth) + (dEta_binWidth*(posdEtaCu
 /////////////////////////////////
 // --- Pt binning
 // Updated binning for pt with dependence on the correlation typ
-double pt(int TypBin, int bin, int a)
+double pt(int TypBin, short int bin, int a)
 {
 	return trigptbins[TypBin][bin][a];
 }
 
-int ptbin(int TypBin, double pt)
+short int ptbin(int TypBin, float pt)
 {
 	int ptbin;
 

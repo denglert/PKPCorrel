@@ -103,6 +103,7 @@ int main( int argc, const char *argv[] )
  CFW.ReBin();
  CFW.makeFigCorrel1D( tag );
 
+
 ////////////////////////////////
  // ***** Setting output ***** //
  ////////////////////////////////

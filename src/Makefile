@@ -1,7 +1,7 @@
 CC = g++
 CFLAGS = `root-config --cflags`  
 LFLAGS = -O3 -Wl,--no-as-needed `root-config --libs`
-CORE = CorrelationUtils.o  PIDUtils.o AnalysisFW.o AnalysisBinning.o SetupCustomTrackTree.o EvtSelection.o EvtAnalyzer.o 
+CORE = CorrelationUtils.o  PIDUtils.o AnalysisFW.o $(AnalysisBinning).o SetupCustomTrackTree.o EvtSelection.o EvtAnalyzer.o 
 EXT = CorrelationUtils_FigureTools.o PhyConst.o GraphTools.o ContMatrix.o
 FULL = $(CORE) $(EXT)
 CMN =  commonSetup.h
@@ -38,6 +38,14 @@ preprocess.o : preprocess.cpp $(CMN) $(CORE)
 
 preprocess_genlevel.o : preprocess_genlevel.cpp $(CMN) $(CORE)
 	$(CC) $(CFLAGS) -o $@ -c $<
+
+# preprocess_genparticles
+../bin/preprocess_genparticles : preprocess_genparticles.o $(CMN) $(CORE)
+	$(CC) $(LFLAGS) -o $@ $< $(CORE)
+
+preprocess_genparticles.o : preprocess_genparticles.cpp $(CMN) $(CORE)
+	$(CC) $(CFLAGS) -o $@ -c $<
+
 
 # SimplePreProc
 ../bin/SimplePreProc : SimplePreProc.o $(CMN) $(CORE)
@@ -97,8 +105,8 @@ MC_Contamination_Matrix_viewer.o : MC_Contamination_Matrix_viewer.cpp
 
 ####################################################################################
 ### TrackCorrection
-../bin/TrackCorrection : TrackCorrection.o $(CMN) PIDUtils.o AnalysisFW.o AnalysisBinning.o PhyConst.o SetupCustomTrackTree.o EvtSelection.o EvtAnalyzer.o
-	$(CC) $(LFLAGS) -o $@ $< PIDUtils.o AnalysisBinning.o PhyConst.o AnalysisFW.o SetupCustomTrackTree.o EvtSelection.o EvtAnalyzer.o
+../bin/TrackCorrection : TrackCorrection.o $(CMN) PIDUtils.o AnalysisFW.o $(AnalysisBinning).o PhyConst.o SetupCustomTrackTree.o EvtSelection.o EvtAnalyzer.o
+	$(CC) $(LFLAGS) -o $@ $< PIDUtils.o $(AnalysisBinning).o PhyConst.o AnalysisFW.o SetupCustomTrackTree.o EvtSelection.o EvtAnalyzer.o
 
 TrackCorrection.o : TrackCorrection.cpp
 	$(CC) $(CFLAGS) -o $@ -c $<
@@ -127,30 +135,30 @@ UtilityTest.o : UtilityTest.cpp
 	$(CC) $(CFLAGS)-o $@ -c $<  
 
 # MC_CrosscheckFig
-../bin/MC_CrosscheckFig : MC_CrosscheckFig.o $(CMN) AnalysisBinning.o
-	$(CC) $(LFLAGS) -o $@ $<  AnalysisBinning.o
+../bin/MC_CrosscheckFig : MC_CrosscheckFig.o $(CMN) $(AnalysisBinning).o
+	$(CC) $(LFLAGS) -o $@ $<  $(AnalysisBinning).o
 
 MC_CrosscheckFig.o : MC_CrosscheckFig.cpp
-	$(CC) $(CFLAGS)-o $@ -c $<  AnalysisBinning.o
+	$(CC) $(CFLAGS)-o $@ -c $<  $(AnalysisBinning).o 
 
 # Compare_vns
-../bin/Compare_vns : Compare_vns.o $(CMN) AnalysisBinning.o
-	$(CC) $(LFLAGS) -o $@ $< AnalysisBinning.o
+../bin/Compare_vns : Compare_vns.o $(CMN) $(AnalysisBinning).o GraphTools.o
+	$(CC) $(LFLAGS) -o $@ $< $(AnalysisBinning).o GraphTools.o
 
-Compare_vns.o : Compare_vns.cpp
-	$(CC) $(CFLAGS)-o $@ -c $< AnalysisBinning.o
+Compare_vns.o : Compare_vns.cpp GraphTools.o
+	$(CC) $(CFLAGS)-o $@ -c $<
 
 # Compare_vns_multi
-../bin/Compare_vns_multi : Compare_vns_multi.o $(CMN) AnalysisBinning.o
-	$(CC) $(LFLAGS) -o $@ $< AnalysisBinning.o
+../bin/Compare_vns_multi : Compare_vns_multi.o $(CMN) $(AnalysisBinning).o
+	$(CC) $(LFLAGS) -o $@ $< $(AnalysisBinning).o
 
 Compare_vns_multi.o : Compare_vns_multi.cpp
-	$(CC) $(CFLAGS)-o $@ -c $< AnalysisBinning.o
+	$(CC) $(CFLAGS)-o $@ -c $< $(AnalysisBinning).o
 
 ###########################################
 ### *** Framework classes
-# AnalysisBinning
-AnalysisBinning.o : AnalysisBinning.cpp AnalysisBinning.h
+# $(AnalysisBinning)
+$(AnalysisBinning).o : $(AnalysisBinning).cpp AnalysisBinning.h
 	$(CC) $(CFLAGS) -c $< -o $@ 
 
 # AnalysisFW

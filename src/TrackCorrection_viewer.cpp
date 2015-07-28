@@ -14,8 +14,8 @@
 #include "PIDUtils.h"
 #include "SetupCustomTrackTree.h"
 #include "TLatex.h"
-
-double figuretextsize = 0.043; 
+#include "TLegend.h"
+#include "GraphTools.h"
 
 double TH1Dlabelposx = 0.63;
 double TH1Dlabelposy = 0.20;
@@ -23,7 +23,7 @@ double TH1Dlabelposy = 0.20;
 const double ptGlobalMin = 0.1;
 
 //const int nphi = 70;
-const int nphi = 35;
+const int nphi = 20;
 const double phiMin = -TMath::Pi();
 const double phiMax =  TMath::Pi();
 
@@ -34,9 +34,9 @@ const int npt[nCorrTyp]      = { 15,     8,    7,   14,     6 };
 const double ptMin[nCorrTyp] = { 0.3, 0.20, 0.20, 0.20,  1.00 };
 const double ptMax[nCorrTyp] = { 3.0, 1.00, 0.90, 1.60,  1.60 };
 
-const int neta[nCorrTyp]      = { 24 ,   8,   8 ,  8 ,    8 };
-const double etaMin[nCorrTyp] = {-2.4,-0.8,-0.8 ,-0.8, -0.8 };
-const double etaMax[nCorrTyp] = { 2.4, 0.8, 0.8 , 0.8,  0.8 };
+const int neta[nCorrTyp]      = {  12 ,    4,    4,    4,    4 };
+const double etaMin[nCorrTyp] = { -2.4, -0.8, -0.8, -0.8, -0.8 };
+const double etaMax[nCorrTyp] = {  2.4,  0.8,  0.8,  0.8,  0.8 };
 
 void plottable( TH3D **table, const char figbasename[] )
 {
@@ -127,16 +127,70 @@ void plottable( TH3D **table, const char figbasename[] )
 	}
 }
 
-void plotTH2D( TH2D *histo, const char figbasename[], const char label[])
+void plotTH2D( TH2D *histo, const char figbasename[], const char label[], const char option[] )
 {
 	TCanvas canvas_table ("trkcorrfigure", "lol", 800, 600);
 
+//	gStyle->SetPadRightMargin(0.2);
+//	gStyle->SetPadLeftMargin(0.2);
+
   	canvas_table.Divide(2,1);
+
+//  	canvas_table.SetRightMargin(0.2);
+  	canvas_table.GetPad(1)->SetRightMargin(0.15);
+  	canvas_table.GetPad(2)->SetRightMargin(0.15);
 
 	histo->SetTitle(label);
 	histo->GetXaxis()->SetTitleOffset(1.6);
 	histo->GetYaxis()->SetTitleOffset(1.6);
 	histo->GetZaxis()->SetTitleOffset(1.6);
+
+	histo->GetXaxis()->SetLabelSize(trkcorr2D_xlabelsize);
+	histo->GetYaxis()->SetLabelSize(trkcorr2D_ylabelsize);
+	histo->GetZaxis()->SetLabelSize(trkcorr2D_zlabelsize);
+	histo->GetXaxis()->SetTitleSize(trkcorr2D_xlabelsize);
+	histo->GetYaxis()->SetTitleSize(trkcorr2D_ylabelsize);
+	histo->GetZaxis()->SetTitleSize(trkcorr2D_zlabelsize);
+
+
+	double zmin, zmax;
+
+	if ( option == "0.0-1.0" )
+	{
+		std::cout << "0.0-1.0" << std::endl;
+		zmin = 0.0;
+		zmax = 1.0;
+		histo->GetZaxis()->SetLimits(zmin, zmax);
+		histo->GetZaxis()->SetRangeUser(zmin, zmax);
+	}
+	else if ( option == "1.0-1.1" )
+	{
+		std::cout << "1.0-1.1" << std::endl;
+		zmin = 1.0;
+		zmax = 1.1;
+		histo->GetZaxis()->SetLimits(zmin, zmax);
+		histo->GetZaxis()->SetRangeUser(zmin, zmax);
+	}
+	else if ( option == "0.0-0.1" )
+	{
+		std::cout << "0.0-0.1" << std::endl;
+		zmin = 0.0;
+		zmax = 0.1;
+		histo->GetZaxis()->SetLimits(zmin, zmax);
+		histo->GetZaxis()->SetRangeUser(zmin, zmax);
+	}
+	else if ( option == "0.9-10.0")
+	{
+		std::cout << "0.9-10.0" << std::endl;
+		zmin = 0.9;
+		zmax = 10.0;
+		histo->GetZaxis()->SetLimits(zmin, zmax);
+		histo->GetZaxis()->SetRangeUser(zmin, zmax);
+	}
+	else if ( option == "auto" ) 
+	{
+		std::cout << "auto" << std::endl;
+	};
 
   	canvas_table.cd(1);
 
@@ -166,7 +220,6 @@ void plotTH1D( TH1D *histo, const char figbasename[], const char xaxisname[], co
 	histo->GetXaxis()->SetTitleOffset(1.6);
 	histo->GetYaxis()->SetTitleOffset(1.6);
 	histo->GetZaxis()->SetTitleOffset(1.6);
-
 
 	TLatex tlabel( TH1Dlabelposx, TH1Dlabelposy, label); 
 	tlabel.SetTextSize(figuretextsize);
@@ -200,6 +253,11 @@ int main( int argc, const char *argv[] )
  TFile *f = TFile::Open(inpFilename);
  if ( f->IsZombie() ) {std::cerr << "Error opening file: " << inpFilename << std::endl; exit(-1);}
  else {std::cout << "File successfully opened." << std::endl;}
+
+ TH1D *zvtxDistrDATA = (TH1D*)f->Get("zvtxDistrDATA");
+ TH1D *zvtxDistrMC   = (TH1D*)f->Get("zvtxDistrMC");
+ TH1D *ratiozvtx     = (TH1D*)f->Get("zvtxratio");
+;
 
  TH3D **hgen3D         = Read_TH3D_1Darray( f, "hgen3D typ",  nCorrTyp);
  TH3D **heff3D         = Read_TH3D_1Darray( f, "heff3D part",  nCorrTyp);
@@ -258,6 +316,59 @@ int main( int argc, const char *argv[] )
 // //	  log.wr(Form("%d %.3f %.2f %.2f : %.4f", i, pt, eta, phi, value));
 //  }
 
+	gStyle->SetOptStat(0);
+	TCanvas canvas_zvtx ("zvtxdistr", ";Eta;Phi", 900, 600);
+
+	canvas_zvtx.SetBottomMargin(0.50);
+
+   zvtxDistrMC->SetMarkerSize(0.9);
+   zvtxDistrMC->SetMarkerStyle(8);
+   zvtxDistrDATA->SetMarkerSize(0.9);
+   zvtxDistrDATA->SetMarkerStyle(8);
+
+   TPad *pad1 = new TPad("pad1","pad1",0,0.3,1,1);
+   pad1->SetBottomMargin(0);
+   pad1->Draw("");
+   pad1->cd();
+   zvtxDistrDATA->GetYaxis()->SetTitle("dN/d z_{vtx}");
+   zvtxDistrDATA->SetMarkerColor(kBlue);
+   zvtxDistrMC->SetMarkerColor(kRed);
+   zvtxDistrDATA->Draw("P");
+   zvtxDistrMC->Draw("SAMEP");
+
+	TLegend zvtxdistr_legend (0.75, 0.6, 0.85, 0.7);
+	zvtxdistr_legend.SetFillStyle(1);
+	zvtxdistr_legend.SetBorderSize(1);
+	zvtxdistr_legend.AddEntry(zvtxDistrDATA,"DATA", "P");
+	zvtxdistr_legend.AddEntry(zvtxDistrMC,"MC", "P");
+	zvtxdistr_legend.Draw("SAME");
+   canvas_zvtx.cd();
+   TPad *pad2 = new TPad("pad2","pad2",0,0,1,0.3);
+   pad2->SetTopMargin(0);
+   pad2->SetBottomMargin(0.2);
+   pad2->Draw();
+   pad2->cd();
+	ratiozvtx->SetMarkerColor(kBlack);
+	ratiozvtx->SetLineColor(kBlack);
+	ratiozvtx->GetXaxis()->SetTitle("z_{vtx} [cm]");
+	ratiozvtx->GetYaxis()->SetTitle("ratio");
+	ratiozvtx->GetXaxis()->SetTitleOffset(1.0);
+	ratiozvtx->GetYaxis()->SetTitleOffset(0.4);
+	ratiozvtx->GetYaxis()->SetLabelSize(0.06);
+	ratiozvtx->GetXaxis()->SetLabelSize(0.09);
+	ratiozvtx->GetXaxis()->SetTitleSize(zvtxdistr_xlabelsize);
+	ratiozvtx->GetYaxis()->SetTitleSize(zvtxdistr_ylabelsize);
+   ratiozvtx->SetMarkerStyle(8);
+	ratiozvtx->Draw("P");
+
+
+
+	std::string outPDF = "zvtxdistr.pdf";
+	std::string outPNG = "zvtxdistr.png";
+
+	canvas_zvtx.SaveAs(outPDF.c_str());
+	canvas_zvtx.SaveAs(outPNG.c_str());
+
 
  for(int i = 0; i < nCorrTyp; i++)
  {
@@ -286,9 +397,10 @@ int main( int argc, const char *argv[] )
  plotTH1D(hmultrec1D[i],    filebasename_multreco_ptint_etadep.c_str(),"#eta", "multreco"      , label_ptint_etadep.c_str());
  plotTH1D(hmatched1D[i],    filebasename_matchedt_ptint_etadep.c_str(),"#eta", "matched"       , label_ptint_etadep.c_str());
 
- plotTH2D(hfake2D[i]       ,filebasename_fake_ptetadep.c_str(),Form("%s fake;p_{T};#eta", type.c_str()) );
- plotTH2D(hsecondary2D[i]  ,filebasename_seco_ptetadep.c_str(),Form("%s seco;p_{T};#eta", type.c_str()) );
- plotTH2D(hmultrecrate2D[i],filebasename_mult_ptetadep.c_str(),Form("%s mult;p_{T};#eta", type.c_str()) );
+ plotTH2D(hfake2D[i]       ,filebasename_fake_ptetadep.c_str(),Form("%s fake;p_{T};#eta", type.c_str()), "0.0-0.1"  );
+ plotTH2D(hsecondary2D[i]  ,filebasename_seco_ptetadep.c_str(),Form("%s seco;p_{T};#eta", type.c_str()), "0.0-0.1" );
+ plotTH2D(hmultrecrate2D[i],filebasename_mult_ptetadep.c_str(),Form("%s mult;p_{T};#eta", type.c_str()), "1.0-1.1" );
+
 
  }
 
@@ -319,16 +431,16 @@ int main( int argc, const char *argv[] )
  std::string filebasename_gen     = Form("gen_%d_pT_%.2f_%.2f", i, pt1, pt2);
  std::string filebasename_matched = Form("matchedt_%d_pT_%.2f_%.2f", i, pt1, pt2);
 
+
  std::string label_trkCorr        = Form("#splitline{%s, trkCorrections}{p_{T} [ %.2f - %.2f]}", type.c_str(), pt1, pt2);
  std::string label_eff            = Form("#splitline{%s, efficiency}{p_{T} [ %.2f - %.2f]}", type.c_str(), pt1, pt2);
  std::string label_gen            = Form("#splitline{%s, gen}{p_{T} [ %.2f - %.2f]}", type.c_str(), pt1, pt2);
  std::string label_matched        = Form("#splitline{%s, matched}{p_{T} [ %.2f - %.2f]}", type.c_str(), pt1, pt2);
 
- 	plotTH2D(trkCorr,filebasename_trkCorr.c_str(),Form("%s;#eta;#phi", label_trkCorr.c_str()) );
- 	plotTH2D(heff   ,filebasename_eff.c_str()    ,Form("%s;#eta;#phi", label_eff.c_str())     );
- 	plotTH2D(hgen   ,filebasename_gen.c_str()    ,Form("%s;#eta;#phi", label_gen.c_str())     );
- 	plotTH2D(hmatched   ,filebasename_matched.c_str(),Form("%s;#eta;#phi", label_matched.c_str())     );
+ 	plotTH2D(trkCorr,filebasename_trkCorr.c_str(),Form("%s;#eta;#phi", label_trkCorr.c_str()) , "0.9-10.0" );
+ 	plotTH2D(heff   ,filebasename_eff.c_str()    ,Form("%s;#eta;#phi", label_eff.c_str())     , "0.0-1.0" );
+ 	plotTH2D(hgen   ,filebasename_gen.c_str()    ,Form("%s;#eta;#phi", label_gen.c_str())     , "auto" );
+ 	plotTH2D(hmatched   ,filebasename_matched.c_str(),Form("%s;#eta;#phi", label_matched.c_str()), "auto"     );
  }
-
 
 }

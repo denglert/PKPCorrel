@@ -9,11 +9,10 @@ extern const int nPtBinsMax_;
 // pT classes
 extern const int nPtBins_[];
 
-extern const float trigptbins[][16][2];
+extern const float trigptbins[][14][2];
 
 extern const float ptref1;
 extern const float ptref2;
-
 
 extern const float assoptmin;
 extern const float assoptmax;

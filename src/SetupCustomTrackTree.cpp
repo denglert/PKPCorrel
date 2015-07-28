@@ -103,3 +103,46 @@ void setupParticleTree(TTree *t, Particles &tTracks)
    t->SetBranchAddress("pPhi", tTracks.pPhi, &tTracks.b_pPhi);
    t->SetBranchAddress("pPt", tTracks.pPt, &tTracks.b_pPt);
 }
+
+
+
+void setupGenParticleTree(TTree *t,GenParticles &tGenParticles, bool doCheck = 1)
+{
+   // Set branch addresses and branch pointers
+   if (t->GetBranch("event")) t->SetBranchAddress("event", &tGenParticles.event, &tGenParticles.b_event);
+   if (t->GetBranch("b")) t->SetBranchAddress("b", &tGenParticles.b, &tGenParticles.b_b);
+   if (t->GetBranch("npart")) t->SetBranchAddress("npart", &tGenParticles.npart, &tGenParticles.b_npart);
+   if (t->GetBranch("ncoll")) t->SetBranchAddress("ncoll", &tGenParticles.ncoll, &tGenParticles.b_ncoll);
+   if (t->GetBranch("nhard")) t->SetBranchAddress("nhard", &tGenParticles.nhard, &tGenParticles.b_nhard);
+   if (t->GetBranch("phi0")) t->SetBranchAddress("phi0", &tGenParticles.phi0, &tGenParticles.b_phi0);
+   if (t->GetBranch("scale")) t->SetBranchAddress("scale", &tGenParticles.scale, &tGenParticles.b_scale);
+   if (t->GetBranch("n")) t->SetBranchAddress("n", tGenParticles.n, &tGenParticles.b_n);
+   if (t->GetBranch("ptav")) t->SetBranchAddress("ptav", tGenParticles.ptav, &tGenParticles.b_ptav);
+   if (t->GetBranch("mult")) t->SetBranchAddress("mult", &tGenParticles.mult, &tGenParticles.b_mult);
+   if (t->GetBranch("pt")) t->SetBranchAddress("pt", tGenParticles.pt, &tGenParticles.b_pt);
+   if (t->GetBranch("eta")) t->SetBranchAddress("eta", tGenParticles.eta, &tGenParticles.b_eta);
+   if (t->GetBranch("phi")) t->SetBranchAddress("phi", tGenParticles.phi, &tGenParticles.b_phi);
+   if (t->GetBranch("pdg")) t->SetBranchAddress("pdg", tGenParticles.pdg, &tGenParticles.b_pdg);
+   if (t->GetBranch("chg")) t->SetBranchAddress("chg", tGenParticles.chg, &tGenParticles.b_chg);
+   if (t->GetBranch("sube")) t->SetBranchAddress("sube", tGenParticles.sube, &tGenParticles.b_sube);
+   if (t->GetBranch("vx")) t->SetBranchAddress("vx", &tGenParticles.vx, &tGenParticles.b_vx);
+   if (t->GetBranch("vy")) t->SetBranchAddress("vy", &tGenParticles.vy, &tGenParticles.b_vy);
+   if (t->GetBranch("vz")) t->SetBranchAddress("vz", &tGenParticles.vz, &tGenParticles.b_vz);
+   if (t->GetBranch("vr")) t->SetBranchAddress("vr", &tGenParticles.vr, &tGenParticles.b_vr);
+   if (doCheck) {
+      if (t->GetMaximum("mult")>maxEntrySim) { cout <<"FATAL ERROR: Arrary size of mult too small!!!  "<<t->GetMaximum("mult")<<endl; exit(0);
+ }   }
+}
+
+
+
+void TracksParticles::setupGenPartTree( TFile *f )
+{
+	genPartTree = (TTree*)f->Get("HiGenParticle");
+	setupGenParticleTree( genPartTree, genParts);
+}
+
+void TracksParticles::GetEntry( int iEv )
+{
+	genPartTree->GetEntry(iEv);
+}

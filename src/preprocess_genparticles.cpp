@@ -15,7 +15,6 @@
 #include "SetupCustomTrackTree.h"
 #include "EvtSelection.h"
 
-// This is for tracking particles...
 
 int main( int argc, const char *argv[] )
 { 
@@ -67,11 +66,9 @@ int main( int argc, const char *argv[] )
  if ( f->IsZombie() || (f == NULL) ) {std::cerr << "Error opening file: " << inpFilename << std::endl; exit(-1);}
  else {std::cout << Form("TFile %s seem to have loaded.\n", inpFilename.c_str()); }
 
- // trackTree
- TTree *trackTree = (TTree*)f->Get("ppTrack/trackTree");
- Particles tTracks;
- bool isMC = true;
- setupParticleTree(trackTree, tTracks);
+
+ TracksParticles trksparts;
+ trksparts.setupGenPartTree(f);
 
  // hiEvtAnalyzer
  TTree *EvtAna= (TTree*)f->Get("hiEvtAnalyzer/HiTree");
@@ -79,8 +76,10 @@ int main( int argc, const char *argv[] )
  float vz; EvtAna->SetBranchAddress("vz", &vz);
 
  // Event Selection (SkimAnalysis)
+ bool isMC = true;
  EvtSelection EvSel;
  EvSel.setupSkimTree_pPb( f, isMC);
+
 
  ////////////////////////////////
  //                            //
@@ -137,7 +136,7 @@ int main( int argc, const char *argv[] )
  //                                       //
  ///////////////////////////////////////////
  
- log->wr(Form("trackTree entries: %d", trackTree->GetEntries()));
+ log->wr(Form("trackTree entries: %d", trksparts.genPartTree->GetEntries()));
  log->wr(Form("EventSelection (SkimAna) entries: %d", EvSel.GetEntries()));
  log->wr(Form("nEvMax: %d", nEvMax));
 
@@ -151,7 +150,7 @@ int main( int argc, const char *argv[] )
 	
 	int iEv = 0;
 
- 	while ( (count < (nev+1)) && (iEv < trackTree->GetEntries() )) 
+ 	while ( (count < (nev+1)) && (iEv < trksparts.genPartTree->GetEntries() )) 
 	{
 
 		// Get current event info
@@ -164,16 +163,16 @@ int main( int argc, const char *argv[] )
 		if ( multiplicitybin_EvM(hiNtracks) == multBin )
 		{
 
-			trackTree->GetEntry(iEv);
-			int nPar = tTracks.nParticle;
+			trksparts.GetEntry(iEv);
+			int nPar = trksparts.genParts.mult;
 
 	 		for (int iPar = 0; iPar < nPar; iPar++)
 			{
 
 				// Particle selection //
 				// Same kinematical cuts as at RECO level!
-				if ( 2.4 < abs(tTracks.pEta[iPar]) )  continue;
-				bool isOutsideReferencePartPtRange = ( ( tTracks.pPt[iPar] < ptref1 ) || ( ptref2 < tTracks.pPt[iPar] ) );
+				if ( 2.4 < abs( trksparts.genParts.eta[iPar]) )  continue;
+				bool isOutsideReferencePartPtRange = ( ( trksparts.genParts.pt[iPar] < ptref1 ) || ( ptref2 < trksparts.genParts.pt[iPar] ) );
 				if ( isOutsideReferencePartPtRange ) continue;	
 				// Particle selection //
 
@@ -183,8 +182,8 @@ int main( int argc, const char *argv[] )
 				// Warning: no charge fill!;
 				particle.charge  = 0;
 
-				particle.phi     = tTracks.pPhi[iPar];
-				particle.eta     = tTracks.pEta[iPar];
+				particle.phi     = trksparts.genParts.phi[iPar];
+				particle.eta     = trksparts.genParts.eta[iPar];
 	
 				ev->AddTrack(particle);
 			}
@@ -219,7 +218,7 @@ int main( int argc, const char *argv[] )
    std::cout << Form("multBin: %3d, zvtxBin: %3d, found: %2d/10", multBin, zvtxBin, EventCache[multBin][zvtxBin].size()) << std::endl;
  }
 
- log->wr(Form("trackTree entries: %d", trackTree->GetEntries()));
+ log->wr(Form("trackTree entries: %d",  trksparts.genPartTree->GetEntries()));
  log->wr(Form("EventSelection (SkimAna) entries: %d", EvSel.GetEntries()));
  log->wr(Form("nEvMax: %d", nEvMax));
 
@@ -229,9 +228,9 @@ int main( int argc, const char *argv[] )
  //                       //
  ///////////////////////////
  
- if (nEvMax == -1) {nEvMax = trackTree->GetEntries();}
+ if (nEvMax == -1) {nEvMax = trksparts.genPartTree->GetEntries();}
 
- log->wr(Form("trackTree entries: %d", trackTree->GetEntries()));
+ log->wr(Form("trackTree entries: %d", trksparts.genPartTree->GetEntries() ));
  log->wr(Form("SkimAna entries: %d", EvSel.GetEntries()));
  log->wr(Form("nEvMax: %d", nEvMax));
 
@@ -264,10 +263,10 @@ int main( int argc, const char *argv[] )
 	CFW.ResetCurrentEventCorrelation();
 
 	// Load in tracks
-	trackTree->GetEntry(iEvA);
+	trksparts.genPartTree->GetEntry(iEvA);
 
 	// Read in event
-	ev->ReadInMC( tTracks, pidutil );
+	ev->ReadInGenParticles( trksparts.genParts, pidutil );
 
 	CFW.SignalCorrelation(ev);
 	CFW.MixedCorrelation(ev, EventCache_ptr);

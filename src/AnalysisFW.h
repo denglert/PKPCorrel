@@ -64,8 +64,10 @@ class EventData
 	int EventID;
    std::vector<track> tracks;
 
-   int **nTriggerParticles;
-   int nTriggerParticles_cpar_ref;
+   float **nTriggerParticles;
+   float *nTriggerParticles_ptint;
+   float nTriggerParticles_cpar_ref;
+
 	
 	float zVtx; 
 	int   nTrk;
@@ -83,7 +85,8 @@ class EventData
 	int GetMultiplicityBin_EvM();
 
 	void ReadInDATA( const Tracks &tTracks, PIDUtil *pidutil, TrackCorr *trkCorr);
-	void ReadInMC  (Particles &tTracks);
+	void ReadInGenParticles( GenParticles &gParts, PIDUtil *pidutil );
+	void ReadInMC  (Particles &tTracks, PIDUtil *pidutil);
 
 	void Clear(int nCorrTyp, int *nPtBins);
 };

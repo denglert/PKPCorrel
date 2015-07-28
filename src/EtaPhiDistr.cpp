@@ -111,8 +111,8 @@ int main( int argc, const char *argv[] )
  // trackTree
  // DATA - pptracks
  // MC   - ppTrack
- // TTree *trackTree = (TTree*)f->Get("pptracks/trackTree");
- TTree *trackTree = (TTree*)f->Get("ppTrack/trackTree");
+ TTree *trackTree = (TTree*)f->Get("pptracks/trackTree");
+ //TTree *trackTree = (TTree*)f->Get("ppTrack/trackTree");
  Tracks_c tTracks;
  bool isMC = true;
  setupTrackTree_c(trackTree, tTracks, isMC);
@@ -126,8 +126,8 @@ int main( int argc, const char *argv[] )
  TTree *SkimAna= (TTree*)f->Get("skimanalysis/HltTree");
  // DATA  -pPAcollisionEventSelection
  // MC   - pPAcollisionEventSelectionPA
- int pPAcollisionEventSelection; SkimAna->SetBranchAddress("pPAcollisionEventSelectionPA", &pPAcollisionEventSelection);
-// int pPAcollisionEventSelection; SkimAna->SetBranchAddress("pPAcollisionEventSelection", &pPAcollisionEventSelection);
+// int pPAcollisionEventSelection; SkimAna->SetBranchAddress("pPAcollisionEventSelectionPA", &pPAcollisionEventSelection);
+ int pPAcollisionEventSelection; SkimAna->SetBranchAddress("pPAcollisionEventSelection", &pPAcollisionEventSelection);
  int pileUpBit;                  SkimAna->SetBranchAddress("pVertexFilterCutGplus", &pileUpBit);
 
  ////////////////////////////////
@@ -227,13 +227,14 @@ int main( int argc, const char *argv[] )
  // pT distribution
  const int nPtDistrBins = 15;
  const double pTMin = 0.1;
- const double pTMax = 3.0;
+ const double pTMax = 1.6;
 
  TH1D *pTDistr[nParticles];
  for (int pid = 0; pid < nParticles; pid++)
  {
  	pTDistr[pid]  = new TH1D (Form("pTDistribution id = %d", pid),";pT;Entries", nPtDistrBins, pTMin, pTMax);
  }
+
 
  // vertez z distribution
  int nZvtxDistrBins = 30;
@@ -429,11 +430,19 @@ int main( int argc, const char *argv[] )
  	canvas_dEdxvsplin.SaveAs(dEdxvspFigPDF.c_str() );
  }
 
+ TF1 *ptexpfit[nCorrTyp];
+
+ for (int i = 0; i < nCorrTyp; i++)
+ {
+ 	ptexpfit[i] = new TF1(Form("ptdistr_exp_%d", i), "[0]*exp(- [1]*(x-[2]) )", 0.4, 1.0 );
+ }
+
  ////////////////////
- // Eta distribution
+ // pT distribution
  for (int pid = 0; pid < nParticles; pid++)
  {
 	TCanvas canvas_pTDistr ("pTDistr", ";Eta;Phi", 800, 600);
+	pTDistr[pid]->Fit( ptexpfit[pid] );
  	pTDistr[pid]->Draw("");
 
  	std::string pTDistrFigBase = Form("pTDistr_typ_%d", pid);

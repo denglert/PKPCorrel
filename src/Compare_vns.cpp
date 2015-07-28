@@ -18,10 +18,18 @@
 #include "TLegend.h"
 #include "TLatex.h"
 #include "TSpline.h"
+#include "GraphTools.h"
 #include "GraphStyles.h"
 
-const int mult1 = 0;
-const int mult2 = 120;
+//const int mult1 = 0;
+//const int mult2 = 120;
+
+//const int mult1 = 185;
+//const int mult2 = 220;
+
+const int mult1 = 185;
+const int mult2 = 220;
+
 
 int main( int argc, const char *argv[] )
 { 
@@ -48,6 +56,7 @@ int main( int argc, const char *argv[] )
  int nMultiplicityBins_EvM = nMultiplicityBins_EvM_HDR;
  int nZvtxBins 		      = nZvtxBins_; 
 
+ std::cout << "Compare_vns running." << std::endl;
 
  ///////////////////////////////////////
  //                                   //
@@ -77,6 +86,16 @@ int main( int argc, const char *argv[] )
  TGraphErrors *kaon_2 = (TGraphErrors*)f2->Get( Form("kaon_Ntrk_%03d-%03d", mult1, mult2 ) );
  TGraphErrors *prot_2 = (TGraphErrors*)f2->Get( Form("prot_Ntrk_%03d-%03d", mult1, mult2 ) );
 
+ cpar_1->SetPoint(0, -50, -5);
+ pion_1->SetPoint(0, -50, -5);
+ kaon_1->SetPoint(0, -50, -5);
+ prot_1->SetPoint(0, -50, -5);
+
+ cpar_2->SetPoint(0, -50, -5);
+ pion_2->SetPoint(0, -50, -5);
+ kaon_2->SetPoint(0, -50, -5);
+ prot_2->SetPoint(0, -50, -5);
+
  //////////////////////
  //                  //
  // ***** Plot ***** //
@@ -97,10 +116,10 @@ int main( int argc, const char *argv[] )
 //	pion_1->GetFunction("pionv2_fit")->SetBit(TF1::kNotDraw);
 //	kaon_1->GetFunction("kaonv2_fit")->SetBit(TF1::kNotDraw);
 //	prot_1->GetFunction("protv2_fit")->SetBit(TF1::kNotDraw);
-	cpar_2->GetFunction("cparv2_fit")->SetBit(TF1::kNotDraw);
-	pion_2->GetFunction("pionv2_fit")->SetBit(TF1::kNotDraw);
-	kaon_2->GetFunction("kaonv2_fit")->SetBit(TF1::kNotDraw);
-	prot_2->GetFunction("protv2_fit")->SetBit(TF1::kNotDraw);
+	//cpar_2->GetFunction("cparv2_fit")->SetBit(TF1::kNotDraw);
+	//pion_2->GetFunction("pionv2_fit")->SetBit(TF1::kNotDraw);
+	//kaon_2->GetFunction("kaonv2_fit")->SetBit(TF1::kNotDraw);
+	//prot_2->GetFunction("protv2_fit")->SetBit(TF1::kNotDraw);
 
  	// *** Plotting the graphs *** //
 	gStyle->SetPadTickY(1);
@@ -115,7 +134,8 @@ int main( int argc, const char *argv[] )
 	double v2vspt_ptmin = 0.0;
 	double v2vspt_ptmax = 2.5;
 	double v2vspt_v2min = 0.0;
-	double v2vspt_v2max = 0.6;
+	//double v2vspt_v2max = 0.6;
+	double v2vspt_v2max = 0.16;
 
 	cpar_1->SetTitle("");
    cpar_1->GetXaxis()->SetLimits(v2vspt_ptmin,v2vspt_ptmax);
@@ -138,7 +158,6 @@ int main( int argc, const char *argv[] )
 	pion_spl->SetLineColor(kRed);
 	kaon_spl->SetLineColor(kGreen);
 	prot_spl->SetLineColor(kBlue);
-
 
 	TF1 *cparv2_fit = new TF1 ("cparv2_fit", "[0]+[1]*x+[2]*x*x",0.2,3);
 	TF1 *pionv2_fit = new TF1 ("pionv2_fit", "[0]+[1]*x+[2]*x*x",0.2,0.9);
@@ -182,15 +201,16 @@ int main( int argc, const char *argv[] )
 	double legend_x2=legend_x1+.20;
 	double legend_y2=legend_y1+.20;
 
-	double gr_legend_x1=0.6;
-	double gr_legend_y1=0.4;
+	double gr_legend_x1=0.70;
+	double gr_legend_y1=0.30;
 	double gr_legend_x2=gr_legend_x1+.10;
 	double gr_legend_y2=gr_legend_y1+.10;
 
+
 	double CMSsystemlabelposx = 0.14;
 	double CMSsystemlabelposy = 0.84;
-	double multlabelposx = 0.62;
-	double multlabelposy = 0.24;
+	double multlabelposx = 0.58;
+	double multlabelposy = 0.20;
 
 
 	TLegend v2vsptlegend (legend_x1, legend_y1, legend_x2, legend_y2);
@@ -219,7 +239,8 @@ int main( int argc, const char *argv[] )
 	gr_legend.SetTextSize(figuretextsize);
 	gr_legend.Draw("SAME");
 
-	std::string CMSsystemlabel = Form("#splitline{CMS (work in progress)}{pPb EPOS MC}", mult1, mult2);
+
+	std::string CMSsystemlabel = Form("#splitline{CMS pPb #sqrt{s_{NN}} = 5.02 TeV }{ %d #leq N_{trk}^{offline} < %d}", mult1, mult2);
 	std::string multlabel = Form("0.3 < p_{T}^{assoc} < 3.0 GeV/c", mult1, mult2);
 
 	TLatex tCMSsystemlabel( CMSsystemlabelposx,CMSsystemlabelposy, CMSsystemlabel.c_str()); 
@@ -262,6 +283,16 @@ int main( int argc, const char *argv[] )
 	double *pion_2_xpts = pion_2->GetX();
 	double *kaon_2_xpts = kaon_2->GetX();
 	double *prot_2_xpts = prot_2->GetX();
+
+
+	double *xpts[4] = {cpar_2_xpts, pion_2_xpts, kaon_2_xpts, prot_2_xpts};
+
+ 	for (int i = 0; i < 4; i++)
+ 	for (int ptBin = 0; ptBin < nPtBins[i]; ptBin++)
+ 	{
+		xpts[i][ptBin] = xpt (xpts[i][ptBin], 4, i);
+	}
+
 
 	double *cpar_1_relE = new double[nPtBins[0]];
 	double *pion_1_relE = new double[nPtBins[1]];
@@ -358,12 +389,13 @@ int main( int argc, const char *argv[] )
 
 	}
 
+	// Pion
 	for(int ptBin = 0; ptBin < nPtBins[1]; ptBin++)
 	{
 		pion_diff[ptBin] = pion_2_ypts[ptBin] - pion_1_ypts[ptBin];
 		pion_reldiff[ptBin] =   pion_diff[ptBin] / pion_1_ypts[ptBin];
 
-		cpar_1_relE[ptBin] = cpar_1_Eypts[ptBin] / cpar_1_ypts[ptBin];
+		pion_1_relE[ptBin] = pion_1_Eypts[ptBin] / pion_1_ypts[ptBin];
 		pion_2_relE[ptBin] = pion_2_Eypts[ptBin] / pion_2_ypts[ptBin];
 
 		pion_reldiff_E[ptBin] = (pion_2_ypts[ptBin] / pion_1_ypts[ptBin]) * sqrt( pion_1_relE[ptBin] * pion_1_relE[ptBin] + pion_2_relE[ptBin] * pion_2_relE[ptBin] );
@@ -375,8 +407,17 @@ int main( int argc, const char *argv[] )
 		pion_1_Eypts[ptBin] = pion_1_Eypts[ptBin] / pion_1_ypts[ptBin];
 		pion_2_Eypts[ptBin] = pion_2_Eypts[ptBin] / pion_1_ypts[ptBin];
 		pion_1_ypts[ptBin]  = pion_1_ypts[ptBin]  / pion_1_ypts[ptBin];
+
+		std::cerr << "pion_1_ypts: "    << pion_1_ypts[ptBin] << std::endl;
+		std::cerr << "pion_2_ypts: "    << pion_2_ypts[ptBin] << std::endl;
+		std::cerr << "pion_diff: "      << pion_diff[ptBin] << std::endl;
+		std::cerr << "pion_reldiff: "   << pion_reldiff[ptBin] << std::endl;
+		std::cerr << "pion_1_relE: "    << pion_1_relE[ptBin] << std::endl;
+		std::cerr << "pion_2_relE: "    << pion_2_relE[ptBin] << std::endl;
+		std::cerr << "pion_reldiffE: "  << pion_reldiff_E[ptBin] << std::endl;
 	}
 
+	// Kaon
 	for(int ptBin = 0; ptBin < nPtBins[2]; ptBin++)
 	{
 		kaon_diff[ptBin] = kaon_2_ypts[ptBin] - kaon_1_ypts[ptBin];
@@ -396,6 +437,7 @@ int main( int argc, const char *argv[] )
 		kaon_1_ypts[ptBin]  = kaon_1_ypts[ptBin]  / kaon_1_ypts[ptBin];
 	}
 
+	// Proton
 	for(int ptBin = 0; ptBin < nPtBins[3]; ptBin++)
 	{
 		prot_diff[ptBin] = prot_2_ypts[ptBin] - prot_1_ypts[ptBin];
@@ -472,6 +514,8 @@ int main( int argc, const char *argv[] )
 	kaon_1_norm.SetMarkerStyle(29);
 	prot_1_norm.SetMarkerStyle(20);
 
+	tCMSsystemlabel.Draw();
+
 	cpar_2_norm.Draw("AP");
 	pion_2_norm.Draw("P");
 	kaon_2_norm.Draw("P");
@@ -487,6 +531,27 @@ int main( int argc, const char *argv[] )
 	TLine *line_up  = new TLine(rv2vspt_ptmin,up,rv2vspt_ptmax,up); 
 	TLine *line_mi  = new TLine(rv2vspt_ptmin,1.00,rv2vspt_ptmax,1.00); 
 	TLine *line_lo  = new TLine(rv2vspt_ptmin,lo,rv2vspt_ptmax,lo); 
+
+	TF1* funcr_1 = new TF1("func_1", "1", 0, 2);
+	TF1* funcr_2 = new TF1("func_2", "1", 0, 2);
+
+	funcr_1->SetLineColor(kBlack);
+	funcr_2->SetLineColor(kBlack);
+	funcr_1->SetMarkerStyle(21);
+	funcr_2->SetMarkerStyle(25);
+
+	double grr_legend_x1=0.7;
+	double grr_legend_y1=0.25;
+	double grr_legend_x2=grr_legend_x1+.10;
+	double grr_legend_y2=grr_legend_y1+.10;
+
+	TLegend grr_legend (grr_legend_x1, grr_legend_y1, grr_legend_x2, grr_legend_y2);
+	grr_legend.SetFillStyle(0);
+	grr_legend.SetBorderSize(0);
+	grr_legend.AddEntry(funcr_1,Form("%s", label1.c_str()) , "P");
+   grr_legend.AddEntry(funcr_2,Form("%s", label2.c_str()) , "P");
+	grr_legend.SetTextSize(figuretextsize);
+	grr_legend.Draw("SAME");
 
 	line_up->SetLineStyle(7);
 	line_mi->SetLineStyle(7);
@@ -526,10 +591,22 @@ int main( int argc, const char *argv[] )
 	cpar_reldiffgraph.GetXaxis()->SetTitleSize(figuretextsize);
 	cpar_reldiffgraph.GetYaxis()->SetRangeUser(reldiffvspt_rmin,reldiffvspt_rmax);
 	cpar_reldiffgraph.GetYaxis()->SetLimits(reldiffvspt_rmin,reldiffvspt_rmax);
-	cpar_reldiffgraph.GetYaxis()->SetTitle("relative difference");
+	//cpar_reldiffgraph.GetYaxis()->SetTitle("rel. diff");
+	cpar_reldiffgraph.GetYaxis()->SetTitle("rel. diff");
 	cpar_reldiffgraph.GetYaxis()->CenterTitle(1);
 	cpar_reldiffgraph.GetYaxis()->SetTitleOffset(1.2);
 	cpar_reldiffgraph.GetYaxis()->SetTitleSize(figuretextsize);
+
+	double grrel_legend_x1=0.70;
+	double grrel_legend_y1=0.30;
+	double grrel_legend_x2=grrel_legend_x1+.10;
+	double grrel_legend_y2=grrel_legend_y1+.10;
+
+	TLegend grrel_legend (grrel_legend_x1, grrel_legend_y1, grrel_legend_x2, grrel_legend_y2);
+	grrel_legend.SetFillStyle(0);
+	grrel_legend.SetBorderSize(0);
+	grrel_legend.AddEntry(func_2,Form("%s", "#frac{ v_{2,corr} - v_{2,uncorr} }{ v_{2,uncorr} } ") , "P");
+	grrel_legend.SetTextSize(figuretextsize);
 
 	std::string label_reldiff = Form("reldiff_MC_comprarison_nTrk_%03d-%03d", mult1, mult2); 
 	std::string pngfigure_reldiff = label_reldiff+".png";
@@ -545,6 +622,8 @@ int main( int argc, const char *argv[] )
 	kaon_reldiffgraph.Draw("P");
 	prot_reldiffgraph.Draw("P");
 
+	grrel_legend.Draw("SAME");
+
    double reldiff_min = -0.05;
    double reldiff_max =  0.05;
 
@@ -559,6 +638,8 @@ int main( int argc, const char *argv[] )
 	line_upp->Draw("SAME");
 	line_upp->Draw("SAME");
 	line_low->Draw("SAME");
+
+	tCMSsystemlabel.Draw();
 
 	canvas_reldiff.SaveAs( pngfigure_reldiff.c_str() );
 	canvas_reldiff.SaveAs( pdffigure_reldiff.c_str() );

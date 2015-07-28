@@ -163,11 +163,73 @@ int PIDUtil::GetIDmTrk_trkCorr(const Tracks_c &tTracks, int iTrk)
 	return unIDcode;
 }
 
-int PIDUtil::GetIDgenPart_trkCorr(const Tracks_c &tTracks, int iPart)
+int PIDUtil::GetIDgenPart_trkCorr(const Particles &tTracks, int iPart)
 {
 
 	float eta  = tTracks.pEta[iPart];
 	float pt   = tTracks.pPt [iPart];
+  	float p    = pt * cosh(eta);
+	int McPID  = tTracks.pPId[iPart];
+
+	if (  etaMax < fabs(eta) ) 						{return unIDcode;}
+
+	if ( p < BB_Kaon_maxpcut )
+	{
+		if (( McPID == 211)  || (McPID == -211) ) 	{ return 1; }
+		if (( McPID == 321)  || (McPID == -321) ) 	{ return 2; }
+		if (( McPID == 2212) || (McPID == -2212)) 	{ return 3; }
+	}
+	else if ( ( BB_Kaon_maxpcut < p) && (p < BB_Pion_maxpcut) )
+	{
+		if (( McPID == 211)  || (McPID == -211) ) 	{ return 1; }
+		if (( McPID == 2212) || (McPID == -2212)) 	{ return 3; }
+	}
+	else if ( ( BB_Pion_maxpcut < p) && (p < BB_Prot_maxpcut) )
+	{
+		if (  ( McPID == 2212) || (McPID == -2212)) 	{ return 3; }
+		else {return 4;}
+		
+	}
+
+	return unIDcode;
+}
+
+int PIDUtil::GetIDgenPart_trkCorr(const GenParticles &tTracks, int iPart)
+{
+
+	float eta  = tTracks.eta[iPart];
+	float pt   = tTracks.pt [iPart];
+  	float p    = pt * cosh(eta);
+	int McPID  = tTracks.pdg[iPart];
+
+	if (  etaMax < fabs(eta) ) 						{return unIDcode;}
+
+	if ( p < BB_Kaon_maxpcut )
+	{
+		if (( McPID == 211)  || (McPID == -211) ) 	{ return 1; }
+		if (( McPID == 321)  || (McPID == -321) ) 	{ return 2; }
+		if (( McPID == 2212) || (McPID == -2212)) 	{ return 3; }
+	}
+	else if ( ( BB_Kaon_maxpcut < p) && (p < BB_Pion_maxpcut) )
+	{
+		if (( McPID == 211)  || (McPID == -211) ) 	{ return 1; }
+		if (( McPID == 2212) || (McPID == -2212)) 	{ return 3; }
+	}
+	else if ( ( BB_Pion_maxpcut < p) && (p < BB_Prot_maxpcut) )
+	{
+		if (  ( McPID == 2212) || (McPID == -2212)) 	{ return 3; }
+		else {return 4;}
+		
+	}
+
+	return unIDcode;
+}
+
+int PIDUtil::GetIDgenPart_trkCorr(const Tracks_c &tTracks, int iPart)
+{
+
+	float eta  = tTracks.pEta[iPart];
+	float pt   = tTracks.mtrkPt [iPart];
   	float p    = pt * cosh(eta);
 	int McPID  = tTracks.pPId[iPart];
 

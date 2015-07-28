@@ -1,5 +1,15 @@
 #include "GraphTools.h"
 
+/////////////////////////////////////////////////////////////////////////
+double xpt ( double center, int npts, int ipt, double dx )
+{
+	double icenter = double(npts-1.)/2.;
+	double retxpt = center + (ipt-icenter)*dx;
+	return retxpt;
+
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 void plotTH2D (TH2D *histo, const char titlelabels[], const char figbasename[], const char drawmode[] )
 {
 

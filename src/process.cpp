@@ -23,7 +23,6 @@ int main( int argc, const char *argv[] )
  std::string tag		            = argv[2];
  std::string contmatrix_filename = argv[3];
 
-
  // Binning
  int nCorrTyp 	    = nCorrTyp_;
  int *nPtBins      = new int[nCorrTyp_];
@@ -36,6 +35,7 @@ int main( int argc, const char *argv[] )
 
  prepareDIR(tag);
 
+
  //////////////////////////////////////
  // ****** Opening input file ****** //
  //////////////////////////////////////
@@ -47,7 +47,7 @@ int main( int argc, const char *argv[] )
  //////////////////////////////
  // ***** Initializing ***** //
  //////////////////////////////
- 
+
  TH1::SetDefaultSumw2( );
  TH2::SetDefaultSumw2( );
 
@@ -85,7 +85,6 @@ int main( int argc, const char *argv[] )
  CFW.Calcvns();
  CFW.display_v2s();
 
-
  // Make figures
  for(int multBin=0; multBin < nMultiplicityBins_Ana; multBin++)
  {
@@ -94,14 +93,18 @@ int main( int argc, const char *argv[] )
 	CFW.makeFigv3vspT_allparticles(multBin, tag);
 //	CFW.makeFigv2vspT_allparticles_with_selfcorrelation(multBin, tag);
 
+
  }
 
- CFW.makeFigv2vspT_HIN13002(tag);
- CFW.makeFigv2vsnTrk_cpar_ref(tag);
-
- CFW.makeFigCorrel2D( tag );
+// CFW.makeFigv2ptNtrk();
+//
+// CFW.makeFigv2vspT_HIN13002(tag);
+// CFW.makeFigv2vsnTrk_cpar_ref(tag);
+//
+// CFW.makeFigCorrel2D( tag );
  CFW.ReBin();
- CFW.makeFigCorrel1D( tag );
+// CFW.makeFigCorrel1D( tag );
+
 
 
 ////////////////////////////////

@@ -1,4 +1,5 @@
 #include <string>
+#include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <TFile.h>
@@ -51,8 +52,6 @@ int main( int argc, const char *argv[] )
  log->repeat = 1000;
  log->label = "DATA";
 
-
-
  //////////////////////////////////////
  //                                  //
  // ****** Opening input file ****** //
@@ -74,7 +73,6 @@ int main( int argc, const char *argv[] )
  { doMC = true; std::cout << "doMC: false" << std::endl; }
 
  TTree *trackTree;
-
 
  // trackTree
  if ( doMC == false )
@@ -142,7 +140,7 @@ int main( int argc, const char *argv[] )
  else {std::cout << "trkCorr File successfully opened." << std::endl;}
 
  TrackCorr *trkCorr = new TrackCorr;
- trkCorr->table = Read_TH3D_1Darray(f_trkCorr, "hcorr3D typ", 4);
+ trkCorr->table = Read_TH3D_1Darray(f_trkCorr, "hcorr3D typ", nCorrTyp);
 
  std::cout << "dotrkCorr: " << dotrkCorr_str << std::endl;
 
@@ -152,7 +150,7 @@ int main( int argc, const char *argv[] )
  else {std::cerr << "dotrkCorr not defined." << std::endl; exit(-1);}
 
  trkCorr->DoTrackWeight = dotrkCorr;
- for (int i = 0; i < 4; i++)
+ for (int i = 0; i < nCorrTyp ; i++)
  { trkCorr->table[i]->SetDirectory(0); }
 
  f_trkCorr->Close();
@@ -197,7 +195,8 @@ int main( int argc, const char *argv[] )
 		if ( multiplicitybin_EvM(hiNtracks) == multBin )
 		{
 
-
+			tTracks.b_nTrk->GetEntry(iEv);
+			if ( maxTracks < tTracks.nTrk) continue;
 			trackTree->GetEntry(iEv);
 			int nTrk = tTracks.nTrk;
 			if ( maxTracks < tTracks.nTrk) continue;
@@ -227,7 +226,6 @@ int main( int argc, const char *argv[] )
 
 				ev->AddTrack(trk);
 			}
-
 					
 			ev->EventID = iEv;
 			(*EventCache_ptr)[multBin][zvtxBin].push_back( (*ev) );
@@ -289,10 +287,10 @@ int main( int argc, const char *argv[] )
 	CFW.nEvents_Processed_signal_total->Fill(0.);
 	if ( multiplicitybin_Ana(hiNtracks, nMultiplicityBins_Ana) == -1) continue;
 
-	int multBin = multiplicitybin_Ana(hiNtracks, nMultiplicityBins_Ana);
-
+	// Reset event
  	ev->Clear(nCorrTyp, nPtBins);
 
+	// Read in Event Data
 	ev->EventID = iEvA;
 	ev->SetnTrk(hiNtracks);
 	ev->SetzVtx(vz);
@@ -303,10 +301,9 @@ int main( int argc, const char *argv[] )
 	
 	CFW.ResetCurrentEventCorrelation();
 
-	// Load in tracks
-	trackTree->GetEntry(iEvA);
-
+	tTracks.b_nTrk->GetEntry(iEvA);
 	if ( maxTracks < tTracks.nTrk) continue;
+	trackTree->GetEntry(iEvA);
 
 	// Read in event
 	ev->ReadInDATA(tTracks, pidutil, trkCorr);

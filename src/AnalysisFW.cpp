@@ -14,7 +14,7 @@ const double normalizationRegionMassMin = 1.0400;
 const double normalizationRegionMassMax = 1.0495;
 
 
-const double maxtrkCorr2 = 10;
+const double maxtrkCorr2 = 999;
 
 /////////////////////////////
 // *** EventData class *** //
@@ -36,6 +36,7 @@ double TrackCorr::trackWeight(int PID, float pt, float eta, float phi)
 
 	if( DoTrackWeight )
 	{ 
+
 		if( (PID == 0))
 		{ 
 			double value = table[0]->GetBinContent(table[0]->FindBin(pt,eta,phi));
@@ -46,12 +47,13 @@ double TrackCorr::trackWeight(int PID, float pt, float eta, float phi)
 			double value = table[PID]->GetBinContent(table[PID]->FindBin(pt,eta,phi));
 		 	return value;
 		 }
+
 	}	
-	else
-	{ return 1; }
+
+	return 1;
 }
 
-LogFile::LogFile(const char filename[])
+LogFile::LogFile( const char filename[] )
 { ofs.open( filename ); }
 
 void LogFile::wr( const char str[])
@@ -60,8 +62,9 @@ void LogFile::wr( const char str[])
 	std::cout << str << std::endl;
 }
 
-void LogFile::EventCounter( int iEv)
+void LogFile::EventCounter( int iEv )
 {
+
   if ( (iEv % repeat) == 0 )
   { 
 	 std::cout << Form("%s Event: %d", label.c_str(), iEv ) << std::endl; 
@@ -81,9 +84,13 @@ void EventData::Clear(int nCorrTyp, int *nPtBins)
 	nTrk=-1;
 
 	for(int TypBin=0; TypBin < nCorrTyp; TypBin++)
-	for(int ptBin=0; ptBin < nPtBins[TypBin]; ptBin++)
 	{
-		nTriggerParticles[TypBin][ptBin] = 0; 
+
+		nTriggerParticles_ptint[TypBin] = 0.0;
+		for(int ptBin=0; ptBin < nPtBins[TypBin]; ptBin++)
+		{
+			nTriggerParticles[TypBin][ptBin] = 0; 
+		}
 	}
 
 	nTriggerParticles_cpar_ref = 0;
@@ -93,19 +100,22 @@ void EventData::Clear(int nCorrTyp, int *nPtBins)
 // Setup_nTriggerParticles
 void EventData::Setup_nTriggerParticles(int nCorrTyp, int *nPtBins)
 {
-	nTriggerParticles = new int*[nCorrTyp];
+	nTriggerParticles = new float*[nCorrTyp];
+
+	nTriggerParticles_ptint = new float[nCorrTyp];
 
 	for( int TypBin=0; TypBin < nCorrTyp; TypBin++)
 	{
-		 nTriggerParticles[TypBin] = new int[nPtBins[TypBin]];
+		 nTriggerParticles_ptint[TypBin] = 0.0;
+		 nTriggerParticles[TypBin] = new float[nPtBins[TypBin]];
 		 for(int ptBin=0; ptBin < nPtBins[TypBin]; ptBin++)
 		{
-			nTriggerParticles[TypBin][ptBin] = 0;
+			nTriggerParticles[TypBin][ptBin] = 0.0;
 		}
 	
 	}
 	
-	nTriggerParticles_cpar_ref = 0;
+	nTriggerParticles_cpar_ref = 0.0;
 
 }
 
@@ -148,6 +158,7 @@ bool TrackSelection( const Tracks &tTracks, int iTrk )
 	// *** Track selection *** //
 	if ( tTracks.highPurity[iTrk] == false ) {return false;}
 	if ( 2.4 < abs(tTracks.trkEta[iTrk]) ) {return false;}
+	//if ( 0.8 < abs(tTracks.trkEta[iTrk]) ) {return false;}
 
 	float z_sep_significance  = tTracks.trkDz1 [iTrk] / tTracks.trkDzError1  [iTrk];
 	if ( 3   < abs(z_sep_significance)   ) {return false;}
@@ -221,18 +232,18 @@ void EventData::ReadInDATA( const Tracks &tTracks, PIDUtil *pidutil, TrackCorr *
 		trk.pid 		 = pidutil->GetID( tTracks, iTrk);
 		trk.ptBin_CH = ptbin(       0 , pt );
 		trk.IsPID = false;
-		if ( trk.pid != 99)
+		if ( trk.pid != 99 )
 		{
 		 trk.ptBin_ID = ptbin( trk.pid , pt );
 		 trk.IsPID    = ( trk.ptBin_ID != -1 );
+		 trk.w  = trkCorr->trackWeight( trk.pid, pt, eta, phi); 
 		}
 
 		trk.IsInsideReferencePtRange = ( (ptref1 < pt) && ( pt < ptref2 ));
 		trk.IsInsideChParticlPtRange = ( trk.ptBin_CH != -1 );
-		if ( !trk.IsInsideReferencePtRange && !trk.IsPID ) continue;
+		if ( !trk.IsInsideChParticlPtRange && !trk.IsInsideReferencePtRange && !trk.IsPID ) continue;
 
 		trk.w0 = trkCorr->trackWeight(     0  , pt, eta, phi); 
-		trk.w  = trkCorr->trackWeight( trk.pid, pt, eta, phi); 
 		
   		// Track fill up
   		trk.charge  = tTracks.trkCharge[iTrk];
@@ -244,61 +255,130 @@ void EventData::ReadInDATA( const Tracks &tTracks, PIDUtil *pidutil, TrackCorr *
 
 		// chadron
 		if( trk.IsInsideChParticlPtRange )
-		{ nTriggerParticles[0][ trk.ptBin_CH ]++; }
+		{ nTriggerParticles[0][ trk.ptBin_CH ] += trk.w0; }
  
 		// reference
 		if ( trk.IsInsideReferencePtRange )
-		{ nTriggerParticles_cpar_ref++; }
+		{ nTriggerParticles_cpar_ref += trk.w0; }
 
 		// pid particle
 		if( trk.IsPID )
-		{ nTriggerParticles[ trk.pid ][ trk.ptBin_ID ]++; }
+		{ 
+			nTriggerParticles[ trk.pid ][ trk.ptBin_ID ] += trk.w;
+			nTriggerParticles_ptint[ trk.pid ] += trk.w;
+		}
 
 	}
 
 }
 
 // ReadInMC
-void EventData::ReadInMC( Particles &tTracks)
+void EventData::ReadInMC( Particles &tTracks, PIDUtil *pidutil )
 {
 	int nPart = tTracks.nParticle;
 
 	for (int iPar = 0; iPar < nPart; iPar++)
 	{
 
-  		float p = tTracks.pPt[iPar] * cosh(tTracks.pEta[iPar]);
+		float pt  = tTracks.pPt [iPar];
+		float eta = tTracks.pEta[iPar];
+		float phi = tTracks.pPhi[iPar];
 
-		int PID = McPID2AnaPID ( tTracks, iPar );
-		int ptBin_CH = ptbin(   0 , tTracks.pPt[iPar]);
-		int ptBin_ID = ptbin( PID , tTracks.pPt[iPar]);
+  		track part;
+		part.pid = pidutil->GetIDgenPart_trkCorr( tTracks, iPar);
+		part.ptBin_CH = ptbin(   0 , tTracks.pPt[iPar]);
+		part.IsPID = false;
+		if ( part.pid != 99 )
+		{
+		 part.ptBin_ID = ptbin( part.pid , pt );
+		 part.IsPID    = ( part.ptBin_ID != -1 );
+		}
 
-		bool isOutsideReferencePartPtRange = ( ( tTracks.pPt[iPar] < ptref1 ) || ( ptref2 < tTracks.pPt[iPar] ) );
-		bool isOutsideIdentifHadronPtRange = ( ptBin_ID == -1);
-		bool isOutsideChargedHadronPtRange = ( ptBin_CH == -1);
 
-		if ( isOutsideReferencePartPtRange && isOutsideChargedHadronPtRange && isOutsideIdentifHadronPtRange ) continue;
+		part.IsInsideReferencePtRange = ( (ptref1 < pt) && ( pt < ptref2 ));
+		part.IsInsideChParticlPtRange = ( part.ptBin_CH != -1 );
+		if ( !part.IsInsideChParticlPtRange && !part.IsInsideReferencePtRange && !part.IsPID ) continue;
+
 		// *** Track selection *** //
 		
   		// Track fill up
-  		track part;
-  		part.charge  = 0;
-  		part.pid  	 = PID;
   		part.phi     = tTracks.pPhi[iPar];
   		part.eta     = tTracks.pEta[iPar];
+		part.w0 		 = 1;
+		part.w 		 = 1;
 
 		EventData::AddTrack(part);
 
 		// chadron
-		if( !isOutsideChargedHadronPtRange )
-		{ nTriggerParticles[0][ ptBin_CH ]++; }
+		if( part.IsInsideChParticlPtRange )
+		{ nTriggerParticles[0][ part.ptBin_CH ]++; }
  
 		// reference
-		if ( !isOutsideReferencePartPtRange )
+		if ( part.IsInsideReferencePtRange )
 		{ nTriggerParticles_cpar_ref++; }
 
 		// pid particle
-		if( (part.pid != 99) && !isOutsideIdentifHadronPtRange )
-		{ nTriggerParticles[ part.pid ][ ptBin_ID ]++; }
+		if( part.IsPID )
+		{ 
+			nTriggerParticles[ part.pid ][ part.ptBin_ID ]++; 
+			nTriggerParticles_ptint[ part.pid ] += part.w;
+		}
+
+	}
+
+}
+
+// ReadInGenParticles
+void EventData::ReadInGenParticles( GenParticles &gParts, PIDUtil *pidutil )
+{
+	int nPart = gParts.mult;
+
+	for (int iPar = 0; iPar < nPart; iPar++)
+	{
+
+		float pt  = gParts.pt [iPar];
+		float eta = gParts.eta[iPar];
+		float phi = gParts.phi[iPar];
+
+  		track part;
+		part.pid = pidutil->GetIDgenPart_trkCorr( gParts, iPar);
+		part.ptBin_CH = ptbin(   0 , gParts.pt[iPar]);
+		part.IsPID = false;
+		if ( part.pid != 99 )
+		{
+		 part.ptBin_ID = ptbin( part.pid , pt );
+		 part.IsPID    = ( part.ptBin_ID != -1 );
+		}
+
+
+		part.IsInsideReferencePtRange = ( (ptref1 < pt) && ( pt < ptref2 ));
+		part.IsInsideChParticlPtRange = ( part.ptBin_CH != -1 );
+		if ( !part.IsInsideChParticlPtRange && !part.IsInsideReferencePtRange && !part.IsPID ) continue;
+
+		// *** Track selection *** //
+		
+  		// Track fill up
+  		part.phi     = phi;
+  		part.eta     = eta;
+		part.w0 		 = 1;
+		part.w 		 = 1;
+
+		EventData::AddTrack(part);
+
+		// chadron
+		if( part.IsInsideChParticlPtRange )
+		{ nTriggerParticles[0][ part.ptBin_CH ]++; }
+ 
+		// reference
+		if ( part.IsInsideReferencePtRange )
+		{ nTriggerParticles_cpar_ref++; }
+
+		// pid particle
+		if( part.IsPID )
+		{ 
+			nTriggerParticles[ part.pid ][ part.ptBin_ID ]++; 
+			nTriggerParticles_ptint[ part.pid ] += part.w;
+		}
 
 	}
 

@@ -92,12 +92,6 @@ int main( int argc, const char *argv[] )
  PIDUtil *pidutil = new PIDUtil;
  pidutil->ReadInConfig(PIDconfig);
 
- // pT Binning self-check
- std::cout << "GetPtBin_sl(0.19): " << GetPtBin_sl(0.19) << std::endl;
- std::cout << "GetPtBin_sl(0.21): " << GetPtBin_sl(0.21) << std::endl;
- std::cout << "GetPtBin_sl(1.59): " << GetPtBin_sl(1.59) << std::endl;
- std::cout << "GetPtBin_sl(1.61): " << GetPtBin_sl(1.61) << std::endl;
-
  // Binning
  int nCorrTyp = nCorrTyp_; 
  int *nPtBins = new int[nCorrTyp_];
@@ -371,6 +365,7 @@ int main( int argc, const char *argv[] )
 			int ptBin_RECO_sl = GetPtBin_sl( mpt );
 
 			if ( (ptBin_GENE_sl == -1) || (ptBin_RECO_sl == -1) ) continue;
+
 
 //			std::cerr << "PID_GEN: " << PID_GEN << std::endl;
 //			std::cerr << "PID_RECO: " << PID_RECO << std::endl;

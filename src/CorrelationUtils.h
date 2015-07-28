@@ -105,6 +105,9 @@ class CorrelationFramework
  	TH2D ***correl2D_currev_signal;
  	TH2D ***correl2D_currev_backgr;
 
+	TH2D **correl2D_ptint_currev_signal;
+ 	TH2D **correl2D_ptint_currev_backgr;
+
 	TH2D ***correl2D_self_currev_signal;
  	TH2D ***correl2D_self_currev_backgr;
 
@@ -114,10 +117,17 @@ class CorrelationFramework
 	// correl2D all event
  	TH2D ****correl2D_signal_meas;
  	TH2D ****correl2D_backgr_meas;
+
+ 	TH2D ***correl2D_ptint_signal_meas;
+ 	TH2D ***correl2D_ptint_backgr_meas;
 	
 	TH2D ****correl2D_functi;
  	TH2D ****correl2D_signal;
  	TH2D ****correl2D_backgr;
+
+	TH2D ***correl2D_ptint_functi;
+ 	TH2D ***correl2D_ptint_signal;
+ 	TH2D ***correl2D_ptint_backgr;
 
  	TH2D ****correl2D_self_functi;
  	TH2D ****correl2D_self_signal;
@@ -126,6 +136,8 @@ class CorrelationFramework
  	TH2D **correl2D_cpar_ref_functi;
  	TH2D **correl2D_cpar_ref_signal;
  	TH2D **correl2D_cpar_ref_backgr;
+
+   TH2D **v2ptNtrkhisto;
 
 	// correl1D
  	TH1D ****correl1D;
@@ -140,6 +152,9 @@ class CorrelationFramework
  	TH1D  *nEvents_Processed_backgr_total;
  	TH1D ****nEvents_Processed_signal;
  	TH1D ****nEvents_Processed_backgr;
+ 	TH1D ***nEvents_ptint_Processed_signal;
+ 	TH1D ***nEvents_ptint_Processed_backgr;
+
 
 	// variables holding the results
 	CorrelResults 			  ***correl_Results;
@@ -179,6 +194,7 @@ class CorrelationFramework
 	void makeFigv2vspT_allparticles_with_selfcorrelation(int multBin, std::string tag);
 	void makeFigv2vsnTrk_cpar_ref( std::string tag );
 	void makeFigv2vsnTrk_allparticles( std::string tag );
+	void makeFigv2ptNtrk();
 
 	TGraphErrors Getv2TGraphError (int TypBin, int multBin);
 	std::vector< double > Getptvec      ( int TypBin, double offset );
@@ -202,8 +218,10 @@ class CorrelationFramework
 
 	// Read functions
 	void Setup_TH1Ds_CorrPtMult( TH1D ****&histo, const char histoname[], const char titlelabels[], int nBins, double min, double max );
+	void Setup_TH1Ds_CorrMult( TH1D ***&histo, const char histoname[], const char titlelabels[], int nBins, double min, double max );
 	void Setup_TH2Ds_CorrPtMult( TH2D ****&histo, const char histoname[], const char titlelabels[], int XnBins, double Xmin, double Xmax, int YnBins, double Ymin, double Ymax );
 	void Setup_TH2Ds_Mult( TH2D **&histo, const char histoname[], const char titlelabels[], int XnBins, double Xmin, double Xmax, int YnBins, double Ymin, double Ymax );
+	void Setup_TH2Ds_CorrMult( TH2D ***&histo, const char histoname[], const char titlelabels[], int XnBins, double Xmin, double Xmax, int YnBins, double Ymin, double Ymax );
 	
 	void Read_TH1Ds_CorrPtMult( TH1D ****&histo, const char histoname[] );
 	void Read_TH2Ds_CorrPtMult( TH2D ****&histo, const char histoname[] );
@@ -211,10 +229,15 @@ class CorrelationFramework
 
 	// Auxiliary
 	std::string genStrCorrPtMult (const char name[], int TypBin, int ptBin, int multBin);
+	std::string genStrCorrMult (const char name[], int TypBin, int multBin);
 	std::string genStrMult (const char name[], int multBin);
+
+	void Allocate_TH1Ds_CorrMult( TH1D ***&histo );
 	void Allocate_TH1Ds_CorrPtMult( TH1D ****&histo );
 	void Allocate_TH2Ds_CorrPtMult( TH2D ****&histo );
+	void Allocate_TH2Ds_CorrMult( TH2D ***&histo );
 	void Allocate_TH2Ds_Mult( TH2D **&histo );
+	void Allocate_TH2Ds_Corr( TH2D **&histo );
 
 	private:
 	detacut dEtacut;
@@ -276,6 +299,9 @@ void ReadIn_TH2Ds_nMult(TFile *f, TH2D **&correl2D, int nMultiplicityBins, const
 void Setup_EventCache( std::deque< EventData > **&EventCache, int nMultiplicityBins, int nZvtxBins);
 
 void Setup_TH2Ds_nCorrnPt( TH2D ***&correl2D, int nCorrTyp, int *nPtBins, const char histoname[], const char tag[]);
+
+void Setup_TH2Ds_nCorr( TH2D **&correl2D, int nCorrTyp, const char histoname[], const char tag[]);
+
 void Setup_TH2Ds_nCorrnPtnMult( TH2D ****&correl2D, int nCorrTyp, int *nPtBins, int nMultiplicityBins, const char histoname[], const char tag[]);
 void Setup_TH2Ds_nMult( TH2D **&correl2D, int nMultiplicityBins, const char histoname[], const char tag[], double pt1, double pt2);
 

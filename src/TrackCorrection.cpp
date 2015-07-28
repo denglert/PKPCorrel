@@ -30,6 +30,10 @@ const int npt[nCorrTyp]      = { 15,     8,    7,   14,     6 };
 const double ptMin[nCorrTyp] = { 0.3, 0.20, 0.20, 0.20,  1.00 };
 const double ptMax[nCorrTyp] = { 3.0, 1.00, 0.90, 1.60,  1.60 };
 
+const double ptminlog[nCorrTyp] = { 0.3, 0.20, 0.20, 0.20, 1.00 };
+const double ptmaxlog[nCorrTyp] = { 3.0, 1.00, 0.90, 1.60, 1.60 };
+const int      nptlog[nCorrTyp] = { 15,     8,    7,   14,    6 };
+
 // const int npt[4]      = {1,    1,   1,  1};
 // const double ptMin[4] = {0.3, 0.15, 0.15, 0.15};
 // const double ptMax[4] = {0.5, 0.40, 0.40, 0.4 };
@@ -37,16 +41,20 @@ const double ptMax[nCorrTyp] = { 3.0, 1.00, 0.90, 1.60,  1.60 };
 const double ptGlobalMin = 0.1;
 
 //const int neta[4]      = { 48 , 16 , 16  , 16 };
-const int neta[nCorrTyp]      = { 24 ,   8,   8 ,  8 ,    8 };
-const double etaMin[nCorrTyp] = {-2.4,-0.8,-0.8 ,-0.8, -0.8 };
-const double etaMax[nCorrTyp] = { 2.4, 0.8, 0.8 , 0.8,  0.8 };
+const int neta[nCorrTyp]      = {  12 ,    8,    8,    8,    8 };
+const double etaMin[nCorrTyp] = { -2.4, -1.6, -1.6, -1.6, -1.6 };
+const double etaMax[nCorrTyp] = {  2.4,  1.6,  1.6,  1.6,  1.6 };
+
+//const int neta[nCorrTyp]      = {  12 ,    4,    4,    4,    4 };
+//const double etaMin[nCorrTyp] = { -2.4, -0.8, -0.8, -0.8, -0.8 };
+//const double etaMax[nCorrTyp] = {  2.4,  0.8,  0.8,  0.8,  0.8 };
+
 
 
 //const int nphi = 70;
-const int nphi = 35;
+const int nphi = 20;
 const double phiMin = -TMath::Pi();
 const double phiMax =  TMath::Pi();
-
 
 TH3D** Setup_TH3D_nCorrTyp(const char histoname[], const char histolabel[], const int nXBins[], const double xmin[], const double xmax[], const int nYBins[], const double ymin[], const double ymax[], int nZBins, double zmin, double zmax )
 {
@@ -93,6 +101,7 @@ bool isInsidePt(int PID, double pt)
 int main( int argc, const char *argv[] )
 {
 
+
   if(argc != 7)
   {
     std::cerr << "Usage: TrackCorrection <MC sample> <DATA sample> <tag> <nEventsDATA> <nEventsMC> <PIDconfig>" << std::endl;
@@ -110,7 +119,6 @@ int main( int argc, const char *argv[] )
  pidutil->ReadInConfig(PIDconfig);
  
  // Binning
- int nCorrTyp = nCorrTyp_; 
  int *nPtBins = new int[nCorrTyp_];
 
  for(int TypBin = 0; TypBin < nCorrTyp; TypBin++)
@@ -130,6 +138,20 @@ int main( int argc, const char *argv[] )
  TH1D *zvtxDistrMC   = new TH1D("zvtxDistrMC  ",";zvtx;nEvents", nZvtxDistrBins, zVtxDistrMin, zVtxDistrMax);
  TH1D *zvtxDistrDATA = new TH1D("zvtxDistrDATA",";zvtx;nEvents", nZvtxDistrBins, zVtxDistrMin, zVtxDistrMax);
  TH1D *ratiozvtx;
+
+ // ptbins
+ const int nptlogmax = 15;
+
+ const double l10 = TMath::Log(10);
+ double ptbinslog[nCorrTyp][nptlogmax];
+
+ double dptlog[nCorrTyp];
+ 
+ for(int i = 0; i < nCorrTyp; i++)
+ {
+ 	dptlog[i] = ( TMath::Log(ptmaxlog[i]) - TMath::Log(ptminlog[i]) )/nptlog[i]/l10;
+ }
+
 
 /////////////////////////////////////
 //                                 //
@@ -246,6 +268,10 @@ int main( int argc, const char *argv[] )
  TFile *output = new TFile(Form("./trkCorrections_%s.root", tag.c_str() ),"RECREATE");
  output->cd();
 
+ double nEvDATA = zvtxDistrDATA->Integral();
+ double nEvMC   = zvtxDistrMC  ->Integral();
+ zvtxDistrDATA->Scale(1./nEvDATA);
+ zvtxDistrMC  ->Scale(1./nEvMC);
  ratiozvtx = (TH1D*)zvtxDistrDATA->Clone("zvtxratio");
  ratiozvtx->Divide( zvtxDistrMC );
 
@@ -311,6 +337,8 @@ int main( int argc, const char *argv[] )
  ///////////////////////////////////////
  
  log.wr( "Starting to process MC to calclulate track corrrections..." );
+
+ TH1D *hist = new TH1D("hist", ";eta;", 20, -1.0, 1.0);
 
   // Event loop 
   if ( nEvMaxMC == -1 )
@@ -418,7 +446,8 @@ int main( int argc, const char *argv[] )
 
 			// particle selection
 			if( fabs(eta) > 2.4 ) continue;
-			if( pt < ptGlobalMin      ) continue;
+			if( pt < ptGlobalMin ) continue;
+			
 		
 								hgen3D[ 0 ]->Fill( pt,eta,phi,wzvtx );
 								hgen2D[ 0 ]->Fill( pt,eta,    wzvtx );
@@ -432,18 +461,15 @@ int main( int argc, const char *argv[] )
 								{hgen1D[PID]->Fill(    eta,    wzvtx );}};
 
 			// matched track selection
-			if( !( mTrackSelection_c( tTracks, iPart) )) continue;
+			if( tTracks.pNRec[iPart] == 0 ) continue;
+//			if( !( mTrackSelection_c( tTracks, iPart) )) continue;
 
-
-			double mpt  = tTracks.mtrkPt [iPart];
-			double meta = tTracks.pEta[iPart]; 
 			int    mPID = pidutil->GetIDmTrk_trkCorr(tTracks, iPart);
-			bool   misPID = (mPID != 99);
+			bool   PID_match = (PID == mPID);
 
-		
-				hmatched3D[ 0 ]->Fill(mpt,eta,phi,wzvtx); 
-				hmatched2D[ 0 ]->Fill(mpt,eta,    wzvtx); 
-				hmultrec2D[ 0 ]->Fill(mpt,eta,wzvtx*tTracks.pNRec[iPart]);
+				hmatched3D[ 0 ]->Fill(pt,eta,phi,wzvtx); 
+				hmatched2D[ 0 ]->Fill(pt,eta,    wzvtx); 
+				hmultrec2D[ 0 ]->Fill(pt,eta,wzvtx*tTracks.pNRec[iPart]);
 				if (isInsideChrPt)
 				{		  
 				hmultrec1D[ 0 ]->Fill(   eta,wzvtx*tTracks.pNRec[iPart]);
@@ -451,15 +477,15 @@ int main( int argc, const char *argv[] )
 				}
 
 
-			if ( misPID && (mPID == PID)  )
+			if ( isPID && PID_match )
 			{ 
-				hmatched3D[mPID]->Fill(mpt,eta,phi,wzvtx); 
-				hmatched2D[mPID]->Fill(mpt,eta,    wzvtx); 
-				hmultrec2D[mPID]->Fill(mpt,eta,wzvtx*tTracks.pNRec[iPart]);
+				hmatched3D[PID]->Fill(pt,eta,phi,wzvtx); 
+				hmatched2D[PID]->Fill(pt,eta,    wzvtx); 
+				hmultrec2D[PID]->Fill(pt,eta,wzvtx*tTracks.pNRec[iPart]);
 				if (isInsidePIDPt)
 				{
-				hmatched1D[mPID]->Fill(   eta,    wzvtx); 
-				hmultrec1D[mPID]->Fill(   eta,wzvtx*tTracks.pNRec[iPart]);
+				hmatched1D[PID]->Fill(   eta,    wzvtx); 
+				hmultrec1D[PID]->Fill(   eta,wzvtx*tTracks.pNRec[iPart]);
 				}
 
 			}
@@ -517,6 +543,8 @@ int main( int argc, const char *argv[] )
  //////////////////////
   
   output->cd();
+  zvtxDistrDATA->Write();
+  zvtxDistrMC->Write();
   output->Write();
   
   //heff->wr();

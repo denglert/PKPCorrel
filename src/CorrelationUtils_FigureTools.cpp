@@ -5,6 +5,7 @@
 #include <TGraphErrors.h>
 #include <TLegend.h>
 #include "GraphStyles.h"
+#include "GraphTools.h"
 #include "CorrelationUtils.h"
 #include "AnalysisBinning.h"
 #include "CMSres.h"
@@ -81,18 +82,29 @@ void CorrelationFramework::makeFigv2vspT_allparticles(int multBin, std::string t
 	double v2vspt_v2min = 0.0;
 	double v2vspt_v2max = 0.16;
 	//double v2vspt_v2max = 0.6;
+	
+	// Remove 1st point
+	cparv2.SetPoint(0, -50, -5);
+	pionv2.SetPoint(0, -50, -5);
+	kaonv2.SetPoint(0, -50, -5);
+	protv2.SetPoint(0, -50, -5);
+
+	cparv2_syst.SetPoint(0, -50, -5);
+	pionv2_syst.SetPoint(0, -50, -5);
+	kaonv2_syst.SetPoint(0, -50, -5);
+	protv2_syst.SetPoint(0, -50, -5);
 
 	cparv2.SetTitle("");
    cparv2.GetXaxis()->SetLimits(v2vspt_ptmin,v2vspt_ptmax);
 	cparv2.GetXaxis()->SetTitle("p_{T} [GeV/c]");                              			  
 	cparv2.GetXaxis()->CenterTitle(1);
 	cparv2.GetXaxis()->SetTitleOffset(1.2);
-	cparv2.GetXaxis()->SetTitleSize(figuretextsize);
+	cparv2.GetXaxis()->SetTitleSize(v2vspt_xlabelsize);
 	cparv2.GetYaxis()->SetRangeUser(v2vspt_v2min,v2vspt_v2max);
 	cparv2.GetYaxis()->SetTitle("v_{2}");
 	cparv2.GetYaxis()->CenterTitle(1);
 	cparv2.GetYaxis()->SetTitleOffset(1.2);
-	cparv2.GetYaxis()->SetTitleSize(figuretextsize);
+	cparv2.GetYaxis()->SetTitleSize(v2vspt_ylabelsize);
 
 // No fit.
 
@@ -115,6 +127,7 @@ void CorrelationFramework::makeFigv2vspT_allparticles(int multBin, std::string t
 //	pionv2.Fit("pionv2_fit", "R");
 //	kaonv2.Fit("kaonv2_fit", "R");
 //	protv2.Fit("protv2_fit", "R");
+//
 
 	cparv2.Draw("AP");
 	pionv2.Draw("P");
@@ -155,6 +168,7 @@ void CorrelationFramework::makeFigv2vspT_allparticles(int multBin, std::string t
 	TLegend v2vsptlegend (legend_x1, legend_y1, legend_x2, legend_y2);
 	v2vsptlegend.SetFillStyle(0);
 	v2vsptlegend.SetBorderSize(0);
+	v2vsptlegend.SetTextSize(v2vspt_legendtextsize);
 	v2vsptlegend.AddEntry(&cparv2,"charged", "P");
 	v2vsptlegend.AddEntry(&pionv2,"#pi", "P");
 	v2vsptlegend.AddEntry(&kaonv2,"K", "P");
@@ -166,22 +180,21 @@ void CorrelationFramework::makeFigv2vspT_allparticles(int multBin, std::string t
 //	v2vsptlegend.AddEntry(&alice_0_20_kaon,"# ALICE [0-20] K - c.p", "P");
 //	v2vsptlegend.AddEntry(&alice_0_20_prot,"# ALICE [0-20] p - c.p", "P");
 
-	v2vsptlegend.SetTextSize(figuretextsize);
 	v2vsptlegend.Draw("SAME");
 
    int mult1 = multiplicity_Ana(multBin, 0, nMultiplicityBins_Ana);
 	int mult2 = multiplicity_Ana(multBin, 1, nMultiplicityBins_Ana);
 
-	std::string CMSsystemlabel = Form("#splitline{CMS (work in progress) pPb}{#sqrt{s_{NN}} = 5.02 TeV L_{int} = 35 nb^{-1}}", mult1, mult2);
-	std::string multlabel = Form("%3d #leq N_{trk}^{offline} #leq %3d", mult1, mult2);
+	std::string CMSsystemlabel = Form("#splitline{CMS Preliminary pPb}{#sqrt{s_{NN}} = 5.02 TeV L_{int} = 35 nb^{-1}}", mult1, mult2);
+	std::string multlabel = Form("%3d #leq N_{trk}^{offline} < %3d", mult1, mult2);
 
 	TLatex tCMSsystemlabel( CMSsystemlabelposx,CMSsystemlabelposy, CMSsystemlabel.c_str()); 
-	tCMSsystemlabel.SetTextSize(figuretextsize);
+	tCMSsystemlabel.SetTextSize(v2vspt_figuretextsize);
 	tCMSsystemlabel.SetNDC(kTRUE);
 	tCMSsystemlabel.Draw();
 
 	TLatex tmultlabel( multlabelposx,multlabelposy, multlabel.c_str()); 
-	tmultlabel.SetTextSize(figuretextsize);
+	tmultlabel.SetTextSize(v2vspt_figuretextsize);
 	tmultlabel.SetNDC(kTRUE);
 	tmultlabel.Draw();
 	
@@ -288,6 +301,16 @@ void CorrelationFramework::makeFigv2vspT_allparticles_ALICE_comparison(int multB
 	double v2vspt_v2min = 0.0;
 	double v2vspt_v2max = 0.16;
 
+//	cparv2.SetPoint(0, -50, -5);
+//	pionv2.SetPoint(0, -50, -5);
+//	kaonv2.SetPoint(0, -50, -5);
+//	protv2.SetPoint(0, -50, -5);
+//
+//	cparv2_syst.SetPoint(0, -50, -5);
+//	pionv2_syst.SetPoint(0, -50, -5);
+//	kaonv2_syst.SetPoint(0, -50, -5);
+//	protv2_syst.SetPoint(0, -50, -5);
+
 	cparv2.SetTitle("");
    cparv2.GetXaxis()->SetLimits(v2vspt_ptmin,v2vspt_ptmax);
 	cparv2.GetXaxis()->SetTitle("p_{T} [GeV/c]");                              			  
@@ -300,15 +323,50 @@ void CorrelationFramework::makeFigv2vspT_allparticles_ALICE_comparison(int multB
 	cparv2.GetYaxis()->SetTitleOffset(1.2);
 	cparv2.GetYaxis()->SetTitleSize(figuretextsize);
 
+	pionv2.SetTitle("");
+   pionv2.GetXaxis()->SetLimits(v2vspt_ptmin,v2vspt_ptmax);
+	pionv2.GetXaxis()->SetTitle("p_{T} [GeV/c]");                              			  
+	pionv2.GetXaxis()->CenterTitle(1);
+	pionv2.GetXaxis()->SetTitleOffset(1.2);
+	pionv2.GetXaxis()->SetTitleSize(figuretextsize);
+	pionv2.GetYaxis()->SetRangeUser(v2vspt_v2min,v2vspt_v2max);
+	pionv2.GetYaxis()->SetTitle("v_{2}");
+	pionv2.GetYaxis()->CenterTitle(1);
+	pionv2.GetYaxis()->SetTitleOffset(1.2);
+	pionv2.GetYaxis()->SetTitleSize(figuretextsize);
 
-	cparv2.Draw("AP");
-	pionv2.Draw("P");
-	kaonv2.Draw("P");
-	protv2.Draw("P");
+	kaonv2.SetTitle("");
+   kaonv2.GetXaxis()->SetLimits(v2vspt_ptmin,v2vspt_ptmax);
+	kaonv2.GetXaxis()->SetTitle("p_{T} [GeV/c]");                              			  
+	kaonv2.GetXaxis()->CenterTitle(1);
+	kaonv2.GetXaxis()->SetTitleOffset(1.2);
+	kaonv2.GetXaxis()->SetTitleSize(figuretextsize);
+	kaonv2.GetYaxis()->SetRangeUser(v2vspt_v2min,v2vspt_v2max);
+	kaonv2.GetYaxis()->SetTitle("v_{2}");
+	kaonv2.GetYaxis()->CenterTitle(1);
+	kaonv2.GetYaxis()->SetTitleOffset(1.2);
+	kaonv2.GetYaxis()->SetTitleSize(figuretextsize);
 
-	cparv2_syst.Draw("2 SAME");
-	pionv2_syst.Draw("2 SAME");
-	kaonv2_syst.Draw("2 SAME");
+	protv2.SetTitle("");
+   protv2.GetXaxis()->SetLimits(v2vspt_ptmin,v2vspt_ptmax);
+	protv2.GetXaxis()->SetTitle("p_{T} [GeV/c]");                              			  
+	protv2.GetXaxis()->CenterTitle(1);
+	protv2.GetXaxis()->SetTitleOffset(1.2);
+	protv2.GetXaxis()->SetTitleSize(figuretextsize);
+	protv2.GetYaxis()->SetRangeUser(v2vspt_v2min,v2vspt_v2max);
+	protv2.GetYaxis()->SetTitle("v_{2}");
+	protv2.GetYaxis()->CenterTitle(1);
+	protv2.GetYaxis()->SetTitleOffset(1.2);
+	protv2.GetYaxis()->SetTitleSize(figuretextsize);
+
+//	cparv2.Draw("AP");
+//	pionv2.Draw("AP");
+//	kaonv2.Draw("AP");
+	protv2.Draw("AP");
+
+//	cparv2_syst.Draw("2 SAME");
+//	pionv2_syst.Draw("2 SAME");
+//	kaonv2_syst.Draw("2 SAME");
 	protv2_syst.Draw("2 SAME");
 
 	// TGraphErrors cms = CMSres_v2_chadron_120_150();
@@ -322,9 +380,9 @@ void CorrelationFramework::makeFigv2vspT_allparticles_ALICE_comparison(int multB
 	TGraphAsymmErrors alice_0_20_kaon = ALICE_pPB_0_20_kaon();
 	TGraphAsymmErrors alice_0_20_prot = ALICE_pPB_0_20_prot();
 
-	alice_0_20_cpar.Draw("P");
-	alice_0_20_pion.Draw("P");
-	alice_0_20_kaon.Draw("P");
+//	alice_0_20_cpar.Draw("P");
+//	alice_0_20_pion.Draw("P");
+//	alice_0_20_kaon.Draw("P");
 	alice_0_20_prot.Draw("P");
 
 	TF1 *cparv2_fit = new TF1 ("cparv2_fit", "[1]*x+[2]*x*x",0,3);
@@ -342,10 +400,10 @@ void CorrelationFramework::makeFigv2vspT_allparticles_ALICE_comparison(int multB
 	kaonv2_fit->SetLineStyle(9);
 	protv2_fit->SetLineStyle(9);
 
-	cparv2.Fit("cparv2_fit", "R");
-	pionv2.Fit("pionv2_fit", "R");
-	kaonv2.Fit("kaonv2_fit", "R");
-	protv2.Fit("protv2_fit", "R");
+//	cparv2.Fit("cparv2_fit", "R");
+//	pionv2.Fit("pionv2_fit", "R");
+//	kaonv2.Fit("kaonv2_fit", "R");
+//	protv2.Fit("protv2_fit", "R");
 
 	double legend_x1=.55;
 	double legend_y1=0.14;
@@ -375,9 +433,8 @@ void CorrelationFramework::makeFigv2vspT_allparticles_ALICE_comparison(int multB
 	v2vsptlegend.Draw("SAME");
 
 
-
-	std::string CMSsystemlabel = Form("#splitline{CMS (work in progress) pPb}{#sqrt{s_{NN}} = 5.02 TeV L_{int} = 35 nb^{-1}}", mult1, mult2);
-	std::string multlabel = Form("%3d #leq N_{trk}^{offline} #leq %3d", mult1, mult2);
+	std::string CMSsystemlabel = Form("#splitline{CMS Preliminary pPb}{#sqrt{s_{NN}} = 5.02 TeV L_{int} = 35 nb^{-1}}", mult1, mult2);
+	std::string multlabel = Form("%3d #leq N_{trk}^{offline} < %3d", mult1, mult2);
 
 	TLatex tCMSsystemlabel( CMSsystemlabelposx,CMSsystemlabelposy, CMSsystemlabel.c_str()); 
 	tCMSsystemlabel.SetTextSize(figuretextsize);
@@ -396,6 +453,53 @@ void CorrelationFramework::makeFigv2vspT_allparticles_ALICE_comparison(int multB
 	canvas_v2_vs_pT.SaveAs( pngfigure.c_str() );
 	canvas_v2_vs_pT.SaveAs( pdffigure.c_str() );
 
+}
+
+
+void CorrelationFramework::makeFigv2ptNtrk()
+{
+
+	int nPtBins_proj[5] = {14, 6, 6, 10};
+
+ 	for(int TypBin=0; TypBin < nCorrTyp; TypBin++)
+	{
+		TCanvas canvas_v2ptNtrk ("v2 vs pT", "v_{2} values as a function of p_{T}; p_{T} [GeV/c];v_{2}", 1024, 768);
+	
+		canvas_v2ptNtrk.SetLeftMargin(0.10);
+	   canvas_v2ptNtrk.SetBottomMargin(0.12);
+	   canvas_v2ptNtrk.SetRightMargin(0.1);
+
+		v2ptNtrkhisto[TypBin]->Draw("LEGO2");
+
+		std::string dir  = Form("./results/%s/v2/", tag.c_str());
+		std::string label = Form("v2ptNtrk_%d", TypBin); 
+		std::string	pngfigure = dir+label+".png";
+		std::string	pdffigure = dir+label+".pdf";
+
+		canvas_v2ptNtrk.SaveAs( pngfigure.c_str() );
+		canvas_v2ptNtrk.SaveAs( pdffigure.c_str() );
+
+
+		TCanvas canvas_v2Ntrk ("v2 vs pT", "v_{2} values as a function of p_{T}; p_{T} [GeV/c];v_{2}", 1024, 768);
+		TH1D *proj = v2ptNtrkhisto[TypBin]->ProjectionY(Form("proj_%d"), 2, nPtBins_proj[TypBin]);
+
+		canvas_v2Ntrk.SetLeftMargin(0.10);
+	   canvas_v2Ntrk.SetBottomMargin(0.12);
+	   canvas_v2Ntrk.SetRightMargin(0.1);
+
+		proj->Draw("");
+
+		dir  = Form("./results/%s/v2/", tag.c_str());
+		label = Form("v2Ntrk_%d", TypBin); 
+		pngfigure = dir+label+".png";
+		pdffigure = dir+label+".pdf";
+
+		canvas_v2Ntrk.SaveAs( pngfigure.c_str() );
+		canvas_v2Ntrk.SaveAs( pdffigure.c_str() );
+
+
+
+	}
 }
 
 
@@ -459,10 +563,25 @@ void CorrelationFramework::makeFigv3vspT_allparticles(int multBin, std::string t
 	TGraphErrors kaonv3 = kaon_v2(nPtBins[2], pt[2], v3[2], 0, v3_StatError[2] );
 	TGraphErrors protv3 = prot_v2(nPtBins[3], pt[3], v3[3], 0, v3_StatError[3] );
 
+	TGraphErrors cparv3_syst = cpar_v2_syst(nPtBins[0], pt[0], v3[0], dpt[0], v3_SystError[0] );
+	TGraphErrors pionv3_syst = pion_v2_syst(nPtBins[1], pt[1], v3[1], dpt[1], v3_SystError[1] );
+	TGraphErrors kaonv3_syst = kaon_v2_syst(nPtBins[2], pt[2], v3[2], dpt[2], v3_SystError[2] );
+	TGraphErrors protv3_syst = prot_v2_syst(nPtBins[3], pt[3], v3[3], dpt[3], v3_SystError[3] );
+
 	double v3vspt_ptmin = 0.0;
 	double v3vspt_ptmax = 2.5;
 	double v3vspt_v3min = 0.0;
 	double v3vspt_v3max = 0.08;
+
+	cparv3.SetPoint(0, -50, -5);
+	pionv3.SetPoint(0, -50, -5);
+	kaonv3.SetPoint(0, -50, -5);
+	protv3.SetPoint(0, -50, -5);
+
+	cparv3_syst.SetPoint(0, -50, -5);
+	pionv3_syst.SetPoint(0, -50, -5);
+	kaonv3_syst.SetPoint(0, -50, -5);
+	protv3_syst.SetPoint(0, -50, -5);
 
 	cparv3.SetTitle("");
    cparv3.GetXaxis()->SetLimits(v3vspt_ptmin,v3vspt_ptmax);
@@ -475,11 +594,6 @@ void CorrelationFramework::makeFigv3vspT_allparticles(int multBin, std::string t
 	cparv3.GetYaxis()->CenterTitle(1);
 	cparv3.GetYaxis()->SetTitleOffset(1.2);
 	cparv3.GetYaxis()->SetTitleSize(figuretextsize);
-
-	TGraphErrors cparv3_syst = cpar_v2_syst(nPtBins[0], pt[0], v3[0], dpt[0], v3_SystError[0] );
-	TGraphErrors pionv3_syst = pion_v2_syst(nPtBins[1], pt[1], v3[1], dpt[1], v3_SystError[1] );
-	TGraphErrors kaonv3_syst = kaon_v2_syst(nPtBins[2], pt[2], v3[2], dpt[2], v3_SystError[2] );
-	TGraphErrors protv3_syst = prot_v2_syst(nPtBins[3], pt[3], v3[3], dpt[3], v3_SystError[3] );
 
 	TF1 *cparv3_fit = new TF1 ("cparv3_fit", "[1]*x+[2]*x*x",0.2,3);
 	TF1 *pionv3_fit = new TF1 ("pionv3_fit", "[1]*x+[2]*x*x",0.2,0.9);
@@ -496,10 +610,10 @@ void CorrelationFramework::makeFigv3vspT_allparticles(int multBin, std::string t
 	kaonv3_fit->SetLineStyle(9);
 	protv3_fit->SetLineStyle(9);
 
-	cparv3.Fit("cparv2_fit", "R");
-	pionv3.Fit("pionv2_fit", "R");
-	kaonv3.Fit("kaonv2_fit", "R");
-	protv3.Fit("protv2_fit", "R");
+	cparv3.Fit("cparv2_fit", "0R");
+	pionv3.Fit("pionv2_fit", "0R");
+	kaonv3.Fit("kaonv2_fit", "0R");
+	protv3.Fit("protv2_fit", "0R");
 
 	cparv3.Draw("AP");
 	pionv3.Draw("P");
@@ -534,8 +648,8 @@ void CorrelationFramework::makeFigv3vspT_allparticles(int multBin, std::string t
    int mult1 = multiplicity_Ana(multBin, 0, nMultiplicityBins_Ana);
 	int mult2 = multiplicity_Ana(multBin, 1, nMultiplicityBins_Ana);
 
-	std::string CMSsystemlabel = Form("#splitline{CMS (work in progress) pPb}{#sqrt{s_{NN}} = 5.02 TeV L_{int} = 35 nb^{-1}}", mult1, mult2);
-	std::string multlabel = Form("%3d #leq N_{trk}^{offline} #leq %3d", mult1, mult2);
+	std::string CMSsystemlabel = Form("#splitline{CMS Preliminary pPb}{#sqrt{s_{NN}} = 5.02 TeV L_{int} = 35 nb^{-1}}", mult1, mult2);
+	std::string multlabel = Form("%3d #leq N_{trk}^{offline} < %3d", mult1, mult2);
 
 	TLatex tCMSsystemlabel( CMSsystemlabelposx,CMSsystemlabelposy, CMSsystemlabel.c_str()); 
 	tCMSsystemlabel.SetTextSize(figuretextsize);
@@ -693,7 +807,7 @@ void CorrelationFramework::makeFigv2vspT_HIN13002(std::string tag)
 	std::string dir  = Form("./results/%s/v2/", tag.c_str());
 	std::string label;
 
-	std::string CMSsystemlabel = "#splitline{CMS (work in progress) pPb}{#sqrt{s_{NN}} = 5.02 TeV L_{int} = 35 nb^{-1}}";
+	std::string CMSsystemlabel = "#splitline{CMS Preliminary pPb}{#sqrt{s_{NN}} = 5.02 TeV L_{int} = 35 nb^{-1}}";
 
 	// Get the graphs
 	TGraphErrors cpar_120150 = CorrelationFramework::Getv2TGraphError(0, 5);
@@ -934,9 +1048,9 @@ void CorrelationFramework::makeFigCorrel2D( std::string tag )
 	std::string fig_correl2D_backgr = Form("./results/%s/correl2D/correl2D_backgr_typ_%d_pt_%.2f-%.2f_nTrk_%03d-%03d", tag.c_str(), TypBin, pt1, pt2, mult1, mult2 );
 	std::string fig_correl2D_functi = Form("./results/%s/correl2D/correl2D_functi_typ_%d_pt_%.2f-%.2f_nTrk_%03d-%03d", tag.c_str(), TypBin, pt1, pt2, mult1, mult2 );
 
-	std::string title_correl2D_signal = Form("CMS (work in progress) pPb #sqrt{s_{NN}} = 5.02 TeV L_{int} = 35 nb^{-1}"     , TypBin, pt1, pt2, mult1, mult2 );
-	std::string title_correl2D_backgr = Form("CMS (work in progress) pPb #sqrt{s_{NN}} = 5.02 TeV L_{int} = 35 nb^{-1}", TypBin, pt1, pt2, mult1, mult2 );
-	std::string title_correl2D_functi = Form("CMS (work in progress) pPb #sqrt{s_{NN}} = 5.02 TeV L_{int} = 35 nb^{-1}",    TypBin, pt1, pt2, mult1, mult2 );
+	std::string title_correl2D_signal = Form("CMS Preliminary pPb #sqrt{s_{NN}} = 5.02 TeV L_{int} = 35 nb^{-1}"     , TypBin, pt1, pt2, mult1, mult2 );
+	std::string title_correl2D_backgr = Form("CMS Preliminary pPb #sqrt{s_{NN}} = 5.02 TeV L_{int} = 35 nb^{-1}", TypBin, pt1, pt2, mult1, mult2 );
+	std::string title_correl2D_functi = Form("CMS Preliminary pPb #sqrt{s_{NN}} = 5.02 TeV L_{int} = 35 nb^{-1}",    TypBin, pt1, pt2, mult1, mult2 );
 
 	std::string zaxistitle_correl2D_signal = "S(#Delta #eta, #Delta #phi)";
 	std::string zaxistitle_correl2D_backgr = "B(#Delta #eta, #Delta #phi)";
@@ -950,7 +1064,7 @@ void CorrelationFramework::makeFigCorrel2D( std::string tag )
 	std::string title_correl2D_self_backgr = Form("Background 2D Correlation function - Typ = %d, p_{T} = [%.2f - %.2f], nTrk = [%d-%d];", TypBin, pt1, pt2, mult1, mult2 );
 	std::string title_correl2D_self_functi = Form("2D Correlation function - m = %d, p_{T} = [%.2f - %.2f], nTrk = [%d-%d]",               TypBin, pt1, pt2, mult1, mult2 );
 
-	std::string leftlabel  = Form("#splitline{#splitline{  %d #leq N_{trk}^{offline} #leq %d}{ %.1f < p_{T}^{trig}  < %.1f GeV/c}}{ %.1f < p_{T}^{assoc} < %.1f GeV/c}", mult1, mult2, pt1, pt2, ptref1, ptref2);
+	std::string leftlabel  = Form("#splitline{#splitline{  %d #leq N_{trk}^{offline} < %d}{ %.1f < p_{T}^{trig}  < %.1f GeV/c}}{ %.1f < p_{T}^{assoc} < %.1f GeV/c}", mult1, mult2, pt1, pt2, ptref1, ptref2);
 	std::string rightlabel = Form("%s - charged", particletype(TypBin).c_str());
 
 
@@ -1003,22 +1117,22 @@ void CorrelationFramework::makeFigCorrel1D(std::string tag)
 	double V2_Error_ = correl1D_FitResults[TypBin][ptBin][multBin].V2_Error;
 	double V3_Error_ = correl1D_FitResults[TypBin][ptBin][multBin].V3_Error;
 
-
-
    double phimin = -TMath::Pi()/2;
    double phimax = 3*TMath::Pi()/2;
    
 	TCanvas canvas_correl_1D ("canvas_correl_1D","",800,600);
 
-   canvas_correl_1D.SetLeftMargin(0.15);
-   canvas_correl_1D.SetRightMargin(0.01);
-   canvas_correl_1D.SetTopMargin(0.01);
-   canvas_correl_1D.SetBottomMargin(0.10);
+   canvas_correl_1D.SetLeftMargin  (correl1D_leftmargin  );
+   canvas_correl_1D.SetRightMargin (correl1D_rightmargin );
+   canvas_correl_1D.SetTopMargin  (correl1D_topmargin   );
+   canvas_correl_1D.SetBottomMargin(correl1D_bottommargin);
 
 	correl1D[TypBin][ptBin][multBin]->SetTitle(";#Delta#phi;#frac{1}{N_{trig}} #frac{dN^{pair}}{#Delta#phi}");
 	correl1D[TypBin][ptBin][multBin]->GetXaxis()->CenterTitle(1);
+	correl1D[TypBin][ptBin][multBin]->GetXaxis()->SetTitleSize(correl1D_xlabelsize);
 	correl1D[TypBin][ptBin][multBin]->SetTitleOffset(1.2,"X");
 	correl1D[TypBin][ptBin][multBin]->GetYaxis()->CenterTitle(1);
+	correl1D[TypBin][ptBin][multBin]->GetYaxis()->SetTitleSize(correl1D_ylabelsize);
 	correl1D[TypBin][ptBin][multBin]->SetTitleOffset(1.8,"Y");
 
 	gStyle->SetOptStat(0);
@@ -1073,22 +1187,17 @@ void CorrelationFramework::makeFigCorrel1D(std::string tag)
 	double upperleftposy = 0.33;
 	double shift = 0.04;
 
-	double xl1                = 0.18, yl1                = 0.69;
-	double label_CMS_pPb_posx = 0.18, label_CMS_pPb_posy = 0.91;
-	double label_corrtyp_posx = 0.54, label_corrtyp_posy = 0.90;
-	double label_bin_posx     = 0.37, label_bin_posy     = 0.73;
-
-	TLatex label1 = label_CMS_pPb(label_CMS_pPb_posx, label_CMS_pPb_posy, figuretextsize_correl1D);
-	TLatex label2 = label_CorrTyp(label_corrtyp_posx, label_corrtyp_posy, figuretextsize_correl1D, TypBin);
-	TLatex label3 = label_Ntrk_pt(label_bin_posx, label_bin_posy, figuretextsize_correl1D, TypBin, multBin, ptBin);
+	TLatex label1 = label_CMS_pPb(correl1D_label_CMS_pPb_posx, correl1D_label_CMS_pPb_posy, correl1D_figuretextsize);
+	TLatex label2 = label_CorrTyp(correl1D_label_corrtyp_posx, correl1D_label_corrtyp_posy, correl1D_figuretextsize, TypBin);
+	TLatex label3 = label_Ntrk_pt(correl1D_label_bin_posx, correl1D_label_bin_posy, correl1D_figuretextsize, TypBin, multBin, ptBin);
 
 	label1.Draw(); label2.Draw(); label3.Draw();
 
 	// Legend
-	Double_t xl2=xl1+.15, yl2=yl1+.15;
-	TLegend v2vsptlegend (xl1,yl1,xl2,yl2);
+	Double_t correl1D_xl2=correl1D_xl1+.15, correl1D_yl2=correl1D_yl1+.15;
+	TLegend v2vsptlegend (correl1D_xl1,correl1D_yl1,correl1D_xl2,correl1D_yl2);
 	v2vsptlegend.SetFillStyle(0);
-	v2vsptlegend.SetTextSize(figuretextsize_correl1D);
+	v2vsptlegend.SetTextSize(v2vspt_legendtextsize);
 	v2vsptlegend.SetBorderSize(0);
 	v2vsptlegend.AddEntry(&fitFunc,"Fit function","L");
 	v2vsptlegend.AddEntry(&baseline,"baseline","L");
@@ -1098,22 +1207,22 @@ void CorrelationFramework::makeFigCorrel1D(std::string tag)
 	v2vsptlegend.Draw("SAME");
 
 
-	TLatex tchndf( upperleftposx,upperleftposy-shift, Form("#chi^{2} /n.d.f  = %f", chisqrdperndf_)); 
-	tchndf.SetTextSize(0.032);
+	TLatex tchndf( correl1D_upperleftposx,correl1D_upperleftposy-correl1D_shift, Form("#chi^{2} /n.d.f  = %f", chisqrdperndf_)); 
+	tchndf.SetTextSize(correl1D_figuretextsize);
 	tchndf.SetNDC(kTRUE);
 	tchndf.Draw();
 
-	TLatex t1( upperleftposx,upperleftposy-2*shift,Form("V_{1} = %.4f #pm %.4f ", V1_, V1_Error_) ); 
-	t1.SetTextSize(0.032);
+	TLatex t1( correl1D_upperleftposx,correl1D_upperleftposy-2*correl1D_shift,Form("V_{1} = %.4f #pm %.4f ", V1_, V1_Error_) ); 
+	t1.SetTextSize(correl1D_figuretextsize);
 	t1.SetNDC(kTRUE);
 	t1.Draw();
 
-	TLatex t2( upperleftposx,upperleftposy-3*shift,Form("V_{2} = %.4f #pm %.4f ", V2_, V2_Error_) ); 
-	t2.SetTextSize(0.032);
+	TLatex t2( correl1D_upperleftposx,correl1D_upperleftposy-3*correl1D_shift,Form("V_{2} = %.4f #pm %.4f ", V2_, V2_Error_) ); 
+	t2.SetTextSize(correl1D_figuretextsize);
 	t2.SetNDC(kTRUE);
 	t2.Draw();
 
-	TLatex t3( upperleftposx,upperleftposy-4*shift,Form("V_{3} = %.5f #pm %.5f ", V3_, V3_Error_) ); 
+	TLatex t3( correl1D_upperleftposx,correl1D_upperleftposy-4*correl1D_shift,Form("V_{3} = %.5f #pm %.5f ", V3_, V3_Error_) ); 
 	t3.SetTextSize(0.032);
 	t3.SetNDC(kTRUE);
 	t3.Draw();
@@ -1132,10 +1241,11 @@ void CorrelationFramework::makeFigCorrel1D(std::string tag)
 
 };
 
-
 /////////////////////////////////////////////
 // plot2DCorrelation
 // 
+//
+
 void plot2DCorrelation(TH2D* correl, std::string figurename, std::string title, std::string zaxistitle, std::string leftlabel, std::string rightlabel)
 {
 
@@ -1143,10 +1253,10 @@ void plot2DCorrelation(TH2D* correl, std::string figurename, std::string title, 
 
 	TCanvas canvas_correl ("canvas_correl","",800,600);
 
-   canvas_correl.SetLeftMargin(0.15);
-   canvas_correl.SetBottomMargin(0.05);
-   canvas_correl.SetRightMargin(0.05);
-   canvas_correl.SetTopMargin(0.1);
+   canvas_correl.SetLeftMargin  (correl2D_leftmargin  );
+   canvas_correl.SetRightMargin (correl2D_rightmargin );
+   canvas_correl.SetTopMargin   (correl2D_topmargin   );
+   canvas_correl.SetBottomMargin(correl2D_bottommargin);
    canvas_correl.SetTheta(60.839);
    canvas_correl.SetPhi(38.0172);
 
@@ -1154,32 +1264,34 @@ void plot2DCorrelation(TH2D* correl, std::string figurename, std::string title, 
 
 	correl->GetXaxis()->SetRangeUser( dEtaMin_plot, dEtaMax_plot);
 	correl->GetXaxis()->SetTitle("#Delta #eta");
+	correl->GetXaxis()->SetTitleSize(correl2D_xlabelsize);
 	correl->GetXaxis()->CenterTitle(1);
 	correl->SetTitleOffset(1.6,"X");
 
 	correl->GetYaxis()->CenterTitle(1);
 	correl->GetYaxis()->SetTitle("#Delta #phi [rad]");
+	correl->GetYaxis()->SetTitleSize(correl2D_ylabelsize);
 	correl->SetTitleOffset(1.6,"Y");
 
 	correl->GetZaxis()->CenterTitle(1);
-	correl->GetZaxis()->SetTitleSize(0.032);
+	correl->GetZaxis()->SetTitleSize(correl2D_zlabelsize);
 	correl->SetTitleOffset(2.0,"Z");
 	correl->GetZaxis()->SetTitle( zaxistitle.c_str() );
 
 	correl->Draw("SURF1 FB");
 
 	TLatex ttitle ( 0.06,0.94, title.c_str() ); 
-	ttitle.SetTextSize(0.032);
+	ttitle.SetTextSize(correl2D_figuretextsize);
 	ttitle.SetNDC(kTRUE);
 	ttitle.Draw();
 
 	TLatex tleftlabel ( 0.06,0.8, leftlabel.c_str() ); 
-	tleftlabel.SetTextSize(0.032);
+	tleftlabel.SetTextSize(correl2D_figuretextsize);
 	tleftlabel.SetNDC(kTRUE);
 	tleftlabel.Draw();
 
 	TLatex trightlabel ( 0.75,0.85, rightlabel.c_str() ); 
-	trightlabel.SetTextSize(0.032);
+	trightlabel.SetTextSize(correl2D_figuretextsize);
 	trightlabel.SetNDC(kTRUE);
 	trightlabel.Draw();
 

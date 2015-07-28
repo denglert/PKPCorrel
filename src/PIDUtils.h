@@ -92,6 +92,8 @@ public :
 	int GetID      (const Tracks_c &tTracks, int iTrk);
 	int GetIDmTrk_trkCorr(const Tracks_c &tTracks, int iTrk);
 	int GetIDgenPart_trkCorr(const Tracks_c &tTracks, int iPart);
+	int GetIDgenPart_trkCorr(const Particles &tTracks, int iPart);
+	int GetIDgenPart_trkCorr(const GenParticles &tTracks, int iPart);
 	double GetID_cm(const Tracks_c &tTracks, int iTrk);
 };
 

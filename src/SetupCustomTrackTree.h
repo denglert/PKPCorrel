@@ -217,4 +217,74 @@ public :
 void setupTrackTree(TTree *t, Tracks &tTracks );
 void setupTrackTree_c(TTree *t,Tracks_c &tTracks,bool doCheck);
 void setupParticleTree(TTree *t, Particles &tTracks);
+
+
+class GenParticles {
+public :
+   GenParticles(){};
+   ~GenParticles(){};
+
+   // Declaration of leaf types
+	Int_t           event;
+   Float_t         b;
+   Float_t         npart;
+   Float_t         ncoll;
+   Float_t         nhard;
+   Float_t         phi0;
+   Float_t         scale;
+   Int_t           n[3];
+   Float_t         ptav[3];
+   Int_t           mult;
+   Float_t         pt[maxEntrySim];   //[mult]
+   Float_t         eta[maxEntrySim];   //[mult]
+   Float_t         phi[maxEntrySim];   //[mult]
+   Int_t           pdg[maxEntrySim];   //[mult]
+   Int_t           chg[maxEntrySim];   //[mult]
+   Int_t           sube[maxEntrySim];   //[mult]
+   Float_t         vx;
+   Float_t         vy;
+   Float_t         vz;
+   Float_t         vr;
+
+   // List of branches
+   TBranch        *b_event;   //!
+   TBranch        *b_b;   //!
+   TBranch        *b_npart;   //!
+   TBranch        *b_ncoll;   //!
+   TBranch        *b_nhard;   //!
+   TBranch        *b_phi0;   //!
+   TBranch        *b_scale;   //!
+   TBranch        *b_n;   //!
+   TBranch        *b_ptav;   //!
+   TBranch        *b_mult;   //!
+   TBranch        *b_pt;   //!
+   TBranch        *b_eta;   //!
+   TBranch        *b_phi;   //!
+   TBranch        *b_pdg;   //!
+   TBranch        *b_chg;   //!
+   TBranch        *b_sube;   //!
+   TBranch        *b_vx;   //!
+   TBranch        *b_vy;   //!
+   TBranch        *b_vz;   //!
+   TBranch        *b_vr;   //!
+
+};
+
+
+void setupGenParticleTree(TTree *t,GenParticles &tGenParticles,bool doCheck);
+
+class TracksParticles {
+
+	public :
+   TracksParticles(){};
+   ~TracksParticles(){};
+
+	// TTree
+	TTree *genPartTree;
+	GenParticles genParts;
+
+	// Functions
+	void setupGenPartTree( TFile *f );
+	void GetEntry( int iEv );
+};
 #endif

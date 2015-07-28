@@ -164,27 +164,28 @@ int main( int argc, const char *argv[] )
 //
 // }
 
-//  for( int ptBin = 0; ptBin < npt; ptBin++ )
-//  {
-//
-//  	double pt1 = (ptMin + (ptBin  ) * ptbw);
-// 	double pt2 = (ptMin + (ptBin+1) * ptbw);
-//
-//
-// 	std::string dEdxvsplinFigBase = Form( "dEdxvspLin_typ_%.2f-%.2f", pt1, pt2 	);
-// 	std::string dEdxvsplogFigBase = Form( "dEdxvspLog_typ_%.2f-%.2f", pt1, pt2 	);
-//
-// 	std::string dEdxvsplinFigPNG = dEdxvsplinFigBase+".png";
-// 	std::string dEdxvsplinFigPDF = dEdxvsplinFigBase+".pdf";
-// 	std::string dEdxvsplogFigPNG = dEdxvsplogFigBase+".png";
-// 	std::string dEdxvsplogFigPDF = dEdxvsplogFigBase+".pdf";
-//
-//	makedEdxvspFigloglog( dEdxvsPMapsLog[ptBin], PIDconfig, dEdxvsplogFigPNG);
-//	makedEdxvspFigloglog( dEdxvsPMapsLog[ptBin], PIDconfig ,dEdxvsplogFigPDF);
-//	makedEdxvspFiglinlin( dEdxvsPMapsLin[ptBin], PIDconfig, dEdxvsplinFigPNG);
-//	makedEdxvspFiglinlin( dEdxvsPMapsLin[ptBin], PIDconfig, dEdxvsplinFigPDF);
-//
-//  }
+
+  for( int ptBin = 0; ptBin < npt; ptBin++ )
+  {
+
+  	double pt1 = (ptMin + (ptBin  ) * ptbw);
+ 	double pt2 = (ptMin + (ptBin+1) * ptbw);
+
+
+ 	std::string dEdxvsplinFigBase = Form( "dEdxvspLin_typ_%.2f-%.2f", pt1, pt2 	);
+ 	std::string dEdxvsplogFigBase = Form( "dEdxvspLog_typ_%.2f-%.2f", pt1, pt2 	);
+
+ 	std::string dEdxvsplinFigPNG = dEdxvsplinFigBase+".png";
+ 	std::string dEdxvsplinFigPDF = dEdxvsplinFigBase+".pdf";
+ 	std::string dEdxvsplogFigPNG = dEdxvsplogFigBase+".png";
+ 	std::string dEdxvsplogFigPDF = dEdxvsplogFigBase+".pdf";
+
+	makedEdxvspFigloglog( dEdxvsPMapsLog[ptBin], PIDconfig, dEdxvsplogFigPNG);
+	makedEdxvspFigloglog( dEdxvsPMapsLog[ptBin], PIDconfig ,dEdxvsplogFigPDF);
+	makedEdxvspFiglinlin( dEdxvsPMapsLin[ptBin], PIDconfig, dEdxvsplinFigPNG);
+	makedEdxvspFiglinlin( dEdxvsPMapsLin[ptBin], PIDconfig, dEdxvsplinFigPDF);
+
+  }
 
  plotTH2D(ptres, ";p_{T,gen} [GeV/c];p_{T,reco} [GeV/c]", "ptgenreco", "COLZ");
 

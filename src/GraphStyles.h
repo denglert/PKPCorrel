@@ -6,7 +6,6 @@
 #include "AnalysisFW.h"
 #include "AnalysisBinning.h"
 
-const double figuretextsize = 0.043;
 const double figuretextsize_correl1D = 0.035;
 const int fillstyle = 3009;
 

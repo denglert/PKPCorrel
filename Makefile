@@ -7,8 +7,8 @@
 #AnalysisBinning = AnalysisBinning_HIN15007_MinBias
 #AnalysisBinning = AnalysisBinning_HIN15007_MinBias_SingleBin
 #AnalysisBinning = AnalysisBinning_HIN15007_HighMult
-#AnalysisBinning = AnalysisBinning_HIN15007_MinBias_HighMult
-AnalysisBinning = AnalysisBinning_test
+AnalysisBinning = AnalysisBinning_HIN15007_MinBias_HighMult
+#AnalysisBinning = AnalysisBinning_test
 
 ###########################
 ### ---  Main area  --- ###
@@ -174,9 +174,9 @@ tag_preproc_genparticles=$(label_preproc_genparticles)_nEv_$(nEvents_preproc_gen
 
 #batchjobtag=Gilgamesh_HighMult_pPb_PIDConfig_default_trkCorr_yes
 #batchjobtag=Fiji_HighMult_Full_PIDConfig_default_trkCorr_no_temp
-#batchjobtag=Fiji_MinBias_HighMult_Full_trkCorr_yes
+batchjobtag=Fiji_MinBias_HighMult_Full_trkCorr_yes
 #batchjobtag=Dip_study_nEv_50000
-batchjobtag=Dipstudy_HighMult_Full_PIDConfig_default_trkCorr_1nd_yes_temp
+#batchjobtag=Dipstudy_HighMult_Full_PIDConfig_default_trkCorr_1nd_yes_temp
 #batchjobtag=Dip_study_pPb_MC_vzhukova-EPOS_RECO_trkCorr_no_nEv_5000
 #batchjobtag=Dip_study_pPb_MC_vzhukova-EPOS_RECO_trkCorr_no_nEv_20000
 #batchjobtag=Dip_study_pPb_MC_vzhukova-EPOS_GENE_nEv_50000
@@ -198,7 +198,7 @@ batchjobtag=Dipstudy_HighMult_Full_PIDConfig_default_trkCorr_1nd_yes_temp
 #filetoprocess=correl_analysis_0.root
 #batchjobflag=ContMatrix_yes_shifted_20percent
 #batchjobflag=ContMatrix_yes_Original
-batchjobflag=ContMatrix_no
+batchjobflag=ContMatrix_yes
 #batchjobflag=ContMatrix_no
 filetoprocess=correl_FULL.root
 #filetoprocess=correl_FULL.root
@@ -213,9 +213,9 @@ batchjobfolder=$(batchjobtag)_$(batchjobflag)
 #filetoprocess=correl_MinBiasHighMulti.root
 #filetoprocess=correl_selection20.root
 
-batchjob_contmatrix=no
+#batchjob_contmatrix=no
 #batchjob_contmatrix=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/ContMatrix/Contamination_Matrix_PIDConfig_default_EPOS_LHC_MC_Fiji/shifted_20percent/Cont_Matrix.root
-#batchjob_contmatrix=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/ContMatrix/Contamination_Matrix_PIDConfig_default_EPOS_LHC_MC_Fiji/normal/Cont_Matrix.root
+batchjob_contmatrix=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/ContMatrix/Contamination_Matrix_PIDConfig_default_EPOS_LHC_MC_Fiji/normal/Cont_Matrix.root
 # Default:
 #batchjob_contmatrix=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/ContMatrix/Contamination_Matrix_Study_Mult_0-120_PIDConfig_config_4_EPOS_LHC_MC_Fiji/Cont_Matrix.root
 #

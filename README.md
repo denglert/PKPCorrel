@@ -6,11 +6,12 @@ Pion, kaon and proton correlation code
 # Setup HOW-TO 
 
 Creating CMSSW environment:
-* `mkdir <projectname>; cd <projectname>`
-* `cmsrel CMSSW_5_3_20`
-* `mkdir CMSSW_5_3_20/src/<directory>`
-* `git clone git@github.com:denglert/PKPCorrel.git`
-* `cd CMSSW_5_3_20/src/<directory>/PKPCorrel`
+1. `mkdir <projectname>; cd <projectname>`
+2. `cmsrel CMSSW_5_3_20`
+3. `mkdir CMSSW_5_3_20/src/<directory>`
+4. `git clone git@github.com:denglert/PKPCorrel.git`
+5. `cd CMSSW_5_3_20/src/<directory>/PKPCorrel`
+6. `xrdcp -r root://eoscms.cern.ch//eos/cms/store/group/phys_heavyions/denglert/PKPCorrelation/ ./`
 
 # Usage
 

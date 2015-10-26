@@ -8,13 +8,6 @@
 #include <iostream>
 #include <deque>
 #include <TLorentzVector.h>
-#include "AnalysisFW.h"
-#include "AnalysisBinning.h"
-#include "PIDUtils.h"
-#include "CorrelationUtils.h"
-#include "SetupCustomTrackTree.h"
-#include "EvtSelection.h"
-#include "TGraphErrors.h"
 #include "TLegend.h"
 #include "TLatex.h"
 #include "TSpline.h"
@@ -27,7 +20,7 @@ int main( int argc, const char *argv[] )
  std::cout << "Compare_vns_multi binary started." << std::endl;
 
 
- const int nFiles = 7;
+ const int nFiles = 5;
  int centerbin = 2;
 
  std::string inpFilenames[nFiles];
@@ -45,13 +38,20 @@ int main( int argc, const char *argv[] )
 // inpFilenames[3] = "/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/PIDscan_MinBias_dEdxminsweep_config_strict_1_trkCorr_no/dump.root";
 // inpFilenames[4] = "/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/PIDscan_MinBias_dEdxminsweep_config_strict_2_trkCorr_no/dump.root";
 
- inpFilenames[0] = "/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/PIDscan_MinBias_dEdxminsweep_full_config_0_trkCorr_no/dump.root";
- inpFilenames[1] = "/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/PIDscan_MinBias_dEdxminsweep_full_config_1_trkCorr_no/dump.root";
- inpFilenames[2] = "/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/PIDscan_MinBias_dEdxminsweep_full_config_2_trkCorr_no/dump.root";
- inpFilenames[3] = "/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/PIDscan_MinBias_dEdxminsweep_full_config_3_trkCorr_no/dump.root";
- inpFilenames[4] = "/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/PIDscan_MinBias_dEdxminsweep_full_config_4_trkCorr_no/dump.root";
- inpFilenames[5] = "/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/PIDscan_MinBias_dEdxminsweep_full_config_5_trkCorr_no/dump.root";
- inpFilenames[6] = "/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/PIDscan_MinBias_dEdxminsweep_full_config_6_trkCorr_no/dump.root";
+// inpFilenames[0] = "/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/Omega_fix_PIDscan_MinBias_dEdxminsweep_full_config_0_trkCorr_yes_ContMatrix_no/dump.root";
+// inpFilenames[1] = "/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/Omega_fix_PIDscan_MinBias_dEdxminsweep_full_config_1_trkCorr_yes_ContMatrix_no/dump.root";
+// inpFilenames[2] = "/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/Omega_fix_PIDscan_MinBias_dEdxminsweep_full_config_2_trkCorr_yes_ContMatrix_no/dump.root";
+// inpFilenames[3] = "/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/Omega_fix_PIDscan_MinBias_dEdxminsweep_full_config_3_trkCorr_yes_ContMatrix_no/dump.root";
+// inpFilenames[4] = "/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/Omega_fix_PIDscan_MinBias_dEdxminsweep_full_config_4_trkCorr_yes_ContMatrix_no/dump.root";
+
+ inpFilenames[0] = "/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/Omega_fix_PIDscan_MinBias_dEdxminsweep_full_config_0_trkCorr_yes_ContMatrix_yes/dump.root";
+ inpFilenames[1] = "/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/Omega_fix_PIDscan_MinBias_dEdxminsweep_full_config_1_trkCorr_yes_ContMatrix_yes/dump.root";
+ inpFilenames[2] = "/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/Omega_fix_PIDscan_MinBias_dEdxminsweep_full_config_2_trkCorr_yes_ContMatrix_yes/dump.root";
+ inpFilenames[3] = "/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/Omega_fix_PIDscan_MinBias_dEdxminsweep_full_config_3_trkCorr_yes_ContMatrix_yes/dump.root";
+ inpFilenames[4] = "/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/Omega_fix_PIDscan_MinBias_dEdxminsweep_full_config_4_trkCorr_yes_ContMatrix_yes/dump.root";
+
+// inpFilenames[5] = "/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/PIDscan_MinBias_dEdxminsweep_full_config_5_trkCorr_no/dump.root";
+// inpFilenames[6] = "/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/results/PIDscan_MinBias_dEdxminsweep_full_config_6_trkCorr_no/dump.root";
 
 
  labels[0] = "config_0";
@@ -59,8 +59,9 @@ int main( int argc, const char *argv[] )
  labels[2] = "config_2";
  labels[3] = "config_3";
  labels[4] = "config_4";
- labels[5] = "config_5";
- labels[6] = "config_6";
+
+// labels[5] = "config_5";
+// labels[6] = "config_6";
 
 // const int nMultiplicityBins = 4;
 // int multbins[nMultiplicityBins][2] = {
@@ -105,13 +106,22 @@ int main( int argc, const char *argv[] )
  //                                   //
  ///////////////////////////////////////
  
- TFile *inpFiles[nFiles];
+ std::cout << Form("Opening %d input files...", nFiles) << std::endl;
+ 
+ TFile **inpFiles;
+ inpFiles = new TFile*[nFiles];
 
  for(int i = 0; i < nFiles; i++)
  { 
+	std::cout << Form("Trying to open %d file %s", i, inpFilenames[i].c_str()) << std::endl;
+	inpFiles[i] = NULL;
+	std::cout << Form("Initializing as NULL. inpFiles[i]: %p\n", inpFiles[i]);
 	inpFiles[i] = new TFile( inpFilenames[i].c_str(), "READ");
-	if ( inpFiles[i]->IsZombie() ) {std::cerr << "Error opening file : " << inpFilenames[i] << std::endl; exit(-1); }
+	std::cout << Form("Opened. inpFiles[i]: %p\n", inpFiles[i]);
+	if ( (inpFiles[i] == NULL) || inpFiles[i]->IsZombie() ) {std::cerr << "Error opening file : " << inpFilenames[i] << std::endl; exit(-1); }
  }
+
+ std::cout << "Probably opened all input files" << std::endl;
  
  //////////////////////////////
  //                          //
@@ -128,9 +138,11 @@ int main( int argc, const char *argv[] )
  // MultBin loop
  for(int multBin = 0; multBin < nMultiplicityBins; multBin++)
  {
-
+	
  int mult1 = multbins[multBin][0];
  int mult2 = multbins[multBin][1];
+
+ std::cout << Form("multBin: %d, mult: [%03d-%03d]\n", multBin, mult1, mult2);
 
  std::string multlabel = Form("%3d #leq N_{trk}^{offline} #leq %3d", mult1, mult2);
 
@@ -139,8 +151,9 @@ int main( int argc, const char *argv[] )
  for(int j = 0; j < nFiles; j++)
  {
    std::string dataname = Form("%s_Ntrk_%03d-%03d", particletypelabel(i).c_str(),  mult1, mult2 );
+	data[i][j] = NULL;
  	data[i][j] = (TGraphErrors*)inpFiles[j]->Get( dataname.c_str() );
-	if ( data[i][j]->IsZombie() ){ std::cerr << Form("TGraphErrors %s not", dataname.c_str()) << std::endl; return -1;}
+//	if ( data[i][j]->IsZombie() ){ std::cerr << Form("TGraphErrors %s not", dataname.c_str()) << std::endl; return -1;}
  }
 
  for(int i = 0; i < nCorrTyp; i++)
@@ -184,10 +197,10 @@ int main( int argc, const char *argv[] )
  {
 
  	// Discard fit that is in the file
-   data[i][j] -> GetFunction(Form("%sv2_fit", particletypelabel(i).c_str() ))->SetBit(TF1::kNotDraw);
+//   data[i][j] -> GetFunction(Form("%sv2_fit", particletypelabel(i).c_str() ))->SetBit(TF1::kNotDraw);
 
 	// Create new fit functions
-	fit[i][j] = new TF1 (Form("%s_fit_%d", particletypelabel(i).c_str(), j), "[0]+[1]*x+[2]*x*x", fit_interval[i][0], fit_interval[i][1]);
+//	fit[i][j] = new TF1 (Form("%s_fit_%d", particletypelabel(i).c_str(), j), "[0]+[1]*x+[2]*x*x", fit_interval[i][0], fit_interval[i][1]);
 
 
  	// Cosmetics
@@ -196,8 +209,8 @@ int main( int argc, const char *argv[] )
 	data[i][j]->SetMarkerColor( Colors[j] );
 	data[i][j]->SetLineColor(   Colors[j] );
 
-	fit[i][j]->SetLineColor( Colors[j] );
-	fit[i][j]->SetLineStyle( LineStyles[j] );
+//	fit[i][j]->SetLineColor( Colors[j] );
+//	fit[i][j]->SetLineStyle( LineStyles[j] );
 
 	// Fit the data
 //   data[i][j]->Fit( Form("%s_fit_%d", particletypelabel(i).c_str(), j), "R");

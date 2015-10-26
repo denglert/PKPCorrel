@@ -86,15 +86,21 @@ const float trigptbins[nCorrTyp_][nPtBinsMax_][2] =
 	  {  1.30,  1.40 },
 	  {  1.40,  1.50 },
 	  {  1.50,  1.60 },
-	  { -1.00,  0.90 },
-	  { -1.00,  1.00 },
-	  { -1.00,  1.10 },
-	  { -1.00,  1.20 },
-	  { -1.00,  1.30 },
-	  { -1.00,  1.40 },
-	  { -1.00,  1.50 },
-	  { -1.00,  1.60 }},
+	  { -1.00, -1.00 },
+	  { -1.00, -1.00 },
+	  { -1.00, -1.00 },
+	  { -1.00, -1.00 },
+	  { -1.00, -1.00 },
+	  { -1.00, -1.00 },
+	  { -1.00, -1.00 },
+	  { -1.00, -1.00 }},
 };
+
+bool IsInsidePtRange(int TypBin, float pt)
+{
+	if ( (trigptbins[TypBin][0][0] < pt) && (pt < trigptbins[TypBin][nPtBins_[TypBin]][1])  ) {return true;}
+	else {return false;}
+}
 
 
 const float ptref1 = 0.3;
@@ -346,3 +352,7 @@ std::string particletypelabel (int ID)
 		case 3: out = "prot"; return out;
    }
 }
+
+
+//
+

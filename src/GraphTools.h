@@ -12,6 +12,31 @@
 #include <TLegend.h>
 #include <string.h>
 
+//struct TGraphStyle
+//{
+//	int MarkerStyle;
+//	double MarkerSize;
+//	int MarkerColor;
+//	int LineColor;
+//	int LineWidth;
+//	int FillStyle;
+//};
+
+//extern struct TGraphStyle TGraphStyle_vnvspt_StatError[];
+//extern struct TGraphStyle TGraphStyle_vnvspt_SystError[];
+
+//void SetupTGraphStyle ( TGraphErrors* graph, TGraphStyle gs );
+
+// TGraphError_vnvspt styles
+//const int    TGraphErrors_vnvspt_MarkerStyle[4] = {21, 22, 29, 20}; 
+//const double TGraphErrors_vnvspt_MarkerSize [4] = {1, 1.5, 2, 1}; 
+//const int    TGraphErrors_vnvspt_MarkerColor[4] = {kBlack, kRed, kGreen, kBlue}; 
+//const int    TGraphErrors_vnvspt_LineColor  [4] = {kBlack, kRed, kGreen, kBlue}; 
+//const int    TGraphErrors_vnvspt_SystErr_FillStyle[4] = {0, 0, 0, 0}; 
+//const double TGraphErrors_vnvspt_SystErr_MarkerSize[4] = {0, 0, 0, 0}; 
+//const int    TGraphErrors_vnvspt_SystErr_LineColor [4] = {kBlack, kRed, kGreen, kBlue}; 
+//const int    TGraphErrors_vnvspt_SystErr_LineWidth [4] = {2, 2, 2, 2}; 
+
 // correl2D graphs
 const double correl2D_leftmargin   = 0.20;
 const double correl2D_rightmargin  = 0.04;
@@ -64,7 +89,46 @@ const double trkcorr2D_ylabelsize = 0.15;
 const double trkcorr2D_zlabelsize = 0.15;
 const double trkcorr2D_figuretextsize = 0.10;
 
-// 0.032
+// PtResolution graphs
+
+const double RelDiffPt_leftmargin   = 0.20;
+const double RelDiffPt_rightmargin  = 0.04;
+const double RelDiffPt_topmargin    = 0.05;
+const double RelDiffPt_bottommargin = 0.20;
+                      
+const double RelDiffPt_xlabelsize = 0.030;
+const double RelDiffPt_ylabelsize = 0.030;
+                       
+const double RelDiffPt_xlabeloffset = 2.3;
+const double RelDiffPt_ylabeloffset = 1.8;
+                       
+const double RelDiffPt_tres_upperleftposx = 0.75;
+const double RelDiffPt_tres_upperleftposy = 0.40;
+
+const double RelDiffPt_ttype_upperleftposx = 0.25;
+const double RelDiffPt_ttype_upperleftposy = 0.80;
+
+const double RelDiffPt_figuretextsize = 0.030;
+
+// PtRecSimMatrix
+const double PtRecSimMatrix_leftmargin   = 0.10;
+const double PtRecSimMatrix_rightmargin  = 0.15;
+const double PtRecSimMatrix_topmargin    = 0.05;
+const double PtRecSimMatrix_bottommargin = 0.10;
+
+const double PtRecSimMatrix_xlabelsize = 0.03;
+const double PtRecSimMatrix_ylabelsize = 0.03;
+
+const double PtRecSimMatrix_xlabeloffset = 1.2;
+const double PtRecSimMatrix_ylabeloffset = 1.2;
+
+const double PtRecSimMatrix_tres_upperleftposx = 0.75;
+const double PtRecSimMatrix_tres_upperleftposy = 0.40;
+
+const double PtRecSimMatrix_ttype_upperleftposx = 0.25;
+const double PtRecSimMatrix_ttype_upperleftposy = 0.80;
+
+const double PtRecSimMatrix_figuretextsize = 0.030;
 
 // Graph variables
 const double figuretextsize = 0.043;

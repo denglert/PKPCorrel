@@ -1,12 +1,5 @@
-#include <TMath.h>
-#include <iostream>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <TFile.h>
+//#define PTRESNEEDED
 #include "AnalysisFW.h"
-#include "AnalysisBinning.h"
-#include "PIDUtils.h"
-#include "SetupCustomTrackTree.h"
 
 const int nMixEv = 10;
 
@@ -26,7 +19,7 @@ void EventData::SetzVtx(float zVtx_) { zVtx = zVtx_; }
 void EventData::SetnTrk(int nTrk_) { nTrk  = nTrk_; }
 
 int EventData::GetzVtxBin()         { return zvtxbin(zVtx, nZvtxBins_); }
-int EventData::GetMultiplicityBin_Ana( int nMultiplicityBins_Ana) { int bin = multiplicitybin_Ana(nTrk, nMultiplicityBins_Ana); return bin;}
+int EventData::GetMultiplicityBin_Ana( int nMultiplicityBins_Ana ) { int bin = multiplicitybin_Ana(nTrk, nMultiplicityBins_Ana); return bin;}
 int EventData::GetMultiplicityBin_EvM() { return multiplicitybin_EvM(nTrk); }
 
 ///////////////////////
@@ -229,6 +222,16 @@ void EventData::ReadInDATA( const Tracks &tTracks, PIDUtil *pidutil, TrackCorr *
 		float phi = tTracks.trkPhi[iTrk];
 
   		track trk;
+		
+		trk.IsPassingPhaseSpaceCut = false;			
+
+		// Kinematic cuts
+		float p = pt * cosh(eta);
+		if ( (p < 1.0) && ( abs(eta) < 0.8 )) 
+		{
+			trk.IsPassingPhaseSpaceCut = true;			
+		}
+
 		trk.pid 		 = pidutil->GetID( tTracks, iTrk);
 		trk.ptBin_CH = ptbin(       0 , pt );
 		trk.IsPID = false;
@@ -255,7 +258,10 @@ void EventData::ReadInDATA( const Tracks &tTracks, PIDUtil *pidutil, TrackCorr *
 
 		// chadron
 		if( trk.IsInsideChParticlPtRange )
-		{ nTriggerParticles[0][ trk.ptBin_CH ] += trk.w0; }
+		{ 
+			nTriggerParticles[0][ trk.ptBin_CH ] += trk.w0;
+//			ptAvgCount( CFW->ptavg[0][multBin][trk.ptBin_CH], CFW->counter[0][multBin][trk.ptBin_CH], pt );
+		}
  
 		// reference
 		if ( trk.IsInsideReferencePtRange )
@@ -266,14 +272,24 @@ void EventData::ReadInDATA( const Tracks &tTracks, PIDUtil *pidutil, TrackCorr *
 		{ 
 			nTriggerParticles[ trk.pid ][ trk.ptBin_ID ] += trk.w;
 			nTriggerParticles_ptint[ trk.pid ] += trk.w;
+//			ptAvgCount( CFW.ptavg[trk.pid][multBin][trk.ptBin_ID], CFW.counter[trk.pid][multBin][trk.ptBin_ID], pt );
 		}
 
 	}
 
 }
 
+// ptAvgCount
+void EventData::ptAvgCount( double &ptavg, double &counter, float &pt)
+{
+	// Avg calculation using iterative mean
+	counter++;
+	ptavg = (counter-1)*ptavg/counter + pt/counter;
+}
+
+
 // ReadInMC
-void EventData::ReadInMC( Particles &tTracks, PIDUtil *pidutil )
+void EventData::ReadInMC( Tracks_c &tTracks, PIDUtil *pidutil )
 {
 	int nPart = tTracks.nParticle;
 
@@ -284,9 +300,13 @@ void EventData::ReadInMC( Particles &tTracks, PIDUtil *pidutil )
 		float eta = tTracks.pEta[iPar];
 		float phi = tTracks.pPhi[iPar];
 
+		// Matched track selection
+		if ( !(mTrackSelection_c(tTracks, iPar)) ) continue;
+
   		track part;
 		part.pid = pidutil->GetIDgenPart_trkCorr( tTracks, iPar);
 		part.ptBin_CH = ptbin(   0 , tTracks.pPt[iPar]);
+
 		part.IsPID = false;
 		if ( part.pid != 99 )
 		{
@@ -327,6 +347,76 @@ void EventData::ReadInMC( Particles &tTracks, PIDUtil *pidutil )
 	}
 
 }
+
+
+#ifdef PTRESNEEDED
+// ReadInMC_Smearing
+void EventData::ReadInMC_Smearing( Tracks_c &tTracks, PIDUtil *pidutil, PtRes *ptres )
+{
+	int nPart = tTracks.nParticle;
+
+	for (int iPar = 0; iPar < nPart; iPar++)
+	{
+
+		// Matched track selection
+		if ( !(mTrackSelection_c(tTracks, iPar)) ) continue;
+
+
+		float eta = tTracks.pEta[iPar];
+		float phi = tTracks.pPhi[iPar];
+		float pt = tTracks.pPt[iPar];
+
+		int ptBin = ptres->GetPtBin( pt );
+			
+		if (ptBin == -999) continue;
+		float ptsmr_CH = ( 1.0 + ptres->GetRand(0, ptBin) ) * pt;
+
+  		track part;
+		part.ptBin_CH = ptbin( 0, ptsmr_CH );
+
+		part.pid = pidutil->GetIDgenPart_trkCorr( tTracks, iPar);
+
+		part.IsPID = false;
+		if ( (part.pid != 99) && (part.pid != 4) && ( IsInsidePtRange(part.pid, pt) ))
+		{
+		   float ptsmr_ID = ( 1.0 + ptres->GetRand(part.pid, ptBin) ) * pt;
+			part.ptBin_ID = ptbin( part.pid , ptsmr_ID );
+		   part.IsPID = ( part.ptBin_ID != -1);
+		}
+
+		part.IsInsideReferencePtRange = ( (ptref1 < ptsmr_CH) && ( pt < ptref2 ));
+		part.IsInsideChParticlPtRange = ( part.ptBin_CH != -1 );
+		if ( !part.IsInsideChParticlPtRange && !part.IsInsideReferencePtRange && !part.IsPID ) continue;
+
+		// *** Track selection *** //
+		
+  		// Track fill up
+  		part.phi     = tTracks.pPhi[iPar];
+  		part.eta     = tTracks.pEta[iPar];
+		part.w0 		 = 1;
+		part.w 		 = 1;
+
+		EventData::AddTrack(part);
+
+		// chadron
+		if( part.IsInsideChParticlPtRange )
+		{ nTriggerParticles[0][ part.ptBin_CH ]++; }
+ 
+		// reference
+		if ( part.IsInsideReferencePtRange )
+		{ nTriggerParticles_cpar_ref++; }
+
+		// pid particle
+		if( part.IsPID )
+		{ 
+			nTriggerParticles[ part.pid ][ part.ptBin_ID ]++; 
+			nTriggerParticles_ptint[ part.pid ] += part.w;
+		}
+
+	}
+
+}
+#endif
 
 // ReadInGenParticles
 void EventData::ReadInGenParticles( GenParticles &gParts, PIDUtil *pidutil )

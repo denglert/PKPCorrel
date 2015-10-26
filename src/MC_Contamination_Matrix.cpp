@@ -299,6 +299,34 @@ int main( int argc, const char *argv[] )
 
  }
 
+ 
+ const int nTypBins = 5;
+ TH1D *identi[nTypBins];
+ TH1D *contam[nTypBins];
+ TH1D *purity[nTypBins];
+
+ purity[0] = new TH1D("purity-char",   "purity [%];p_{T} [GeV/c];",  7, 0.3, 1.0);
+ purity[1] = new TH1D("purity-pion",   "purity [%];p_{T} [GeV/c];",  7, 0.3, 1.0);
+ purity[2] = new TH1D("purity-kaon",   "purity [%];p_{T} [GeV/c];",  6, 0.3, 0.9);
+ purity[3] = new TH1D("purity-prot",   "purity [%];p_{T} [GeV/c];", 13, 0.3, 1.6);
+ purity[4] = new TH1D("purity-nonprot","purity [%];p_{T} [GeV/c];", 13, 0.3, 1.6);
+
+ contam[0] = new TH1D("contam-char",   "contam [%];p_{T} [GeV/c];",  7, 0.3, 1.0);
+ contam[1] = new TH1D("contam-pion",   "contam [%];p_{T} [GeV/c];",  7, 0.3, 1.0);
+ contam[2] = new TH1D("contam-kaon",   "contam [%];p_{T} [GeV/c];",  6, 0.3, 0.9);
+ contam[3] = new TH1D("contam-prot",   "contam [%];p_{T} [GeV/c];", 13, 0.3, 1.6);
+ contam[4] = new TH1D("contam-nonprot","contam [%];p_{T} [GeV/c];", 13, 0.3, 1.6);
+
+ identi[0] = new TH1D("identi-char",   "ident;p_{T} [GeV/c];",  7, 0.3, 1.0);
+ identi[1] = new TH1D("identi-pion",   "ident;p_{T} [GeV/c];",  7, 0.3, 1.0);
+ identi[2] = new TH1D("identi-kaon",   "ident;p_{T} [GeV/c];",  6, 0.3, 0.9);
+ identi[3] = new TH1D("identi-prot",   "ident;p_{T} [GeV/c];", 13, 0.3, 1.6);
+ identi[4] = new TH1D("identi-nonprot","ident;p_{T} [GeV/c];", 13, 0.3, 1.6);
+
+ // Electron to pion
+ TH1D *nPions 			= new TH1D ("nPions",        ";p_{T} [GeV];fraction [%]", npt, 0.3, 1.00);
+ TH1D *Electron2Pion = new TH1D ("Electron2Pion", ";p_{T} [GeV];fraction [%]", npt, 0.3, 1.00);
+
 
  ///////////////////////////////////////
  //                                   //
@@ -330,6 +358,12 @@ int main( int argc, const char *argv[] )
 		int wzvtx = ratiozvtx->GetBinContent(vzB);
 
 		if ( (vzB == -1) || ((nZvtxDistrBins) == vzB)) continue;
+
+		int multcut1 = 0;
+		int multcut2 = 120;
+
+		int ntrkoff = EvAnaMC.gethiNtracks();
+		if ( (ntrkoff < multcut1) || (multcut2 < ntrkoff)  ) continue;
 	
 		// Tracks & particles
 		trackTree->GetEntry(iEvA);
@@ -341,6 +375,8 @@ int main( int argc, const char *argv[] )
 			// matched track selection
 			// particle selection
 			if( !( mTrackSelection_c( tTracks, iPart) )) continue;
+
+			// Debuggg 
 
 			double mpt = tTracks.mtrkPt [iPart];
 			double eta = tTracks.pEta[iPart]; 
@@ -367,8 +403,21 @@ int main( int argc, const char *argv[] )
 			if ( (ptBin_GENE_sl == -1) || (ptBin_RECO_sl == -1) ) continue;
 
 
-//			std::cerr << "PID_GEN: " << PID_GEN << std::endl;
-//			std::cerr << "PID_RECO: " << PID_RECO << std::endl;
+			if ( PID_RECO == 0.5) // pions
+			{
+				nPions->Fill(pt);
+				if ( (tTracks.pPId[iPart] == 11) || (tTracks.pPId[iPart] == -11)) // electrons
+				{Electron2Pion->Fill(pt);}
+			}
+
+			int PID_RECO_int = floor(PID_RECO+1);
+			int PID_GENE_int = floor(PID_GENE+1);
+
+			identi[PID_RECO_int]->Fill(pt);
+			if ( PID_RECO == PID_GENE ) 
+			{ purity[PID_RECO_int]->Fill(pt); } // purity
+			else
+			{ contam[PID_RECO_int]->Fill(pt); } // contam
 
 			dEdxvsPMapsLin[ptBin_RECO_sl]->Fill(mp, dEdx);
 			dEdxvsPMapsLog[ptBin_RECO_sl]->Fill(mp, dEdx);

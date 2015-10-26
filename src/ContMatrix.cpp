@@ -45,6 +45,10 @@ void CopyTH2DtoTH2D( TH2D *matrix_old, TH2D *&matrix_new, const char matrixname[
 // normalizeColoumn_TH2D()
 void normalizeColoumn_TH2D (TH2D *matrix, int colno )
 {
+
+ TH1::SetDefaultSumw2( );
+ TH2::SetDefaultSumw2( );
+
 	double entries = 0;
 
 	int nSize = matrix->GetNbinsX();
@@ -67,6 +71,9 @@ void normalizeColoumn_TH2D (TH2D *matrix, int colno )
 // normalizeColoumn_TH2D()
 void normalizeMatrix_TH2D (TH2D *matrix )
 {
+
+ TH1::SetDefaultSumw2( );
+ TH2::SetDefaultSumw2( );
 
 	int nSize = matrix->GetNbinsX();
 
@@ -144,6 +151,9 @@ int GetNdigits( int number )
 void plotContMatrix(TH2D *matrix, int indices, const char figbasename[])
 {
 
+ 	TH1::SetDefaultSumw2( );
+ 	TH2::SetDefaultSumw2( );
+
 	int nSize = matrix->GetNbinsX();
 	std::cout << "plotContMatrix_nSize: " << nSize << std::endl;
 
@@ -155,7 +165,7 @@ void plotContMatrix(TH2D *matrix, int indices, const char figbasename[])
 	gStyle->SetPaintTextFormat("2.2f");
 
 	matrix->SetMarkerSize(2);
-	matrix->Draw("TEXT");
+	matrix->Draw("TEXT E");
 
  	matrix->GetXaxis()->SetLabelSize(0.05);
  	matrix->GetYaxis()->SetLabelSize(0.05);
@@ -177,7 +187,19 @@ void plotContMatrix(TH2D *matrix, int indices, const char figbasename[])
 	canvas_matrix.SaveAs(outPDF.c_str());
 	canvas_matrix.SaveAs(outPNG.c_str());
 
-}
+};
+
+
+//void AddMatrix_TH2D(TH2D *matrix1, TH1D *matrix2)
+//{
+//	int nSize1 = matrix1->GetNbinsX();
+//	int nSize2 = matrix2->GetNbinsX();
+//
+//	if (nSize1 != nSize2) {std::cerr << "Trying to add different sized matrices together.. Exit." << std::endl; exit -1;}	  
+//	
+//	for
+//	double val1 = matrix1->GetBinContent();
+//}
 
 std::string GetTypeLatex (int ID)
 {
@@ -190,6 +212,6 @@ std::string GetTypeLatex (int ID)
 		case 3: out = "p"; return out;
 		case 4: out = "non-p"; return out;
    }
-}
+};
 
 }

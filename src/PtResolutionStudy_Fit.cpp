@@ -18,31 +18,24 @@ int main( int argc, const char *argv[] )
  ///////////////
  
  PtRes *ptres = new PtRes();
+ ptres->tag = tag;
  ptres->OpenFile( inpFilename.c_str() );
+
+ ////////////////////
  ptres->SetupForFit();
 
  ////////////////////
- // Setting output //
- ////////////////////
-
-// TFile *output = new TFile(Form("./PtResolutions_%s.root", tag.c_str() ),"RECREATE");
-// output->cd();
-
+ 
  ptres->Fit();
  ptres->makeFigPtRecPtSim();
+ ptres->makeFigSigmaPtDep();
 
- //////////////////////
- //                  //
- // **** OUTPUT **** //
- //                  //
- //////////////////////
-  
-//  output->cd();
-//  output->Write();
-//  
-//  output->Close();
-//  delete output;
 
-  printf("Done.\n");
+ ptres->SetupOutFile();
+ ptres->WriteFitResultsToFile();
+
+ //ptres->testRand();
+
+ printf("Done.\n");
 
 }

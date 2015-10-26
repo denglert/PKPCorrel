@@ -10,6 +10,62 @@
 #include "AnalysisBinning.h"
 #include "CMSres.h"
 #include "ALICERes.h"
+#include "HIN14002res.h"
+
+/////////////////
+// StoreInTGraph
+//void CorrelationFramework::StoreInTGraph()
+//{
+//
+//	TGraphErrors_v2vspt_StatError = new TGraphErrors**[nMultiplicityBins_Ana];
+//	TGraphErrors_v2vspt_SystError = new TGraphErrors**[nMultiplicityBins_Ana];
+//
+//	double ptw = 0.02;
+//
+// 	for(int multBin = 0; multBin < nMultiplicityBins_Ana; multBin++)
+//	{
+//
+//		TGraphErrors_v2vspt_StatError[multBin] = new TGraphErrors*[nCorrTyp];
+//		TGraphErrors_v2vspt_SystError[multBin] = new TGraphErrors*[nCorrTyp];
+//
+// 		for(int TypBin  = 0; TypBin < nCorrTyp; TypBin++)
+//		{
+//
+//			int nPoints          = nPtBins[TypBin];
+//			double *pt  			= new double[nPoints];
+//			double *pt_StatError = new double[nPoints];
+//			double *dpt 			= new double[nPoints];
+//			double *v2  			= new double[nPoints];
+//			double *v2_StatError = new double[nPoints];
+//			double *v2_SystError = new double[nPoints];
+//			
+//		   std::vector< double > ptvec = CorrelationFramework::Getptvec(TypBin, 0.);
+//		   std::vector< double > v2vec = CorrelationFramework::Getv2vec(TypBin, multBin);
+//		   std::vector< double > v2_StatErrorvec = CorrelationFramework::Getv2_StatErrorvec(TypBin, multBin);
+//		   std::vector< double > v2_SystErrorvec = CorrelationFramework::Getv2_SystErrorvec(TypBin, multBin);
+//		
+//			for(int ptBin = 0; ptBin < nPtBins[TypBin]; ptBin++)
+//			{
+//				pt 			[ptBin] = ptvec[ptBin];
+//				pt_StatError[ptBin] = 0;
+//				dpt 			[ptBin] = ptw;
+//				v2 			[ptBin] = v2vec[ptBin];
+//				v2_StatError[ptBin] = v2_StatErrorvec[ptBin];
+//				v2_SystError[ptBin] = v2_SystErrorvec[ptBin];
+//			};
+//		
+//			TGraphErrors_v2vspt_StatError[multBin][TypBin] = new TGraphErrors(nPoints, pt, v2, pt_StatError, v2_StatError);
+//			TGraphErrors_v2vspt_SystError[multBin][TypBin] = new TGraphErrors(nPoints, pt, v2, pt_StatError, v2_SystError);
+//
+//			delete pt;
+//			delete dpt;
+//			delete v2;
+//			delete v2_StatError;
+//			delete v2_SystError;
+//			
+//		}
+//	}
+//}
 
 ////////////////////////////////////////
 // - makeFigv2vspT_allparticles
@@ -433,6 +489,7 @@ void CorrelationFramework::makeFigv2vspT_allparticles_ALICE_comparison(int multB
 	v2vsptlegend.Draw("SAME");
 
 
+
 	std::string CMSsystemlabel = Form("#splitline{CMS Preliminary pPb}{#sqrt{s_{NN}} = 5.02 TeV L_{int} = 35 nb^{-1}}", mult1, mult2);
 	std::string multlabel = Form("%3d #leq N_{trk}^{offline} < %3d", mult1, mult2);
 
@@ -455,6 +512,201 @@ void CorrelationFramework::makeFigv2vspT_allparticles_ALICE_comparison(int multB
 
 }
 
+////////////////////////////////////////
+// - makeFigv2vspT_HIN14002_comparison()
+void CorrelationFramework::makeFigv2vspT_HIN14002_comparison( )
+{
+
+	const int multBins = 2;
+
+	TGraphAsymmErrors *HIN14002_k0s = new TGraphAsymmErrors[multBins];
+	TGraphAsymmErrors *HIN14002_lam = new TGraphAsymmErrors[multBins];
+
+	//HIN14002_k0s[0] = HIN14002_pPb_000_035_k0s();
+	//HIN14002_lam[0] = HIN14002_pPb_000_035_lam();
+	//HIN14002_lam[1] = HIN14002_pPb_060_120_lam();
+	//HIN14002_k0s[1] = HIN14002_pPb_060_120_k0s();
+	
+	//HIN14002_k0s[0] = HIN14002_pPb_000_035_k0s();
+	//HIN14002_lam[0] = HIN14002_pPb_000_035_lam();
+	//HIN14002_lam[1] = HIN14002_pPb_060_120_lam();
+	//HIN14002_k0s[1] = HIN14002_pPb_060_120_k0s();
+
+
+	int multMap[multBins] = {0,1};
+
+
+	// HighMult
+	HIN14002_k0s[0] = HIN14002_pPb_120_150_k0s();
+	HIN14002_k0s[1] = HIN14002_pPb_150_185_k0s();
+	HIN14002_lam[0] = HIN14002_pPb_120_150_lam();
+	HIN14002_lam[1] = HIN14002_pPb_150_185_lam();
+
+	for (int multBin = 0; multBin < multBins; multBin++)
+	{
+		gStyle->SetOptStat(0);
+
+
+		double ptw = 0.02;
+
+		double **pt;
+		double **dpt;
+		double **v2;
+		double **v2_StatError;
+		double **v2_SystError;
+
+		pt       	 = new double*[nCorrTyp];
+		dpt       	 = new double*[nCorrTyp];
+		v2       	 = new double*[nCorrTyp];
+		v2_StatError = new double*[nCorrTyp];
+		v2_SystError = new double*[nCorrTyp];
+
+ 		for(int TypBin=0; TypBin < nCorrTyp; TypBin++)
+		{
+			pt      [TypBin] = new double[nPtBins[TypBin]];
+			dpt     [TypBin] = new double[nPtBins[TypBin]];
+			v2      [TypBin] = new double[nPtBins[TypBin]];
+			v2_StatError[TypBin] = new double[nPtBins[TypBin]];
+			v2_SystError[TypBin] = new double[nPtBins[TypBin]];
+
+   		std::vector< double > ptvec = CorrelationFramework::Getptvec(TypBin, 0.);
+   		std::vector< double > v2vec = CorrelationFramework::Getv2vec(TypBin, multMap[multBin]);
+   		std::vector< double > v2_StatErrorvec = CorrelationFramework::Getv2_StatErrorvec(TypBin, multMap[multBin]);
+   		std::vector< double > v2_SystErrorvec = CorrelationFramework::Getv2_SystErrorvec(TypBin, multMap[multBin]);
+
+			for(int ptBin = 0; ptBin < nPtBins[TypBin]; ptBin++)
+			{
+				pt[TypBin][ptBin]        = ptvec[ptBin];
+				dpt[TypBin][ptBin]       = ptw;
+				v2[TypBin][ptBin]        = v2vec[ptBin];
+				v2_StatError[TypBin][ptBin]  = v2_StatErrorvec[ptBin];
+				v2_SystError[TypBin][ptBin]  = v2_SystErrorvec[ptBin];
+			};
+
+
+	}
+
+	// *** Plotting the graphs *** //
+	gStyle->SetPadTickY(1);
+	gStyle->SetPadTickX(1);
+
+	TCanvas canvas_v2_vs_pT ("v2vspT", "; p_{T} [GeV/c];v_{2}", 1024, 768);
+	TPad *pad = new TPad("pad", "this is a pad", 0.05, 0.05, 0.95, 0.95);
+
+	canvas_v2_vs_pT.SetLeftMargin(0.10);
+   canvas_v2_vs_pT.SetBottomMargin(0.12);
+   canvas_v2_vs_pT.SetRightMargin(0.05);
+   canvas_v2_vs_pT.SetTopMargin(0.05);
+	
+	TGraphErrors cparv2 = cpar_v2(nPtBins[0], pt[0], v2[0], 0, v2_StatError[0] );
+	TGraphErrors pionv2 = pion_v2(nPtBins[1], pt[1], v2[1], 0, v2_StatError[1] );
+	TGraphErrors kaonv2 = kaon_v2(nPtBins[2], pt[2], v2[2], 0, v2_StatError[2] );
+	TGraphErrors protv2 = prot_v2(nPtBins[3], pt[3], v2[3], 0, v2_StatError[3] );
+
+	TGraphErrors cparv2_syst = cpar_v2_syst(nPtBins[0], pt[0], v2[0], dpt[0], v2_SystError[0] );
+	TGraphErrors pionv2_syst = pion_v2_syst(nPtBins[1], pt[1], v2[1], dpt[1], v2_SystError[1] );
+	TGraphErrors kaonv2_syst = kaon_v2_syst(nPtBins[2], pt[2], v2[2], dpt[2], v2_SystError[2] );
+	TGraphErrors protv2_syst = prot_v2_syst(nPtBins[3], pt[3], v2[3], dpt[3], v2_SystError[3] );
+
+	cparv2.SetPoint(0, -50, -5);
+	pionv2.SetPoint(0, -50, -5);
+	kaonv2.SetPoint(0, -50, -5);
+	protv2.SetPoint(0, -50, -5);
+
+	cparv2_syst.SetPoint(0, -50, -5);
+	pionv2_syst.SetPoint(0, -50, -5);
+	kaonv2_syst.SetPoint(0, -50, -5);
+	protv2_syst.SetPoint(0, -50, -5);
+
+	double v2vspt_ptmin = 0.0;
+	double v2vspt_ptmax = 2.5;
+	double v2vspt_v2min = 0.0;
+	double v2vspt_v2max = 0.16;
+
+	kaonv2.SetTitle("");
+   kaonv2.GetXaxis()->SetLimits(v2vspt_ptmin,v2vspt_ptmax);
+	kaonv2.GetXaxis()->SetTitle("p_{T} [GeV/c]");                              			  
+	kaonv2.GetXaxis()->CenterTitle(1);
+	kaonv2.GetXaxis()->SetTitleOffset(1.2);
+	kaonv2.GetXaxis()->SetTitleSize(figuretextsize);
+	kaonv2.GetYaxis()->SetRangeUser(v2vspt_v2min,v2vspt_v2max);
+	kaonv2.GetYaxis()->SetTitle("v_{2}");
+	kaonv2.GetYaxis()->CenterTitle(1);
+	kaonv2.GetYaxis()->SetTitleOffset(1.2);
+	kaonv2.GetYaxis()->SetTitleSize(figuretextsize);
+
+	protv2.SetTitle("");
+   protv2.GetXaxis()->SetLimits(v2vspt_ptmin,v2vspt_ptmax);
+	protv2.GetXaxis()->SetTitle("p_{T} [GeV/c]");                              			  
+	protv2.GetXaxis()->CenterTitle(1);
+	protv2.GetXaxis()->SetTitleOffset(1.2);
+	protv2.GetXaxis()->SetTitleSize(figuretextsize);
+	protv2.GetYaxis()->SetRangeUser(v2vspt_v2min,v2vspt_v2max);
+	protv2.GetYaxis()->SetTitle("v_{2}");
+	protv2.GetYaxis()->CenterTitle(1);
+	protv2.GetYaxis()->SetTitleOffset(1.2);
+	protv2.GetYaxis()->SetTitleSize(figuretextsize);
+
+   int mult1 = multiplicity_Ana(multMap[multBin], 0, nMultiplicityBins_Ana);
+	int mult2 = multiplicity_Ana(multMap[multBin], 1, nMultiplicityBins_Ana);
+
+
+	double legend_x1=.65;
+	double legend_y1=0.14;
+	double legend_x2=legend_x1+.20;
+	double legend_y2=legend_y1+.32;
+	double CMSsystemlabelposx = 0.14;
+	double CMSsystemlabelposy = 0.86;
+	double multlabelposx = 0.15;
+	double multlabelposy = 0.70;
+
+	TLegend v2vsptlegend (legend_x1, legend_y1, legend_x2, legend_y2);
+	v2vsptlegend.SetFillStyle(0);
+	v2vsptlegend.SetBorderSize(0);
+	v2vsptlegend.SetTextSize(figuretextsize);
+
+	std::string CMSsystemlabel = Form("#splitline{CMS Preliminary pPb}{#sqrt{s_{NN}} = 5.02 TeV L_{int} = 35 nb^{-1}}", mult1, mult2);
+	std::string multlabel = Form("%3d #leq N_{trk}^{offline} < %3d", mult1, mult2);
+
+	TLatex tCMSsystemlabel( CMSsystemlabelposx,CMSsystemlabelposy, CMSsystemlabel.c_str()); 
+	tCMSsystemlabel.SetTextSize(figuretextsize);
+	tCMSsystemlabel.SetNDC(kTRUE);
+
+	TLatex tmultlabel( multlabelposx,multlabelposy, multlabel.c_str()); 
+	tmultlabel.SetTextSize(figuretextsize);
+	tmultlabel.SetNDC(kTRUE);
+
+
+
+	kaonv2.Draw("AP");
+	protv2.Draw("P");
+
+	kaonv2_syst.Draw("2 SAME");
+	protv2_syst.Draw("2 SAME");
+
+	HIN14002_k0s[multBin].Draw("P SAME");
+	HIN14002_lam[multBin].Draw("P SAME");
+
+	v2vsptlegend.AddEntry(&kaonv2,Form("HIN-15-007 K^{#pm}" ), "P");
+	v2vsptlegend.AddEntry(&protv2,Form("HIN-15-007 p^{#pm}" ), "P");
+	v2vsptlegend.AddEntry(&HIN14002_k0s[multBin],"HIN-14-002 K_{S}^{0}", "P");
+	v2vsptlegend.AddEntry(&HIN14002_lam[multBin],"HIN-14-002 #Lambda", "P");
+	v2vsptlegend.Draw("SAME");
+
+	tCMSsystemlabel.Draw();
+
+	tmultlabel.Draw();
+	
+	std::string dir  = Form("./results/%s/v2/", tag.c_str());
+	std::string label = Form("v2vspt_all_nTrk_%03d-%03d_HIN14002_comparison", mult1, mult2); 
+	std::string	pngfigure = dir+label+".png";
+	std::string	pdffigure = dir+label+".pdf";
+	canvas_v2_vs_pT.SaveAs( pngfigure.c_str() );
+	canvas_v2_vs_pT.SaveAs( pdffigure.c_str() );
+
+	}
+
+}
 
 void CorrelationFramework::makeFigv2ptNtrk()
 {

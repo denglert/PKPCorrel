@@ -51,7 +51,7 @@ int main( int argc, const char *argv[] )
  else if ( isMC == "yes")
  { doMC = true;  }
  
- setupTrackTree(trackTree, tTracks, doMC);
+ setupTrackTree(trackTree, tTracks);
 
  // EventAnalyzer
  EvtAnalyzer EvAna;
@@ -64,37 +64,14 @@ int main( int argc, const char *argv[] )
  EvtSelection EvSel;
  EvSel.setupSkimTree_pPb( f, doMC);
 
+
+ PIDStudy *pidstudy = new PIDStudy();
+ pidstudy->nMultiplicityBins = nMultiplicityBins_Ana_HDR;
+ pidstudy->SetupOut();
+ pidstudy->Setup();
  
  // Analysis specific //
  
- double pBins[npBinslog+1];
- double dEdxBins[ndEdxBinslog+1];
-
- double l10 = TMath::Log(10);
- 
- double dplog   = ( TMath::Log(pmaxlog)   -TMath::Log(pminlog)    )/npBinslog/l10;
- double ddEdxlog = ( TMath::Log(dEdxmaxlog)-TMath::Log(dEdxminlog) )/ndEdxBinslog/l10;
-
- for (int i=0; i<=npBinslog; i++)
- { pBins[i] = TMath::Exp(l10*(i*dplog + TMath::Log(pminlog)/l10)); }
-
- for (int i=0; i<=ndEdxBinslog; i++)
- { dEdxBins[i] = TMath::Exp(l10*(i*ddEdxlog+ TMath::Log(dEdxminlog)/l10)); }
-
- TH2D *dEdxvsPMapsLin[npt];
- TH2D *dEdxvsPMapsLog[npt];
-
- for( int ptBin = 0; ptBin < npt; ptBin++ )
- {
-
-   double pt1 = (ptMin + (ptBin  ) * ptbw);
-	double pt2 = (ptMin + (ptBin+1) * ptbw);
-
-	dEdxvsPMapsLin[ptBin] = new TH2D(Form("dEdxvsPMapsLin_pt_%.2f-%.2f", pt1, pt2), ";p [GeV/c];dE/dx [MeV/cm]", npBins, pminlin, pmaxlin, ndEdxBins, dEdxminlin, dEdxmaxlin);
-	dEdxvsPMapsLog[ptBin] = new TH2D(Form("dEdxvsPMapsLog_pt_%.2f-%.2f", pt1, pt2), ";p [GeV/c];dE/dx [MeV/cm]", npBinslog, pBins, ndEdxBinslog, dEdxBins);
-
- }
-
  ////////////////
  // Event loop //
  ////////////////
@@ -102,19 +79,27 @@ int main( int argc, const char *argv[] )
  if (nEvMax == -1) {nEvMax = trackTree->GetEntries();}
 
  for (int iEvA = 0; iEvA < nEvMax; iEvA++)
+ //for (int iEvA = 96966; iEvA < nEvMax; iEvA++)
  {
 
  	// EventCounter
  	log.EventCounter(iEvA);
  	EvAna.GetEntry  (iEvA);
+
  	
+
  	// Event Selection
  	if ( !EvSel.isGoodEv_pPb( iEvA ) ) continue;
- 	if ( !EvAna.isEvPass( )          ) continue;
-
+// 	if ( !EvAna.isEvPass( )          ) continue;
  	
  	// Tracks & particles
  	trackTree->GetEntry(iEvA);
+
+
+	int noff = EvAna.gethiNtracks();
+   int multBin = multiplicitybin_Ana(noff, nMultiplicityBins_Ana_HDR);
+
+	if (multBin == -1) continue;
  	
  	int nTrk = tTracks.nTrk;
  	
@@ -122,13 +107,38 @@ int main( int argc, const char *argv[] )
  	for (int iTrk = 0; iTrk < nTrk; iTrk++)
  	{
 
+
+
  		// *** Track selection *** //
  		if ( !TrackSelection(tTracks, iTrk ) ) continue;
+
+		float pt   = tTracks.trkPt[iTrk];
+		float eta  = tTracks.trkEta[iTrk];
+		float p    = pt*cosh(eta);
+		float dEdx = tTracks.dedx[iTrk];
+
+		double ptMin = 0.3; 
+		if (pt < ptMin) continue;
+		
+		double ptcut1 = 0.8;	
+		double ptcut2 = 0.9;	
+
+//		if ( (pt < ptcut1) || (ptcut2 < pt)) continue;	
+
+		pidstudy->dEdxvsPMap_lin[multBin]->Fill(p,dEdx);
+		pidstudy->dEdxvsPMap_log[multBin]->Fill(p,dEdx);
+
+		int pBin = pidstudy->GetpBin(p);
+
+		if ( pBin == -1 ) continue;
+		pidstudy->dEdxDistr_lin[multBin][pBin]->Fill(dEdx);
+		pidstudy->dEdxDistr_log[multBin][pBin]->Fill(dEdx);
 
  	}
 
  	
  }
 
+ pidstudy->Write();
 
 }

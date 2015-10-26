@@ -122,7 +122,7 @@ public :
    Float_t         pPt[maxTracks];   //[nParticle]
    Float_t         pAcc[maxTracks];   //[nParticle]
    Float_t         pAccPair[maxTracks];   //[nParticle]
-   Int_t         pNRec[maxTracks];   //[nParticle]
+   Int_t           pNRec[maxTracks];   //[nParticle]
    Int_t           pNHit[maxTracks];   //[nParticle]
    Float_t         mtrkdedx[maxTracks];   //[nParticle]
    Float_t         mtrkPt[maxTracks];   //[nParticle]
@@ -139,7 +139,9 @@ public :
    Float_t         mtrkDzError2[maxTracks];   //[nParticle]
    Float_t         mtrkDxy2[maxTracks];   //[nParticle]
    Float_t         mtrkDxyError2[maxTracks];   //[nParticle]
-
+	Float_t 			 trkGMPId[maxTracks];
+	Float_t 			 trkMPId[maxTracks];
+	Float_t 			 trkPId[maxTracks];
 
    // List of branches
    TBranch        *b_nEv;   //!
@@ -209,6 +211,10 @@ public :
    TBranch        *b_mtrkDzError2;   //!
    TBranch        *b_mtrkDxy2;   //!
    TBranch        *b_mtrkDxyError2;   //!
+	TBranch			*b_trkGMPId;
+	TBranch			*b_trkMPId;
+	TBranch			*b_trkPId;
+
 
 
 };

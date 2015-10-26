@@ -8,6 +8,8 @@
 #include <TLine.h>
 #include <fstream>
 #include <string>
+#include "TMath.h"
+#include "AnalysisBinning.h"
 #include "SetupCustomTrackTree.h"
 
 const int nPIDBins = 4;
@@ -18,7 +20,6 @@ const double pMax 	= 3;
 const int ndEdxBins 	= 300;
 const double dEdxMin = -2;
 const double dEdxMax = 30;
-
 
 const int npBinslog    = 100;
 const int ndEdxBinslog = 100;
@@ -46,6 +47,7 @@ public :
 	void Fill(int PID, double p, double dedx);
 	void PlotFigs(const char tag[]);
 };
+
 
 class PIDUtil {
 public :
@@ -96,6 +98,87 @@ public :
 	int GetIDgenPart_trkCorr(const GenParticles &tTracks, int iPart);
 	double GetID_cm(const Tracks_c &tTracks, int iTrk);
 };
+
+class PIDStudy
+{
+	public :
+   PIDStudy( );
+   ~PIDStudy();
+
+	std::string PIDconfig;
+	PIDUtil *pid;
+	std::string fname_inp;
+	std::string fname_out;
+
+	// -- dE/dx vs. p distributions -- //
+	// Linear binning
+	int  nPBins_lin;
+	float PMin_lin;
+	float PMax_lin;
+	float PBinWidth_lin;
+
+	int  ndEdxBins_lin;
+	float dEdxMin_lin;
+	float dEdxMax_lin;
+
+	int GetpBin(float pt);
+
+	// Log binning
+	int    nPBins_log;
+	float   PMin_log;
+	float   PMax_log;
+	float *pBins_log;
+
+	int    ndEdxBins_log;
+	float   dEdxMin_log;
+	float   dEdxMax_log;
+	float *dEdxBins_log;
+
+	float l10;
+
+
+	// -- dE/dx distributions -- //
+	// Lin binning
+	int    ndEdxDistrBins_lin;
+	float   dEdxDistrMin_lin;
+	float   dEdxDistrMax_lin;
+
+	// Log binning
+	int    ndEdxDistrBins_log;
+	float   dEdxDistrMin_log;
+	float   dEdxDistrMax_log;
+	float  *dEdxDistrBins_log;
+
+	//  -- Multiplicity binning -- //
+	int nMultiplicityBins;
+
+	// 
+	TH2D  **dEdxvsPMap_log;
+	TH2D  **dEdxvsPMap_lin;
+	TH1D ***dEdxDistr_log;
+	TH1D ***dEdxDistr_lin;
+	TF1  ***dEdxDistr_lin_Fit;
+	TF1  ***dEdxDistr_log_Fit;
+
+	TF1  ***pion_log_Fit;
+	TF1  ***kaon_log_Fit;
+	TF1  ***prot_log_Fit;
+
+	double **amp;
+	double **sigma;
+
+	TFile *f_inp;
+	TFile *f_out;
+
+	void Setup();
+	void SetupOut();
+	void SetupInput();
+	void Write();
+	void makeFigdEdxvsPMap();
+	void makeFigdEdxDistr();
+	void InitializeFits();
+};
+
 
 // Bethe-Bloch Curve function
 double poly2nd(double *x, double *par);

@@ -104,7 +104,7 @@ const float assoptmax = 3.0;
 
 bool IsInsidePtRange(int TypBin, float pt)
 {
-	if ( (trigptbins[TypBin][0][0] < pt) && (pt < trigptbins[TypBin][nPtBins_[TypBin]][1])  ) {return true;}
+	if ( (trigptbins[TypBin][0][0] < pt) && (pt < trigptbins[TypBin][nPtBins_[TypBin]-1][1])  ) {return true;}
 	else {return false;}
 };
 
@@ -114,12 +114,11 @@ bool IsInsidePtRange(int TypBin, float pt)
 
 //// Analysis multiplicity binning ////
 
-// MINBIAS NEW //
-const int nMultiplicityBins_Ana_HDR = 2;
+// MINBIAS //
+const int nMultiplicityBins_Ana_HDR = 1;
 const int multiplicitybins_Ana[nMultiplicityBins_Ana_HDR][2] = 
 {
-	  {   0,  60 },
-	  {  60, 120 }
+	  {   0,  120 },
 };
 
 

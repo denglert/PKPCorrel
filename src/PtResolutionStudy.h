@@ -13,18 +13,25 @@
 #include <TCanvas.h>
 #include <TF1.h>
 #include <TH3D.h>
-#include <TRandom.h>
+#include <TRandom3.h>
+#include <TVectorD.h>
 #include <iostream>
 #include <TVector.h>
 #include "GraphTools.h"
-#include "AnalysisBinning.h"
 #include "PIDUtils.h"
-#include "AnalysisFW.h"
 #include "SetupCustomTrackTree.h"
-#include "EvtSelection.h"
-#include "EvtAnalyzer.h"
+#include "UtilFunctions.h"
+#include "AnalysisBinning.h"
 
 #define loop2(x, y, nx, ny) for( int x = 0; x < nx; x++)for( int y = 0; y < ny; y++)
+
+const float ptbounds[4][2] =
+{
+	{0.2,3.0},
+	{0.2,1.0},
+	{0.2,0.9},
+	{0.2,1.6}
+};
 
 class PtRes
 {
@@ -33,30 +40,62 @@ class PtRes
 	PtRes();
 	~PtRes();
 
+	// -- -- //
+	std::string tag;
 	TFile *f_inp;
 	TFile *f_out;
 
-	void OpenFile(const char filename[]);
+	// -- Setup function -- //
 	void SetupForProcess();
 	void SetupForFit();
-	void StdPrintBinning();
-	void makeFigPtRecPtSim();
+	void SetupForSmearing();
+
+	// -- Processing -- //
+	void OpenFile(const char filename[]);
+	void SetupOutFile();
+	void WriteFitResultsToFile ( );
 
 	void Fit();
 
-	TRandom3 rand;
-	double GetRand;
+	// -- make figure -- //
+	
+	void makeFigPtRecPtSim();
+	void makeFigSigmaPtDep();
+
+	// -- Distribution -- // 
+	
+	TRandom3 *randgen;
+	double GetRand( int TypBin, int ptBin);
 	void testRand();
 
+	// -- Binning -- //
+	
+	int nCorrTyp;
 	int nPtBins ;
+	
+	int *nPtBins_;
+
 	float PtMin;
 	float PtMax;
 	float PtBinWidth;
-	int nCorrTyp;
+	double **PtBinCenter;
+
+	// -- RelDiffPt- - //
 	
+	TH1D ***RelDiffPt;
+	TF1  ***RelDiffPt_Func;
+
+	double **RelDiffPtSigma;
+	double **RelDiffPtMean ;
+
+	TVectorD ***PtResolutionParams;
+
 	int nRelDiffPtBins ;
 	double RelDiffPtMin;
 	double RelDiffPtMax;
+
+	// -- PtRecSimMatrix -- //
+	TH2D **PtRecSimMatrix;
 
 	int    PtRecSimMatrix_nxBins;
 	double PtRecSimMatrix_xMin  ;
@@ -66,16 +105,10 @@ class PtRes
 	double PtRecSimMatrix_yMin  ;
 	double PtRecSimMatrix_yMax  ;
 
-	TH1D ***RelDiffPt;
-	TF1  ***RelDiffPt_Func;
-	double **RelDiffPtSigma;
-	double **RelDiffPtMean ;
-
-	TH2D **PtRecSimMatrix;
-
-	TVectorD ***PtResolutionParams;
-
-	int ptBin(float pt);
+	// -- Util functions -- //
+	
+	void StdPrintBinning();
+	int GetPtBin(float pt);
 	float PtBinLow ( int ptBin );
 	float PtBinHigh( int ptBin );
 

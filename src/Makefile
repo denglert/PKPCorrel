@@ -1,7 +1,8 @@
 CC = g++
 CFLAGS = `root-config --cflags`  
 LFLAGS = -O3 -Wl,--no-as-needed `root-config --libs`
-CORE = CorrelationUtils.o  PIDUtils.o AnalysisFW.o $(AnalysisBinning).o SetupCustomTrackTree.o EvtSelection.o EvtAnalyzer.o 
+CORE = CorrelationUtils.o  PIDUtils.o AnalysisFW.o $(AnalysisBinning).o SetupCustomTrackTree.o EvtSelection.o EvtAnalyzer.o UtilFunctions.o PtResolutionStudy.o 
+#CORE = CorrelationUtils.o  PIDUtils.o AnalysisFW.o $(AnalysisBinning).o SetupCustomTrackTree.o EvtSelection.o EvtAnalyzer.o
 EXT = CorrelationUtils_FigureTools.o PhyConst.o GraphTools.o ContMatrix.o
 FULL = $(CORE) $(EXT)
 CMN =  commonSetup.h
@@ -32,8 +33,15 @@ process_light.o : process_light.cpp
 preprocess.o : preprocess.cpp $(CMN) $(CORE)
 	$(CC) $(CFLAGS) -o $@ -c $<
 
+# preprocess_genlevel_smearing
+../bin/preprocess_genlevel_smearing : preprocess_genlevel_smearing.o PtResolutionStudy.o $(CMN) $(CORE)
+	$(CC) $(LFLAGS) -o $@ $< $(CORE)
+
+preprocess_genlevel_smearing.o : preprocess_genlevel_smearing.cpp $(CMN) $(CORE)
+	$(CC) $(CFLAGS) -o $@ -c $<
+
 # preprocess_genlevel
-../bin/preprocess_genlevel : preprocess_genlevel.o $(CMN) $(CORE)
+../bin/preprocess_genlevel : preprocess_genlevel.o $(CMN) $(CORE) PtResolutionStudy.o 
 	$(CC) $(LFLAGS) -o $@ $< $(CORE)
 
 preprocess_genlevel.o : preprocess_genlevel.cpp $(CMN) $(CORE)
@@ -78,6 +86,14 @@ PIDSetup.o : PIDSetup.cpp
 	$(CC) $(LFLAGS) -o $@ $< $(CORE) 
 
 PIDStudy.o : PIDStudy.cpp
+	$(CC) $(CFLAGS) -o $@ -c $<
+
+####################################################################################
+### PIDStudy_viewer
+../bin/PIDStudy_viewer : PIDStudy_viewer.o $(CMN) $(CORE)
+	$(CC) $(LFLAGS) -o $@ $< $(CORE) 
+
+PIDStudy_viewer.o : PIDStudy_viewer.cpp
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 ####################################################################################
@@ -148,8 +164,39 @@ MC_CrosscheckFig.o : MC_CrosscheckFig.cpp
 Compare_vns.o : Compare_vns.cpp GraphTools.o
 	$(CC) $(CFLAGS)-o $@ -c $<
 
+##################################################################################
+# PtResolutionStudy_Process
+build_PtResolutionStudy : ../bin/PtResolutionStudy_Process ../bin/PtResolutionStudy_Fit
+
+../bin/PtResolutionStudy_Process :  UtilFunctions.o PtResolutionStudy_Process.o PtResolutionStudy.o $(CORE)
+	$(CC) $(LFLAGS) -o $@ $^
+
+# PtResolutionStudy_Fit
+../bin/PtResolutionStudy_Fit : UtilFunctions.o PtResolutionStudy_Fit.o PtResolutionStudy.o $(AnalysisBinning).o
+	$(CC) $(LFLAGS) -o $@ $^
+
+# objects
+PtResolutionStudy_Process.o : PtResolutionStudy_Process.cpp
+	$(CC) $(CFLAGS)-o $@ -c $< 
+
+PtResolutionStudy_Fit.o : PtResolutionStudy_Fit.cpp
+	$(CC) $(CFLAGS)-o $@ -c $< 
+
+# PtResolutionStudy
+PtResolutionStudy.o : PtResolutionStudy.cpp 
+	$(CC) $(CFLAGS)-o $@ -c $<
+
+##################################################################################
+
+# StudyMCinfo
+../bin/StudyMCinfo : StudyMCinfo.o $(CMN) $(AnalysisBinning).o
+	$(CC) $(LFLAGS) -o $@ $< $(CORE)
+
+StudyMCinfo.o : StudyMCinfo.cpp
+	$(CC) $(CFLAGS)-o $@ -c $< $(AnalysisBinning).o 
+
 # Compare_vns_multi
-../bin/Compare_vns_multi : Compare_vns_multi.o $(CMN) $(AnalysisBinning).o
+../bin/Compare_vns_multi : Compare_vns_multi.o $(AnalysisBinning).o
 	$(CC) $(LFLAGS) -o $@ $< $(AnalysisBinning).o
 
 Compare_vns_multi.o : Compare_vns_multi.cpp
@@ -207,4 +254,8 @@ EvtSelection.o : EvtSelection.cpp EvtSelection.h
 
 # EvtAnalyzer
 EvtAnalyzer.o : EvtAnalyzer.cpp EvtAnalyzer.h
+	$(CC) $(CFLAGS) -c $< -o $@ 
+
+# UtilFunctions
+UtilFunctions.o : UtilFunctions.cpp UtilFunctions.h
 	$(CC) $(CFLAGS) -c $< -o $@ 

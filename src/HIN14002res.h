@@ -1,8 +1,138 @@
-//
+int k0scolor = 2;
+int lamcolor = 6;
+
+//////////////////////////////
+// HIN14002_pPb_000_035_k0s //
+//////////////////////////////
+
+TGraphAsymmErrors HIN14002_pPb_000_035_k0s()
+{
+
+  gROOT->SetStyle("Plain");
+
+  // Plot: p8770_d4x1y1
+  double p8770_d4x1y1_xval[] = { 0.493, 0.884, 1.45, 2.12, 2.99, 4.01, 5.18 };
+  double p8770_d4x1y1_xerrminus[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+  double p8770_d4x1y1_xerrplus[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+  double p8770_d4x1y1_yval[] = { 0.0198, 0.0675, 0.0904, 0.147, 0.212, 0.297, 0.28 };
+  double p8770_d4x1y1_yerrminus[] = { 0.01426497809321837, 0.007401222871931367, 0.009429872745694928, 0.014284257068535276, 0.02263735850314696, 0.03978768653742009, 0.059421629058786334 };
+  double p8770_d4x1y1_yerrplus[] = { 0.01426497809321837, 0.007401222871931367, 0.009429872745694928, 0.014284257068535276, 0.02263735850314696, 0.03978768653742009, 0.059421629058786334 };
+  double p8770_d4x1y1_ystatminus[] = { 0.0142, 0.00575, 0.00707, 0.01, 0.0173, 0.0341, 0.0562 };
+  double p8770_d4x1y1_ystatplus[] = { 0.0142, 0.00575, 0.00707, 0.01, 0.0173, 0.0341, 0.0562 };
+  int p8770_d4x1y1_numpoints = 7;
+  TGraphAsymmErrors p8770_d4x1y1 (p8770_d4x1y1_numpoints, p8770_d4x1y1_xval, p8770_d4x1y1_yval, p8770_d4x1y1_xerrminus, p8770_d4x1y1_xerrplus, p8770_d4x1y1_yerrminus, p8770_d4x1y1_yerrplus);
+  p8770_d4x1y1.SetName("/HepData/8770/d4x1y1");
+  p8770_d4x1y1.SetTitle("/HepData/8770/d4x1y1");
+  p8770_d4x1y1.SetLineColor(k0scolor);
+  p8770_d4x1y1.SetMarkerColor(k0scolor);
+  p8770_d4x1y1.SetMarkerStyle(30);
+  p8770_d4x1y1.SetMarkerSize(2);
+
+
+  return p8770_d4x1y1;
+}
+
+//////////////////////////////
+// HIN14002_pPb_060_120_k0s //
+//////////////////////////////
+
+TGraphAsymmErrors HIN14002_pPb_060_120_k0s()
+{
+
+  gROOT->SetStyle("Plain");
+
+  // Plot: p8770_d6x1y1
+  double p8770_d6x1y1_xval[] = { 0.521, 0.705, 0.9, 1.19, 1.58, 1.98, 2.46, 3.13, 4.01, 
+    5.18 };
+  double p8770_d6x1y1_xerrminus[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
+    0.0 };
+  double p8770_d6x1y1_xerrplus[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
+    0.0 };
+  double p8770_d6x1y1_yval[] = { 0.0276, 0.0476, 0.0555, 0.0851, 0.1, 0.118, 0.134, 0.157, 0.158, 
+    0.17 };
+  double p8770_d6x1y1_yerrminus[] = { 0.0059040748640239995, 0.004854791447631917, 0.00492736237758093, 0.006290031796422018, 0.007420835532472068, 0.008868562453971895, 0.010052820499740359, 0.012200016393431608, 0.013915189542367002, 
+    0.018322117781522963 };
+  double p8770_d6x1y1_yerrplus[] = { 0.0059040748640239995, 0.004854791447631917, 0.00492736237758093, 0.006290031796422018, 0.007420835532472068, 0.008868562453971895, 0.010052820499740359, 0.012200016393431608, 0.013915189542367002, 
+    0.018322117781522963 };
+  double p8770_d6x1y1_ystatminus[] = { 0.00559, 0.00357, 0.0031, 0.00226, 0.00268, 0.00345, 0.00396, 0.00548, 0.00865, 
+    0.0141 };
+  double p8770_d6x1y1_ystatplus[] = { 0.00559, 0.00357, 0.0031, 0.00226, 0.00268, 0.00345, 0.00396, 0.00548, 0.00865, 
+    0.0141 };
+  int p8770_d6x1y1_numpoints = 10;
+  TGraphAsymmErrors p8770_d6x1y1 (p8770_d6x1y1_numpoints, p8770_d6x1y1_xval, p8770_d6x1y1_yval, p8770_d6x1y1_xerrminus, p8770_d6x1y1_xerrplus, p8770_d6x1y1_yerrminus, p8770_d6x1y1_yerrplus);
+  p8770_d6x1y1.SetName("/HepData/8770/d6x1y1");
+  p8770_d6x1y1.SetTitle("/HepData/8770/d6x1y1");
+  p8770_d6x1y1.SetLineColor(k0scolor);
+  p8770_d6x1y1.SetMarkerColor(k0scolor);
+  p8770_d6x1y1.SetMarkerStyle(30);
+  p8770_d6x1y1.SetMarkerSize(2);
+
+  return p8770_d6x1y1;
+}
+
+//////////////////////////////
+// HIN14002_pPb_000_035_lam //
+//////////////////////////////
+
+TGraphAsymmErrors HIN14002_pPb_000_035_lam()
+{
+
+  gROOT->SetStyle("Plain");
+
+  // Plot: p8770_d7x1y1
+  double p8770_d7x1y1_xval[] = { 0.984, 1.46, 2.12, 2.98, 4.0, 5.15 };
+  double p8770_d7x1y1_xerrminus[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+  double p8770_d7x1y1_xerrplus[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+  double p8770_d7x1y1_yval[] = { 0.0521, 0.107, 0.136, 0.182, 0.311, 0.491 };
+  double p8770_d7x1y1_yerrminus[] = { 0.01933618628375306, 0.01545905883293029, 0.018213182039391138, 0.028129877354869503, 0.05738022307380828, 0.10502175965008395 };
+  double p8770_d7x1y1_yerrplus[] = { 0.01933618628375306, 0.01545905883293029, 0.018213182039391138, 0.028129877354869503, 0.05738022307380828, 0.10502175965008395 };
+  double p8770_d7x1y1_ystatminus[] = { 0.019, 0.0136, 0.0156, 0.0252, 0.0532, 0.0994 };
+  double p8770_d7x1y1_ystatplus[] = { 0.019, 0.0136, 0.0156, 0.0252, 0.0532, 0.0994 };
+  int p8770_d7x1y1_numpoints = 6;
+  TGraphAsymmErrors p8770_d7x1y1 (p8770_d7x1y1_numpoints, p8770_d7x1y1_xval, p8770_d7x1y1_yval, p8770_d7x1y1_xerrminus, p8770_d7x1y1_xerrplus, p8770_d7x1y1_yerrminus, p8770_d7x1y1_yerrplus);
+  p8770_d7x1y1.SetName("/HepData/8770/d7x1y1");
+  p8770_d7x1y1.SetTitle("/HepData/8770/d7x1y1");
+  p8770_d7x1y1.SetLineColor(lamcolor);
+  p8770_d7x1y1.SetMarkerColor(lamcolor);
+  p8770_d7x1y1.SetMarkerStyle(24);
+  p8770_d7x1y1.SetMarkerSize(2);
+
+  return p8770_d7x1y1;
+}
+
+//////////////////////////////
+// HIN14002_pPb_060_120_lam //
+//////////////////////////////
+
+TGraphAsymmErrors HIN14002_pPb_060_120_lam()
+{
+  gROOT->SetStyle("Plain");
+
+  // Plot: p8770_d9x1y1
+  double p8770_d9x1y1_xval[] = { 0.886, 1.2, 1.59, 1.98, 2.47, 3.14, 4.0, 5.15 };
+  double p8770_d9x1y1_xerrminus[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+  double p8770_d9x1y1_xerrplus[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+  double p8770_d9x1y1_yval[] = { 0.0447, 0.0581, 0.0936, 0.116, 0.153, 0.171, 0.19, 0.254 };
+  double p8770_d9x1y1_yerrminus[] = { 0.012195343373599614, 0.006814704689126301, 0.008114166623874567, 0.009741729825857418, 0.011837774284045123, 0.01363410796495319, 0.01704171352886792, 0.026425177388240937 };
+  double p8770_d9x1y1_yerrplus[] = { 0.012195343373599614, 0.006814704689126301, 0.008114166623874567, 0.009741729825857418, 0.011837774284045123, 0.01363410796495319, 0.01704171352886792, 0.026425177388240937 };
+  double p8770_d9x1y1_ystatminus[] = { 0.0118, 0.00551, 0.00491, 0.00553, 0.00527, 0.00683, 0.0109, 0.0198 };
+  double p8770_d9x1y1_ystatplus[] = { 0.0118, 0.00551, 0.00491, 0.00553, 0.00527, 0.00683, 0.0109, 0.0198 };
+  int p8770_d9x1y1_numpoints = 8;
+  TGraphAsymmErrors p8770_d9x1y1 (p8770_d9x1y1_numpoints, p8770_d9x1y1_xval, p8770_d9x1y1_yval, p8770_d9x1y1_xerrminus, p8770_d9x1y1_xerrplus, p8770_d9x1y1_yerrminus, p8770_d9x1y1_yerrplus);
+  p8770_d9x1y1.SetName("/HepData/8770/d9x1y1");
+  p8770_d9x1y1.SetTitle("/HepData/8770/d9x1y1");
+  p8770_d9x1y1.SetLineColor(lamcolor);
+  p8770_d9x1y1.SetMarkerColor(lamcolor);
+  p8770_d9x1y1.SetMarkerStyle(24);
+  p8770_d9x1y1.SetMarkerSize(2);
+  return p8770_d9x1y1;
+}
+
 
 //////////////////////////////
 // HIN14002_pPb_120_150_k0s //
 //////////////////////////////
+
 
 TGraphAsymmErrors HIN14002_pPb_120_150_k0s()
 {
@@ -30,10 +160,11 @@ TGraphAsymmErrors HIN14002_pPb_120_150_k0s()
   TGraphAsymmErrors p8770_d23x1y1 = TGraphAsymmErrors(p8770_d23x1y1_numpoints, p8770_d23x1y1_xval, p8770_d23x1y1_yval, p8770_d23x1y1_xerrminus, p8770_d23x1y1_xerrplus, p8770_d23x1y1_yerrminus, p8770_d23x1y1_yerrplus);
   p8770_d23x1y1.SetName("/HepData/8770/d23x1y1");
   p8770_d23x1y1.SetTitle("/HepData/8770/d23x1y1");
-  p8770_d23x1y1.SetMarkerSize(1.4);
-  p8770_d23x1y1.SetMarkerStyle(32);
-  p8770_d23x1y1.SetLineColor(1);	
-  p8770_d23x1y1.SetMarkerColor(1);	
+  p8770_d23x1y1.SetLineColor(k0scolor);
+  p8770_d23x1y1.SetMarkerColor(k0scolor);
+  p8770_d23x1y1.SetMarkerStyle(30);
+  p8770_d23x1y1.SetMarkerSize(2);
+
 
   return p8770_d23x1y1;
 }
@@ -68,6 +199,10 @@ TGraphAsymmErrors HIN14002_pPb_150_185_k0s()
   TGraphAsymmErrors p8770_d24x1y1 = TGraphAsymmErrors(p8770_d24x1y1_numpoints, p8770_d24x1y1_xval, p8770_d24x1y1_yval, p8770_d24x1y1_xerrminus, p8770_d24x1y1_xerrplus, p8770_d24x1y1_yerrminus, p8770_d24x1y1_yerrplus);
   p8770_d24x1y1.SetName("/HepData/8770/d24x1y1");
   p8770_d24x1y1.SetTitle("/HepData/8770/d24x1y1");
+  p8770_d24x1y1.SetLineColor(k0scolor);
+  p8770_d24x1y1.SetMarkerColor(k0scolor);
+  p8770_d24x1y1.SetMarkerStyle(30);
+  p8770_d24x1y1.SetMarkerSize(2);
 
   return p8770_d24x1y1;
 }
@@ -77,9 +212,61 @@ TGraphAsymmErrors HIN14002_pPb_150_185_k0s()
 // HIN14002_pPb_120_150_lam //
 //////////////////////////////
 
+TGraphAsymmErrors HIN14002_pPb_120_150_lam()
+{
+
+  gROOT->SetStyle("Plain");
+
+  // Plot: p8770_d27x1y1
+  double p8770_d27x1y1_xval[] = { 0.885, 1.21, 1.59, 1.99, 2.47, 3.14, 4.0, 5.15 };
+  double p8770_d27x1y1_xerrminus[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+  double p8770_d27x1y1_xerrplus[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+  double p8770_d27x1y1_yval[] = { 0.0313, 0.0564, 0.0836, 0.115, 0.143, 0.176, 0.199, 0.214 };
+  double p8770_d27x1y1_yerrminus[] = { 0.006669460248026072, 0.0048282191333865535, 0.00627251943002172, 0.008317331302767733, 0.010203538601877291, 0.01250329956451496, 0.014560044642788704, 0.017290563900578836 };
+  double p8770_d27x1y1_yerrplus[] = { 0.006669460248026072, 0.0048282191333865535, 0.00627251943002172, 0.008317331302767733, 0.010203538601877291, 0.01250329956451496, 0.014560044642788704, 0.017290563900578836 };
+  double p8770_d27x1y1_ystatminus[] = { 0.00631, 0.00286, 0.00246, 0.00254, 0.00251, 0.00315, 0.00493, 0.00894 };
+  double p8770_d27x1y1_ystatplus[] = { 0.00631, 0.00286, 0.00246, 0.00254, 0.00251, 0.00315, 0.00493, 0.00894 };
+  int p8770_d27x1y1_numpoints = 8;
+  TGraphAsymmErrors p8770_d27x1y1 = TGraphAsymmErrors(p8770_d27x1y1_numpoints, p8770_d27x1y1_xval, p8770_d27x1y1_yval, p8770_d27x1y1_xerrminus, p8770_d27x1y1_xerrplus, p8770_d27x1y1_yerrminus, p8770_d27x1y1_yerrplus);
+  p8770_d27x1y1.SetName("/HepData/8770/d27x1y1");
+  p8770_d27x1y1.SetTitle("/HepData/8770/d27x1y1");
+  p8770_d27x1y1.SetLineColor(lamcolor);
+  p8770_d27x1y1.SetMarkerColor(lamcolor);
+  p8770_d27x1y1.SetMarkerStyle(24);
+  p8770_d27x1y1.SetMarkerSize(2);
+
+
+	return p8770_d27x1y1;
+}
 
 //////////////////////////////
 // HIN14002_pPb_150_185_lam //
 //////////////////////////////
 
 
+TGraphAsymmErrors HIN14002_pPb_150_185_lam()
+{
+  
+  gROOT->SetStyle("Plain");
+
+  // Plot: p8770_d28x1y1
+  double p8770_d28x1y1_xval[] = { 0.885, 1.21, 1.59, 1.99, 2.47, 3.14, 4.0, 5.15 };
+  double p8770_d28x1y1_xerrminus[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+  double p8770_d28x1y1_xerrplus[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+  double p8770_d28x1y1_yval[] = { 0.0338, 0.0512, 0.0847, 0.112, 0.143, 0.169, 0.192, 0.21 };
+  double p8770_d28x1y1_yerrminus[] = { 0.005561600489067873, 0.0041785164831552365, 0.006141612166198709, 0.007974584628681296, 0.010065237205351893, 0.011927799461761587, 0.013786475256569388, 0.016002590415304642 };
+  double p8770_d28x1y1_yerrplus[] = { 0.005561600489067873, 0.0041785164831552365, 0.006141612166198709, 0.007974584628681296, 0.010065237205351893, 0.011927799461761587, 0.013786475256569388, 0.016002590415304642 };
+  double p8770_d28x1y1_ystatminus[] = { 0.00505, 0.00222, 0.00187, 0.00192, 0.00187, 0.00232, 0.00363, 0.00677 };
+  double p8770_d28x1y1_ystatplus[] = { 0.00505, 0.00222, 0.00187, 0.00192, 0.00187, 0.00232, 0.00363, 0.00677 };
+  int p8770_d28x1y1_numpoints = 8;
+  TGraphAsymmErrors p8770_d28x1y1 = TGraphAsymmErrors(p8770_d28x1y1_numpoints, p8770_d28x1y1_xval, p8770_d28x1y1_yval, p8770_d28x1y1_xerrminus, p8770_d28x1y1_xerrplus, p8770_d28x1y1_yerrminus, p8770_d28x1y1_yerrplus);
+  p8770_d28x1y1.SetName("/HepData/8770/d28x1y1");
+  p8770_d28x1y1.SetTitle("/HepData/8770/d28x1y1");
+  p8770_d28x1y1.SetLineColor(lamcolor);
+  p8770_d28x1y1.SetMarkerColor(lamcolor);
+  p8770_d28x1y1.SetMarkerStyle(24);
+  p8770_d28x1y1.SetMarkerSize(2);
+
+  return p8770_d28x1y1;
+
+}

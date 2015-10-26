@@ -86,15 +86,16 @@ const float trigptbins[nCorrTyp_][nPtBinsMax_][2] =
 	  {  1.30,  1.40 },
 	  {  1.40,  1.50 },
 	  {  1.50,  1.60 },
-	  { -1.00,  0.90 },
-	  { -1.00,  1.00 },
-	  { -1.00,  1.10 },
-	  { -1.00,  1.20 },
-	  { -1.00,  1.30 },
-	  { -1.00,  1.40 },
-	  { -1.00,  1.50 },
-	  { -1.00,  1.60 }},
+	  { -1.00, -1.00 },
+	  { -1.00, -1.00 },
+	  { -1.00, -1.00 },
+	  { -1.00, -1.00 },
+	  { -1.00, -1.00 },
+	  { -1.00, -1.00 },
+	  { -1.00, -1.00 },
+	  { -1.00, -1.00 }},
 };
+
 
 const float ptref1 = 0.3;
 const float ptref2 = 3.0;
@@ -102,54 +103,30 @@ const float ptref2 = 3.0;
 const float assoptmin = 0.3;
 const float assoptmax = 3.0;
 
-bool IsInsidePtRange(int TypBin, float pt)
-{
-	if ( (trigptbins[TypBin][0][0] < pt) && (pt < trigptbins[TypBin][nPtBins_[TypBin]][1])  ) {return true;}
-	else {return false;}
-};
-
 //////////////////////////////////
 // *** Multiplicity binning *** //
 //////////////////////////////////
 
 //// Analysis multiplicity binning ////
 
-// MINBIAS NEW //
+// HIGH-MULTIPLICITY
 const int nMultiplicityBins_Ana_HDR = 2;
 const int multiplicitybins_Ana[nMultiplicityBins_Ana_HDR][2] = 
 {
-	  {   0,  60 },
-	  {  60, 120 }
+	  { 120, 185 },
+	  { 185, 260 },
 };
 
-
-// MINBIAS
-//const int nMultiplicityBins_Ana_HDR = 5;
-//const int multiplicitybins_Ana[nMultiplicityBins_Ana_HDR][2] = 
-//{
-//	  {   0,  30 },
-//	  {  30,  50 },
-//	  {  50,  80 },
-//	  {  80, 100 },
-//	  { 100, 120 }
-//};
-
-//// Event Mix multiplicity binning ////
-
-//MINBIAS
-const int nMultiplicityBins_EvM_HDR = 8;
+//// Event Mix multiplicity binning /////
+// HIGH-MULTIPLICITY
+const int nMultiplicityBins_EvM_HDR = 4;
 const int multiplicitybins_EvM[nMultiplicityBins_EvM_HDR][2] = 
 {
-	  {   0,  20 },
-	  {  20,  30 },
-	  {  30,  40 },
-	  {  40,  50 },
-	  {  50,  60 },
-	  {  60,  80 },
-	  {  80, 100 },
-	  { 100, 120 }
+	  { 120, 150 },
+	  { 150, 185 },
+	  { 185, 220 },
+	  { 220, 260 },
 };
-
 
 //////////////////////////
 // *** Zvtx binning *** //

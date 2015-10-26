@@ -63,6 +63,15 @@ const int PtBins[nCorrs][nRegions][7] = {
 										  };
 
 
+const int PtBins_[nRegions][7] = {
+											 {0, 1, 2, 3, 4, 5, 6},
+											 {7,-1,-1,-1,-1,-1,-1},
+											 {8, 9,10,11,12,13,-1}
+											};
+
+
+
+
 // Functions
 void CopyTH2DtoTMatrix( TH2D *th2d_matrix, TMatrix *&tmatrix, int indices );
 void CopyTH2DtoTH2D( TH2D *matrix_old, TH2D *&matrix_new, const char matrixname[], int indices );
@@ -71,6 +80,8 @@ void normalizeMatrix_TH2D (TH2D *matrix );
 int GetNdigits( int number );
 int GetNthDigit(int number, int n);
 void FillIndices( int *indices, int number );
+
+void ShiftMatrix( TMatrix matr );
 
 void displayMatrix_TH2D( TH2D *matrix);
 void displayMatrix_TMatrix( TMatrix *matrix );

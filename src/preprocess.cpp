@@ -33,6 +33,7 @@ int main( int argc, const char *argv[] )
  std::string tag		    = argv[6];
  int nEvMax 	  		    = atoi( argv[7] );
 
+
  // Binning
  int nCorrTyp			  = nCorrTyp_; 
  int *nPtBins = new int[nCorrTyp_];
@@ -123,7 +124,6 @@ int main( int argc, const char *argv[] )
  // Number of tracks distribution
  TH1D *nTrkDistr_signal = new TH1D("nTrkDistr_signal","Track distribution;Multiplicity", 350, 0, 350);
 
-
  // Correlation Framework
  CorrelationFramework CFW(nCorrTyp, nPtBins, nMultiplicityBins_Ana, nMultiplicityBins_EvM);
  std::cout << "Correlation Analysis Framework loaded." << std::endl;
@@ -160,6 +160,9 @@ int main( int argc, const char *argv[] )
  ev = new EventData;
 
  ev->Setup_nTriggerParticles(nCorrTyp, nPtBins);
+
+ // Make CorrelationFramework accessible to EventData
+// ev->CFW = &CFW;
 
  ///////////////////////////////////////////
  //                                       //
@@ -287,6 +290,8 @@ int main( int argc, const char *argv[] )
 	CFW.nEvents_Processed_signal_total->Fill(0.);
 	if ( multiplicitybin_Ana(hiNtracks, nMultiplicityBins_Ana) == -1) continue;
 
+
+
 	// Reset event
  	ev->Clear(nCorrTyp, nPtBins);
 
@@ -294,6 +299,8 @@ int main( int argc, const char *argv[] )
 	ev->EventID = iEvA;
 	ev->SetnTrk(hiNtracks);
 	ev->SetzVtx(vz);
+
+	ev->multBin = ev->GetMultiplicityBin_Ana(nMultiplicityBins_Ana);
 
 	// Statistics
 	CFW.nEvents_Processed_signal_total->Fill(1.);

@@ -1,12 +1,19 @@
 #ifndef CORRELATIONUTILS_H
 #define CORRELATIONUTILS_H
+
+#include "UtilFunctions.h"
+#include "AnalysisFW.h"
 #include <TH2D.h>
 #include <deque>
 #include <string>
 #include "AnalysisBinning.h"
-#include "AnalysisFW.h"
 #include <TGraphErrors.h>
 #include <TMatrix.h>
+#include <TVectorD.h>
+
+#define loop1(x, nx) for( int x = 0; x < nx; x++)
+#define loop2(x, y, nx, ny) for( int x = 0; x < nx; x++)for( int y = 0; y < ny; y++)
+#define loop3(x, y, z, nx, ny, nz) for( int x = 0; x < nx; x++)for( int y = 0; y < ny; y++)for( int z = 0; z < nz; z++)
 
 ///////////////////////////
 //  * Global variables * //
@@ -74,6 +81,7 @@ class CorrelationFramework
 	public:
 
 	// === Constructor === //
+	CorrelationFramework( ){};
 	CorrelationFramework( int nCorrTyp_a, int *nPtBins_a, int nMultiplicityBins_Ana_, int nMultiplicityBins_EvM_);
 
 	// === Functionalities (bool) === //
@@ -155,7 +163,6 @@ class CorrelationFramework
  	TH1D ***nEvents_ptint_Processed_signal;
  	TH1D ***nEvents_ptint_Processed_backgr;
 
-
 	// variables holding the results
 	CorrelResults 			  ***correl_Results;
 	CorrelResults 			  ***correl_Results_self;
@@ -190,6 +197,7 @@ class CorrelationFramework
 	void makeFigv2vspT_allparticles(int multBin, std::string tag);
 	void makeFigv2vspT_allparticles_ALICE_comparison(int multBin, std::string tag);
 	void makeFigv2vspT_HIN13002(std::string tag);
+	void makeFigv2vspT_HIN14002_comparison( );
 	void makeFigv3vspT_allparticles(int multBin, std::string tag);
 	void makeFigv2vspT_allparticles_with_selfcorrelation(int multBin, std::string tag);
 	void makeFigv2vsnTrk_cpar_ref( std::string tag );
@@ -216,6 +224,12 @@ class CorrelationFramework
 	std::vector< double > Get_self_v2vec ( int TypBin, int multBin);
 	std::vector< double > Get_self_v2_StatErrorvec ( int TypBin, int multBin);
 
+	// pt average
+	double ***ptavg;
+	double ***counter;
+	TVectorD ****ptavg_tvec;
+	TVectorD ****counter_tvec;
+
 	// Read functions
 	void Setup_TH1Ds_CorrPtMult( TH1D ****&histo, const char histoname[], const char titlelabels[], int nBins, double min, double max );
 	void Setup_TH1Ds_CorrMult( TH1D ***&histo, const char histoname[], const char titlelabels[], int nBins, double min, double max );
@@ -226,6 +240,11 @@ class CorrelationFramework
 	void Read_TH1Ds_CorrPtMult( TH1D ****&histo, const char histoname[] );
 	void Read_TH2Ds_CorrPtMult( TH2D ****&histo, const char histoname[] );
 	void Read_TH2Ds_Mult( TH2D **&histo, const char histoname[] );
+
+	// TGraphErrors
+	//void StoreInTGraph( );
+	//TGraphErrors ***TGraphErrors_v2vspt_StatError;
+	//TGraphErrors ***TGraphErrors_v2vspt_SystError;
 
 	// Auxiliary
 	std::string genStrCorrPtMult (const char name[], int TypBin, int ptBin, int multBin);

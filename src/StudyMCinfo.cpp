@@ -100,6 +100,7 @@ int main( int argc, const char *argv[] )
  TH1D *nLambda2ProtonGM 	= new TH1D("nLambda2ProtonGM", ";p_{T} [GeV/c];Entries", nBins, ptMin, ptMax);
  TH1D *trkStatusDistr   	= new TH1D("trkStatusDistr", ";trkStatus;Entries", 200, -100, 100);
  TH1D *negtrkStatusPtDistr = new TH1D("negtrkStatusPtDistr", ";p_{T} [GeV/c];Entries", nBins, ptMin, ptMax);
+ TH1D *n99trkStatusPtDistr = new TH1D("n99trkStatusPtDistr", ";p_{T} [GeV/c];Entries", nBins, ptMin, ptMax);
 
  TH1D *MotherPIdDistrGM	 = new TH1D("MotherPIdDistrGM", ";PDG Id;Entries", 20000, -10000, 10000);
  TH1D *MotherPIdDistrM 	 = new TH1D("MotherPIdDistrM", ";PDG Id;Entries", 20000, -10000, 10000);
@@ -139,7 +140,7 @@ int main( int argc, const char *argv[] )
 		{
 
 			// particle selection
-			if ( !(TrackSelection(tTracks, iTrk)) ) continue;
+		//	if ( !(TrackSelection(tTracks, iTrk)) ) continue;
 
 			float pt = tTracks.trkPt[iTrk];
 			int PID = pidutil->GetID( tTracks, iTrk);
@@ -158,14 +159,20 @@ int main( int argc, const char *argv[] )
 
 			// negative track status
 			if ( trkStatus < 0)
-			{ 
-				negtrkStatusPtDistr->Fill( pt ); 
+			{  negtrkStatusPtDistr->Fill( pt ); }
+			
+			if ( trkStatus = -99)
+			{
+				n99trkStatusPtDistr->Fill( pt ); 
+//				std::cerr <<  std::endl;
 //				std::cerr << "trkStatus: " << trkStatus << std::endl;
 //				std::cerr << "trkFake: " << tTracks.trkFake[iTrk] << std::endl;
-//				std::cerr << "genPID: " << genPID << std::endl;
-//				std::cerr << "GMPID: "  << GMPID << std::endl;
-//				std::cerr << "MPID: "   << MPID << std::endl;
-			}
+//				std::cerr << "genPID: "  << genPID << std::endl;
+//				std::cerr << "motherinfo" << std::endl;
+//				std::cerr << "GMPID: "   << GMPID << std::endl;
+//				std::cerr << "MPID: "    << MPID << std::endl;
+//				std::cerr <<  std::endl;
+			} 
 
 		
 			MotherPIdDistrM ->Fill(MPID);
@@ -177,12 +184,7 @@ int main( int argc, const char *argv[] )
 			if ( (GMPID == 3122) || (GMPID == -3122) )
 			{ 
 				nLambda2ProtonGM->Fill(pt);
-				std::cerr << "trkStatus: " << trkStatus << std::endl;
-				std::cerr << "trkFake: " << tTracks.trkFake[iTrk] << std::endl;
-				std::cerr << "GMPID: " << GMPID  << std::endl;
-				std::cerr << "genPID: " << genPID << std::endl;
-				std::cerr << "GMPID: "  << GMPID << std::endl;
-				std::cerr << "MPID: "   << MPID << std::endl;
+
 			}
 
 			if ( (MPID == 3122) || (MPID == -3122) )
@@ -211,3 +213,9 @@ int main( int argc, const char *argv[] )
   printf("Done.\n");
 
 }
+
+//				std::cerr << "trkStatus: " << trkStatus << std::endl;
+//				std::cerr << "trkFake: " << tTracks.trkFake[iTrk] << std::endl;
+//				std::cerr << "genPID: "  << genPID << std::endl;
+//				std::cerr << "GMPID: "   << GMPID << std::endl;
+//				std::cerr << "MPID: "    << MPID << std::endl;

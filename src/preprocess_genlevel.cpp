@@ -69,9 +69,9 @@ int main( int argc, const char *argv[] )
 
  // trackTree
  TTree *trackTree = (TTree*)f->Get("ppTrack/trackTree");
- Particles tTracks;
+ Tracks_c tTracks;
  bool isMC = true;
- setupParticleTree(trackTree, tTracks);
+ setupTrackTree_c(trackTree, tTracks, isMC);
 
  // hiEvtAnalyzer
  TTree *EvtAna= (TTree*)f->Get("hiEvtAnalyzer/HiTree");
@@ -172,11 +172,12 @@ int main( int argc, const char *argv[] )
 
 				// Particle selection //
 				// Same kinematical cuts as at RECO level!
+				// Check if matched track passes reco level track cuts
+				if ( !(mTrackSelection_c(tTracks, iPar)) ) continue;
 				if ( 2.4 < abs(tTracks.pEta[iPar]) )  continue;
 				bool isOutsideReferencePartPtRange = ( ( tTracks.pPt[iPar] < ptref1 ) || ( ptref2 < tTracks.pPt[iPar] ) );
 				if ( isOutsideReferencePartPtRange ) continue;	
 				// Particle selection //
-
 
 				// Particle fill up
 				track particle;
@@ -189,7 +190,7 @@ int main( int argc, const char *argv[] )
 				ev->AddTrack(particle);
 			}
 
-					
+
 			ev->EventID = iEv;
 			EventCache[multBin][zvtxBin].push_back( (*ev) );
 			count++;
@@ -283,6 +284,5 @@ int main( int argc, const char *argv[] )
  
  output->Write();
  output->Close();
-
 
 }

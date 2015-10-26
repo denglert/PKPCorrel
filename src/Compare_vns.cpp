@@ -21,14 +21,15 @@
 #include "GraphTools.h"
 #include "GraphStyles.h"
 
+
 //const int mult1 = 0;
 //const int mult2 = 120;
 
 //const int mult1 = 185;
 //const int mult2 = 220;
 
-const int mult1 = 185;
-const int mult2 = 220;
+const int mult1 = 120;
+const int mult2 = 150;
 
 
 int main( int argc, const char *argv[] )
@@ -134,8 +135,8 @@ int main( int argc, const char *argv[] )
 	double v2vspt_ptmin = 0.0;
 	double v2vspt_ptmax = 2.5;
 	double v2vspt_v2min = 0.0;
-	//double v2vspt_v2max = 0.6;
 	double v2vspt_v2max = 0.16;
+	//double v2vspt_v2max = 0.16;
 
 	cpar_1->SetTitle("");
    cpar_1->GetXaxis()->SetLimits(v2vspt_ptmin,v2vspt_ptmax);
@@ -240,7 +241,8 @@ int main( int argc, const char *argv[] )
 	gr_legend.Draw("SAME");
 
 
-	std::string CMSsystemlabel = Form("#splitline{CMS pPb #sqrt{s_{NN}} = 5.02 TeV }{ %d #leq N_{trk}^{offline} < %d}", mult1, mult2);
+	std::string CMSsystemlabel = Form("#splitline{CMS pPb DATA #sqrt{s_{NN}} = 5.02 TeV }{ %d #leq N_{trk}^{offline} < %d}", mult1, mult2);
+//	std::string CMSsystemlabel = Form("#splitline{CMS pPb #sqrt{s_{NN}} = 5.02 TeV }{ %d #leq N_{trk}^{offline} < %d}", mult1, mult2);
 	std::string multlabel = Form("0.3 < p_{T}^{assoc} < 3.0 GeV/c", mult1, mult2);
 
 	TLatex tCMSsystemlabel( CMSsystemlabelposx,CMSsystemlabelposy, CMSsystemlabel.c_str()); 

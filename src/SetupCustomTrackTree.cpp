@@ -89,6 +89,11 @@ void setupTrackTree_c(TTree *t, Tracks_c &tTracks, bool doMC)
    t->SetBranchAddress("mtrkDzError2", tTracks.mtrkDzError2, &tTracks.b_mtrkDzError2);
    t->SetBranchAddress("mtrkDxy2", tTracks.mtrkDxy2, &tTracks.b_mtrkDxy2);
    t->SetBranchAddress("mtrkDxyError2", tTracks.mtrkDxyError2, &tTracks.b_mtrkDxyError2);
+   t->SetBranchAddress("trkGMPId", tTracks.trkGMPId, &tTracks.b_trkGMPId);
+   t->SetBranchAddress("trkMPId", tTracks.trkMPId, &tTracks.b_trkMPId);
+   t->SetBranchAddress("trkPId", tTracks.trkPId, &tTracks.b_trkPId);
+
+
 	}
 
 }
@@ -130,7 +135,7 @@ void setupGenParticleTree(TTree *t,GenParticles &tGenParticles, bool doCheck = 1
    if (t->GetBranch("vz")) t->SetBranchAddress("vz", &tGenParticles.vz, &tGenParticles.b_vz);
    if (t->GetBranch("vr")) t->SetBranchAddress("vr", &tGenParticles.vr, &tGenParticles.b_vr);
    if (doCheck) {
-      if (t->GetMaximum("mult")>maxEntrySim) { cout <<"FATAL ERROR: Arrary size of mult too small!!!  "<<t->GetMaximum("mult")<<endl; exit(0);
+   if (t->GetMaximum("mult")>maxEntrySim) { cout <<"FATAL ERROR: Arrary size of mult too small!!!  "<<t->GetMaximum("mult")<<endl;
  }   }
 }
 

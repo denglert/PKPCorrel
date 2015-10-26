@@ -313,30 +313,57 @@ int main( int argc, const char *argv[] )
 //CM::plotContMatrix(matrix2, 234, "lolmatrix" );
 
 
-	std::string filename = "/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/preprocessed/EPOS_RECO_level_trkCorr_no_nEv_-1/correl_analysis_0.root";
+//	std::string filename = "/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/preprocessed/EPOS_RECO_level_trkCorr_no_nEv_-1/correl_analysis_0.root";
+//
+//	TFile *f = new TFile( filename.c_str(), "READ");
+//	if ( f->IsZombie() ) {std::cerr << "Error opening file: " << filename << std::endl; }
+//	else{ std::cout << Form("TFile %s seems to be loaded.", filename.c_str()) << std::endl; };
+//
+//	TH2D *corr1 = (TH2D*)f->Get("correl2D_signal_Typ_1_pt_0.20-0.30_nTrk_000-120");
+//	TH2D *corr2 = (TH2D*)f->Get("correl2D_signal_Typ_2_pt_0.20-0.30_nTrk_000-120");
+//	TH2D *corr3 = (TH2D*)f->Get("correl2D_signal_Typ_3_pt_0.20-0.30_nTrk_000-120");
+//
+//	TH2D *corr = new TH2D( "lol", "2D Correlation function;#Delta #eta; #Delta #Phi",
+//		                                            ndEtaBins,dEtaMin,dEtaMax,ndPhiBins,dPhiMin,dPhiMax);
+//;
+//	corr->Add(corr1, -0.03);
+//	corr->Add(corr2, -0.14);
+//	corr->Add(corr3,  1.07);
+//
+//
+//	std::string figurename = "correlation";
+//	std::string title = "lol";
+//	std::string zaxistitle = "lol";
+//	std::string leftlabel  = "leftlabel";
+//	std::string rightlabel = "rightlabel";
+//
+//	plot2DCorrelation(corr , figurename, title, zaxistitle, leftlabel, rightlabel);
+//
+// Debuggg 
+		  std::cerr << Form("true = %d\nfalse = %d\n", true, false) << std::endl;
 
-	TFile *f = new TFile( filename.c_str(), "READ");
-	if ( f->IsZombie() ) {std::cerr << "Error opening file: " << filename << std::endl; }
-	else{ std::cout << Form("TFile %s seems to be loaded.", filename.c_str()) << std::endl; };
+		  int TypBin;
+		  float pt;
+		  TypBin = 0; pt = 1.09; std::cerr << Form("TypBin: %d, pt: %.2f, IsInsidePtRange: %d\n", TypBin, pt, IsInsidePtRange(TypBin, pt));
+		  TypBin = 1; pt = 0.99; std::cerr << Form("TypBin: %d, pt: %.2f, IsInsidePtRange: %d\n", TypBin, pt, IsInsidePtRange(TypBin, pt));
+		  TypBin = 1; pt = 1.00; std::cerr << Form("TypBin: %d, pt: %.2f, IsInsidePtRange: %d\n", TypBin, pt, IsInsidePtRange(TypBin, pt));
+		  TypBin = 1; pt = 1.01; std::cerr << Form("TypBin: %d, pt: %.2f, IsInsidePtRange: %d\n", TypBin, pt, IsInsidePtRange(TypBin, pt));
+		  TypBin = 2; pt = 0.19; std::cerr << Form("TypBin: %d, pt: %.2f, IsInsidePtRange: %d\n", TypBin, pt, IsInsidePtRange(TypBin, pt));
+		  TypBin = 2; pt = 0.21; std::cerr << Form("TypBin: %d, pt: %.2f, IsInsidePtRange: %d\n", TypBin, pt, IsInsidePtRange(TypBin, pt));
+		  TypBin = 2; pt = 0.89; std::cerr << Form("TypBin: %d, pt: %.2f, IsInsidePtRange: %d\n", TypBin, pt, IsInsidePtRange(TypBin, pt));
+		  TypBin = 2; pt = 0.99; std::cerr << Form("TypBin: %d, pt: %.2f, IsInsidePtRange: %d\n", TypBin, pt, IsInsidePtRange(TypBin, pt));
+		  TypBin = 2; pt = 1.1; std::cerr << Form("TypBin: %d, pt: %.2f, IsInsidePtRange: %d\n", TypBin, pt, IsInsidePtRange(TypBin, pt));
+		  TypBin = 3; pt = -1.1; std::cerr << Form("TypBin: %d, pt: %.2f, IsInsidePtRange: %d\n", TypBin, pt, IsInsidePtRange(TypBin, pt));
+		  TypBin = 3; pt = 0.3; std::cerr << Form("TypBin: %d, pt: %.2f, IsInsidePtRange: %d\n", TypBin, pt, IsInsidePtRange(TypBin, pt));
 
-	TH2D *corr1 = (TH2D*)f->Get("correl2D_signal_Typ_1_pt_0.20-0.30_nTrk_000-120");
-	TH2D *corr2 = (TH2D*)f->Get("correl2D_signal_Typ_2_pt_0.20-0.30_nTrk_000-120");
-	TH2D *corr3 = (TH2D*)f->Get("correl2D_signal_Typ_3_pt_0.20-0.30_nTrk_000-120");
+		 TypBin = 0; std::cerr << Form("trigptbins[TypBin][0][0]: %.2f\n", trigptbins[TypBin][0][0]);
+		 TypBin = 1; std::cerr << Form("trigptbins[TypBin][0][0]: %.2f\n", trigptbins[TypBin][0][0]);
+		 TypBin = 2; std::cerr << Form("trigptbins[TypBin][0][0]: %.2f\n", trigptbins[TypBin][0][0]);
+		 TypBin = 3; std::cerr << Form("trigptbins[TypBin][0][0]: %.2f\n", trigptbins[TypBin][0][0]);
 
-	TH2D *corr = new TH2D( "lol", "2D Correlation function;#Delta #eta; #Delta #Phi",
-		                                            ndEtaBins,dEtaMin,dEtaMax,ndPhiBins,dPhiMin,dPhiMax);
-;
-	corr->Add(corr1, -0.03);
-	corr->Add(corr2, -0.14);
-	corr->Add(corr3,  1.07);
-
-
-	std::string figurename = "correlation";
-	std::string title = "lol";
-	std::string zaxistitle = "lol";
-	std::string leftlabel  = "leftlabel";
-	std::string rightlabel = "rightlabel";
-
-	plot2DCorrelation(corr , figurename, title, zaxistitle, leftlabel, rightlabel);
+		 TypBin = 0; std::cerr << Form("trigptbins[TypBin][nPtBins_[TypBin]][1]: %.2f\n", trigptbins[TypBin][nPtBins_[TypBin]-1][1]);
+		 TypBin = 1; std::cerr << Form("trigptbins[TypBin][nPtBins_[TypBin]][1]: %.2f\n", trigptbins[TypBin][nPtBins_[TypBin]-1][1]);
+		 TypBin = 2; std::cerr << Form("trigptbins[TypBin][nPtBins_[TypBin]][1]: %.2f\n", trigptbins[TypBin][nPtBins_[TypBin]-1][1]);
+		 TypBin = 3; std::cerr << Form("trigptbins[TypBin][nPtBins_[TypBin]][1]: %.2f\n", trigptbins[TypBin][nPtBins_[TypBin]-1][1]);
 
 }

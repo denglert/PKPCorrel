@@ -56,9 +56,8 @@ int main( int argc, const char *argv[] )
  CFW.contmatrix_filename   = contmatrix_filename;
  CFW.preprocessed_filename = inpFilename;
  CFW.DoSelfCorrelation = false;
+
  CFW.SetupForProcess();
- // Old Read-In, now integrated with CFW.SetupForProcess();
- // CFW.ReadIn_CorrelationFuncs( f );
  CFW.DeContaminate();
  CFW.Set_dEtacut();
 
@@ -67,6 +66,7 @@ int main( int argc, const char *argv[] )
  ///////////////////////////
  
  CFW.doAnalysis();
+
 
  CFW.ReBin();
 
@@ -90,8 +90,10 @@ int main( int argc, const char *argv[] )
  {
 	CFW.makeFigv2vspT_allparticles(multBin, tag);
 	CFW.makeFigv2vspT_allparticles_ALICE_comparison(multBin, tag);
+	CFW.makeFigv2vspT_HIN14002_comparison();
 	CFW.makeFigv3vspT_allparticles(multBin, tag);
 //	CFW.makeFigv2vspT_allparticles_with_selfcorrelation(multBin, tag);
+
 
 
  }
@@ -101,9 +103,9 @@ int main( int argc, const char *argv[] )
 // CFW.makeFigv2vspT_HIN13002(tag);
 // CFW.makeFigv2vsnTrk_cpar_ref(tag);
 //
-// CFW.makeFigCorrel2D( tag );
+ CFW.makeFigCorrel2D( tag );
  CFW.ReBin();
-// CFW.makeFigCorrel1D( tag );
+ CFW.makeFigCorrel1D( tag );
 
 
 
@@ -112,7 +114,6 @@ int main( int argc, const char *argv[] )
  ////////////////////////////////
 
  CFW.Corr_Results->Close();
-
 
 
 }

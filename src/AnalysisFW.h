@@ -1,5 +1,9 @@
+// Remove or add the following line depending on whether you need PtResolution Library
+#define PTRESNEEDED
+
 #ifndef ANALYSISFW_H
 #define ANALYSISFW_H
+
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -9,8 +13,19 @@
 #include "PIDUtils.h"
 #include <TFile.h>
 #include <TH3D.h>
+#include <TVectorD.h>
 //#include "../HiForestAnalysis/hiForest.h"
 #include "SetupCustomTrackTree.h"
+//#include "CorrelationUtils.h"
+#include "AnalysisBinning.h"
+#include "PIDUtils.h"
+#include "SetupCustomTrackTree.h"
+#include <TMath.h>
+#include <iostream>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <TFile.h>
+#include "PtResolutionStudy.h"
 
 extern const double maxtrkCorr2;
 
@@ -30,6 +45,7 @@ class track
 
 	// Booleans
 	bool IsPID;
+	bool IsPassingPhaseSpaceCut;
 	bool IsInsideReferencePtRange;
 	bool IsInsideChParticlPtRange;
 };
@@ -58,6 +74,7 @@ class LogFile
 	void Close();
 };
 
+///////////////////////////
 class EventData
 {
 	public:
@@ -67,10 +84,12 @@ class EventData
    float **nTriggerParticles;
    float *nTriggerParticles_ptint;
    float nTriggerParticles_cpar_ref;
-
 	
 	float zVtx; 
 	int   nTrk;
+	int multBin;
+
+//	CorrelationFramework *CFW;
 
 	void AddTrack(const track& p);
 	int GetnTracks ();
@@ -85,8 +104,15 @@ class EventData
 	int GetMultiplicityBin_EvM();
 
 	void ReadInDATA( const Tracks &tTracks, PIDUtil *pidutil, TrackCorr *trkCorr);
+
+	#ifdef PTRESNEEDED
+	void ReadInMC_Smearing( Tracks_c &tTracks, PIDUtil *pidutil, PtRes *ptres );
+	#endif
+
+	void ReadInMC  ( Tracks_c &tTracks, PIDUtil *pidutil );
 	void ReadInGenParticles( GenParticles &gParts, PIDUtil *pidutil );
-	void ReadInMC  (Particles &tTracks, PIDUtil *pidutil);
+	
+	void ptAvgCount( double &ptavg, double &counter, float &pt);
 
 	void Clear(int nCorrTyp, int *nPtBins);
 };

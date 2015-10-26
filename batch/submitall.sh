@@ -8,12 +8,10 @@ flag=$1
 ### Batch submission checklist ###
 ##################################
 
-
 # 1, Check AnalysisBinning.cpp
 # 2, Check the parameters here (workdir, isMC, dotrkCorr, etc...) one-by-one.
 # 3, Check if there is enoguh disk space:
 # fs lq
-
 
 #########################
 ### --- MAIN AREA --- ###
@@ -36,28 +34,31 @@ flag=$1
 #workdir=Fiji_MC_vzhukova-EPOS_RECO_batch_RECO_PIDconfig_default_trkCorr
 
 #workdir=Crosscheck_HIN14002_comparison
-#workdir=Crosscheck_charge_comparison
 #workdir=Crosscheck_charge_comparison_negative
-workdir=Helios_MinBias_Full_PIDConfig_default_trkCorr
+#workdir=Crosscheck_charge_comparison_negative
+#workdir=Helios_MinBias_Full_PIDConfig_default_trkCorr
 #workdir=Fiji_MinBias_Full_2MultBins_PIDConfig_default_trkCorr
 #workdir=Fiji_HighMult_Full_PIDConfig_default_trkCorr
+
+#workdir=Omega_MinBias_Full_PIDConfig_default_trkCorr_2nd
+workdir=Dipstudy_HighMult_Full_PIDConfig_default_trkCorr_1nd_temp
 
 binary=preprocess
 #workdir=PIDscan_MinBias_config_strict_1
 #isMC=no
 isMC=no
 #AnalysisBinning=AnalysisBinning_HIN14002_HighMult
-#AnalysisBinning=AnalysisBinning_HIN15007_HighMult
-AnalysisBinning=AnalysisBinning_HIN15007_MinBias
-#inputlist="list_highmult"
-inputlist="list_minbias"
+AnalysisBinning=AnalysisBinning_HIN15007_HighMult
+#AnalysisBinning=AnalysisBinning_HIN15007_MinBias
+inputlist="list_highmult"
+#inputlist="list_minbias"
 dotrkCorr=yes
 workdir=${workdir}_${dotrkCorr}
 trkCorrlabel=trkCorr_HIJING_PIDConfig_default_Fiji_PID_match
 trkCorrFile=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/trkCorr/${trkCorrlabel}/trkCorrections_0.root
 PIDconfig=/afs/cern.ch/work/d/denglert/public/projects/PKPCorrelation_SLC6/CMSSW_5_3_20/src/denglert/PKPCorrelationAna/PIDUtils/config/config_default
 nEvents=-1
-queue=1nw
+queue=1nd
 #inputlist="list_minbias"
 #inputlist="list_minbias_temp"
 #inputlist="list_highmult_pPb"

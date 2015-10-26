@@ -114,7 +114,7 @@ int main( int argc, const char *argv[] )
  TTree *trackTree = (TTree*)f->Get("pptracks/trackTree");
  //TTree *trackTree = (TTree*)f->Get("ppTrack/trackTree");
  Tracks_c tTracks;
- bool isMC = true;
+ bool isMC = false;
  setupTrackTree_c(trackTree, tTracks, isMC);
 
  // hiEvtAnalyzer
@@ -138,9 +138,6 @@ int main( int argc, const char *argv[] )
  
  TFile *output = new TFile(Form("./EtaPhi_distr_%s.root", tag.c_str() ),"RECREATE");
  output->cd();
-
- // Debuggg 
- std::cerr << "chicks " << std::endl;
 
  //////////////////////////////
  //                          //
@@ -208,16 +205,26 @@ int main( int argc, const char *argv[] )
  TH1D *EtaDistr_cpar    = new TH1D (Form("EtaDistribution id = %d, pt [%.2f - %.2f]", 0, ptref1, ptref2),";#eta;Entries", nEtaBins, EtaMin, EtaMax);
 
 
+
  TH1D ***EtaDistr;
  TH2D ***EtaPhiDistr;
+ TH2D **EtaPtDistr;
 
  EtaPhiDistr = new TH2D **[nParticles];
  EtaDistr    = new TH1D **[nParticles];
+ EtaPtDistr  = new TH2D *[nParticles];
 
  for (int pid = 0; pid < nParticles; pid++)
  {
+
 	EtaPhiDistr[pid] = new TH2D*[nPtBins[pid]];
 	EtaDistr   [pid] = new TH1D*[nPtBins[pid]];
+
+	int    EtaPtDistr_nPtBins = 30;
+	double EtaPtDistr_PtMin   = 0.1;
+	double EtaPtDistr_PtMax   = 1.8;
+
+	EtaPtDistr[pid] = new TH2D ( Form("EtaPtDistribution id = %d", pid), ";#eta;p_{T} [GeV/c]", nEtaBins, EtaMin, EtaMax, EtaPtDistr_nPtBins, EtaPtDistr_PtMin, EtaPtDistr_PtMax );
 
  	for (int ptBin = 0; ptBin < nPtBins[pid]; ptBin++)
 	{ EtaPhiDistr[pid][ptBin]  = new TH2D (Form("EtaPhiDistribution id = %d, pt [%.2f - %.2f]", pid, pt(pid, ptBin, 0), pt(pid, ptBin, 1)),";#eta;#Phi [rad]", nEtaBins, EtaMin, EtaMax, nPhiBins, PhiMin, PhiMax); 
@@ -230,6 +237,7 @@ int main( int argc, const char *argv[] )
  const double pTMax = 1.6;
 
  TH1D *pTDistr[nParticles];
+
  for (int pid = 0; pid < nParticles; pid++)
  {
  	pTDistr[pid]  = new TH1D (Form("pTDistribution id = %d", pid),";pT;Entries", nPtDistrBins, pTMin, pTMax);
@@ -254,6 +262,12 @@ int main( int argc, const char *argv[] )
  if (nEvMax == -1) {nEvMax = trackTree->GetEntries();}
  for (int iEvA = 0; iEvA < nEvMax; iEvA++)
  {
+//
+//
+//j	int iEvA = 0;
+//	int counter = 0;
+
+	
 	
 	// Event counter info
 	if ( (iEvA % 1000) == 0 )
@@ -269,10 +283,23 @@ int main( int argc, const char *argv[] )
 	if ( !EventSelection( pPAcollisionEventSelection, pileUpBit) ) continue;
 	if ( zvtxbin(vz, nZvtxBins) == -1 ) continue;
 
+
+	// !!!!!!!!!!!!!!!!!!!!!!!!! //
+	// !!!  Multiplicity cut !!! // 
+	// !!!!!!!!!!!!!!!!!!!!!!!!! //
+
+	int ntrkoffline = hiNtracks;
+
+	int multcut1 = 185;
+	int multcut2 = 220;
+
+	if ( (ntrkoffline < multcut1) || (multcut2 < ntrkoffline) ) continue;
+
 	zVtxDistr->Fill(vz);
 
 	AnaFW->CountPassedEvent();
 	AnaFW->FillnTrk(hiNtracks);
+
 
 	// Load in tracks
 	trackTree->GetEntry(iEvA);
@@ -289,6 +316,7 @@ int main( int argc, const char *argv[] )
 
 		int PID = pidutil->GetID(tTracks, iTrk);
 
+
 		int ptBin_ID = ptbin( PID , tTracks.trkPt[iTrk]);
 		int ptBin_CH = ptbin(   0 , tTracks.trkPt[iTrk]);
 
@@ -300,6 +328,8 @@ int main( int argc, const char *argv[] )
 		double pt = tTracks.trkPt[iTrk];
 		double w0 = trackWeight(trkEff,   0, pt, Eta, Phi, dotrkCorr);
 		double w  = trackWeight(trkEff, PID, pt, Eta, Phi, dotrkCorr);
+
+		if ( pt < 0.3) continue;
 
 		if ( (ptref1 < tTracks.trkPt[iTrk]) && (tTracks.trkPt[iTrk] < ptref2) )
 		{
@@ -315,6 +345,7 @@ int main( int argc, const char *argv[] )
 			pTDistr[0]->Fill(pt, w0);
 			dEdxvsplinlintyp[0]->Fill( p, tTracks.dedx[iTrk] );
 			dEdxvsploglogtyp[0]->Fill( p, tTracks.dedx[iTrk] );
+			EtaPtDistr[0]->Fill(Eta, pt);
 		}
 
 		// pid particle
@@ -325,6 +356,7 @@ int main( int argc, const char *argv[] )
 			pTDistr[PID]->Fill(pt, w);
 			dEdxvsplinlintyp[PID]->Fill( p, tTracks.dedx[iTrk] );
 			dEdxvsploglogtyp[PID]->Fill( p, tTracks.dedx[iTrk] );
+			EtaPtDistr[PID]->Fill(Eta, pt);
 		}
 
 		dEdxvsploglogall->Fill( p, tTracks.dedx[iTrk] );
@@ -453,6 +485,35 @@ int main( int argc, const char *argv[] )
  	canvas_pTDistr.SaveAs(pTDistrFigPNG.c_str() );
  	canvas_pTDistr.SaveAs(pTDistrFigPDF.c_str() );
  }
+
+ ////////////////////
+ // EtaPtDistribution
+ for (int pid = 0; pid < nParticles; pid++)
+ {
+
+   gStyle->SetOptStat(0);
+	TCanvas canvas_EtaPtDistr ("EtaPtDistr", ";#eta;p_{T} [GeV/c]", 800, 600);
+
+ 	EtaPtDistr[pid]->Draw("COLZ");
+
+	double posx = 0.2;
+	double posy = 0.8;
+
+	TLatex tlabel( posx, posy, particletype(pid).c_str() ); 
+	tlabel.SetTextSize(0.04);
+	tlabel.SetNDC(kTRUE);
+
+	tlabel.Draw("SAME");
+
+ 	std::string EtaPtDistrFigBase = Form("EtaPtDistr_typ_%d", pid);
+
+ 	std::string EtaPtDistrFigPNG = EtaPtDistrFigBase+".png";
+ 	std::string EtaPtDistrFigPDF = EtaPtDistrFigBase+".pdf";
+
+ 	canvas_EtaPtDistr.SaveAs(EtaPtDistrFigPNG.c_str() );
+ 	canvas_EtaPtDistr.SaveAs(EtaPtDistrFigPDF.c_str() );
+ }
+
 
  // zVtxDistr
  gStyle->SetOptStat(1);

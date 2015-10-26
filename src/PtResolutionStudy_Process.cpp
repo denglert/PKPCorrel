@@ -1,5 +1,7 @@
-
+#include "EvtSelection.h"
+#include "EvtAnalyzer.h"
 #include "PtResolutionStudy.h"
+#include "AnalysisFW.h"
 
 int main( int argc, const char *argv[] )
 {
@@ -118,7 +120,7 @@ int main( int argc, const char *argv[] )
 			float mtrkPt = tTracks.mtrkPt[iTP]; // matched track Pt
 
 			float trpaPt = tTracks.pPt[iTP];       //          trackingParticle Pt
-			int   ptBin  = ptres->ptBin( trpaPt ); // ptBin of trackingParticle Pt
+			int   ptBin  = ptres->GetPtBin( trpaPt ); // ptBin of trackingParticle Pt
 
 			if ( ptBin   == -999 ) continue;
 
@@ -130,7 +132,6 @@ int main( int argc, const char *argv[] )
 			float PtRelDiff = (mtrkPt-trpaPt)/(trpaPt);
 			ptres->PtRecSimMatrix[0]->Fill(trpaPt,mtrkPt);
 			ptres->RelDiffPt          [0][ptBin]->Fill(PtRelDiff);
-
 
 			if ( mtrkPID == 99 ) continue;
 			ptres->PtRecSimMatrix[mtrkPID]->Fill(trpaPt,mtrkPt);

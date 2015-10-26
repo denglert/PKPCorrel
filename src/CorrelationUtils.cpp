@@ -471,14 +471,14 @@ void CorrelationFramework::MixedCorrelation( EventData *ev, std::deque< EventDat
 
 		int nTrkB = (*EventCache)[multBin][zvtxBin][iEvB].tracks.size();
 
-		// Debuggg 
-		std::cerr << std::endl;
-		std::cerr << Form("EvA_ID: %d", EvA_ID) << std::endl;
-		std::cerr << Form("ev->zVtx: %.3f\n", ev->zVtx);
-		std::cerr << Form("ev->GetzVtxBin(): %d\n", ev->GetzVtxBin()); 
-		std::cerr << Form("(*EventCache)[multBin][zvtxBin][iEvB].zVtx: %.3f\n", (*EventCache)[multBin][zvtxBin][iEvB].zVtx);
-		std::cerr << Form("(*EventCache)[multBin][zvtxBin][iEvB].GetzVtxBin(): %d\n", (*EventCache)[multBin][zvtxBin][iEvB].GetzVtxBin()); 
-	
+//		// Debuggg 
+//		std::cerr << std::endl;
+//		std::cerr << Form("EvA_ID: %d", EvA_ID) << std::endl;
+//		std::cerr << Form("ev->zVtx: %.3f\n", ev->zVtx);
+//		std::cerr << Form("ev->GetzVtxBin(): %d\n", ev->GetzVtxBin()); 
+//		std::cerr << Form("(*EventCache)[multBin][zvtxBin][iEvB].zVtx: %.3f\n", (*EventCache)[multBin][zvtxBin][iEvB].zVtx);
+//		std::cerr << Form("(*EventCache)[multBin][zvtxBin][iEvB].GetzVtxBin(): %d\n", (*EventCache)[multBin][zvtxBin][iEvB].GetzVtxBin()); 
+//	
 
 		for (int iTrkA = 0; iTrkA < nTrkA; iTrkA++)
 		{

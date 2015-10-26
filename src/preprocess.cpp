@@ -33,7 +33,6 @@ int main( int argc, const char *argv[] )
  std::string tag		    = argv[6];
  int nEvMax 	  		    = atoi( argv[7] );
 
-
  // Binning
  int nCorrTyp			  = nCorrTyp_; 
  int *nPtBins = new int[nCorrTyp_];
@@ -259,9 +258,6 @@ int main( int argc, const char *argv[] )
    std::cout << Form("multBin: %3d, zvtxBin: %3d, found: %2d/10", multBin, zvtxBin, EventCache[multBin][zvtxBin].size()) << std::endl;
  }
 
- log->wr(Form("trackTree entries: %d", trackTree->GetEntries()));
- log->wr(Form("EventSelection (SkimAna) entries: %d", EvSel.GetEntries()));
- log->wr(Form("nEvMax: %d", nEvMax));
 
  ///////////////////////////
  //                       //

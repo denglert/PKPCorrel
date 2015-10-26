@@ -14,7 +14,21 @@ Creating CMSSW environment:
 
 # Usage
 
-The analysis have two-steps: preprocessing and processing.
+The analysis has two-steps: **preprocessing** and **processing**.
+
+## Preprocessing
+
+Has the following output:
+- TH2D *correl2D_signal_meas[TypBin][ptBin][multBin]; (measured signal correlation function)
+- TH2D *correl2D_signal_meas[TypBin][ptBin][multBin]; (measured backgr correlation function)
+- TH1D *nEvents_Processed_signal[TypBin][ptBin][multBin]; (number of events)
+- TH1D *nEvents_Processed_backgr[TypBin][ptBin][multBin]; (number of events)
+
+## Processing
+
+
+
+## Commands
 
 Interactive:
 

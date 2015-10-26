@@ -12,6 +12,21 @@ Creating CMSSW environment:
 * `git clone git@github.com:denglert/PKPCorrel.git`
 * `cd CMSSW_5_3_20/src/<directory>/PKPCorrel`
 
+# Usage
+
+Interactive:
+1. `make preproc`
+  - Note: You have to setup the `Makefile` ['PREPROCESS'](https://github.com/denglert/PKPCorrel/blob/master/Makefile#L17) section accordingly
+2. `make procbatcjob`
+  - Note: You have to setup the `Makefile` ['PROCESS BATCHJOB'](https://github.com/denglert/PKPCorrel/blob/master/Makefile#L93) section accordingly
+
+Lxbatch jobs:
+1. Setup lxbatch jobs.
+  - See /batch/ folder for job submission macros.
+2. `make procbatchjob`
+  - Note: You have to setup the `Makefile` ['PROCESS BATCHJOB' section](https://github.com/denglert/PKPCorrel/blob/master/Makefile#L93) accordingly
+
+
 # Classes and files in /src
 - AnalysisBinning_*.
 - AnalysisFW

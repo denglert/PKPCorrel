@@ -6,6 +6,7 @@ Pion, kaon and proton correlation code
 # Setup HOW-TO 
 
 Creating CMSSW environment:
+
 1. `mkdir <projectname>; cd <projectname>`
 2. `cmsrel CMSSW_5_3_20`
 3. `mkdir CMSSW_5_3_20/src/<directory>`
@@ -27,7 +28,8 @@ Has the following output:
 
 ## Processing
 
-
+- Constructs the final correlation functions
+- Makes the 2D, 1D, v2 vs. pT figures
 
 ## Commands
 
